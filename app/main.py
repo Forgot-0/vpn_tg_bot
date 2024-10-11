@@ -1,31 +1,33 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
+from punq import Container
 
 from bot.handlers.users import router as user_router
 from bot.handlers.subscriptions import router as sub_router
+from bot.handlers.servers import router as server_router
 from bot.middlewares.mediator import MediatorMiddleware
+from infra.depends.init import init_container
 
 
-async def main():
+async def init_bot():
+
+
+    container: Container = init_container()
+
+    bot: Bot = container.resolve(Bot)
     
-
-    bot: Bot = Bot(
-        token='5208514073:AAE4tGvLhsCeWAaR1Cuv8C30YSScqvuyuXk',
-        default=DefaultBotProperties(parse_mode='HTML'),
-    )
     dp: Dispatcher = Dispatcher()
-
     dp.include_router(user_router)
     dp.include_router(sub_router)
-    dp.update.middleware(MediatorMiddleware())
+    dp.include_router(server_router)
 
+    dp.update.middleware(MediatorMiddleware())
     
+
     await bot.delete_webhook(drop_pending_updates=False)
     await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
-   
+    asyncio.run(init_bot())

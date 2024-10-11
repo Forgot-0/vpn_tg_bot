@@ -1,11 +1,12 @@
 from aiogram import F, Router
 from aiogram.types import Message, LabeledPrice, PreCheckoutQuery
+from punq import Container
 
 from application.commands.subscriptions.create import CreateSubscriptionCommand
 from application.commands.subscriptions.paid import PaidSubscriptionCommand
 from application.mediator.mediator import Mediator
 from bot.keyboards.tarif import TarifsTextButtons, keyboard_tarifs
-from settings.config import config
+from settings.config import Config
 
 
 router = Router()
@@ -23,7 +24,7 @@ async def buy_sub(message: Message):
 
 
 @router.message(F.text == TarifsTextButtons.ONE_MONTH)
-async def buy_one_month(message: Message, mediator: Mediator):
+async def buy_one_month(message: Message, mediator: Mediator, container: Container):
     text = ""
     subscription, *_ = await mediator.handle_command(
         CreateSubscriptionCommand(
@@ -32,6 +33,7 @@ async def buy_one_month(message: Message, mediator: Mediator):
         )
     )
 
+    config: Config = container.resolve(Config)
     PRICE = LabeledPrice(label='test', amount=1000)
     await message.answer_invoice(
         title='Test',

@@ -3,7 +3,7 @@ from typing import Callable, Awaitable, Dict, Any
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
-from infra.depends.init import get_mediator
+from infra.depends.init import get_mediator, init_container
 
 
 class MediatorMiddleware(BaseMiddleware):
@@ -15,4 +15,6 @@ class MediatorMiddleware(BaseMiddleware):
             data: Dict[str, Any],
     ) -> Any:
         data['mediator'] = get_mediator()
+        data['container'] = init_container()
+
         return await handler(event, data)

@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings
 
 
 class BOT(BaseSettings):
+    owner: int = Field(alias="OWNER")
     token: str = Field(alias='BOT_TOKEN')
     provider_token: str = Field(alias='PROVIDER_TOKEN')
 
@@ -19,14 +20,6 @@ class Broker(BaseSettings):
 
 
 class VPN(BaseSettings):
-    ip: str = Field(alias="VPN_IP")
-    url: str = Field(alias="VPN_URL")
-    pbk: str = Field(alias='VPN_PBK')
-    urn_login: str = Field(alias='VPN_URL_LOGIN')
-    urn_create: str = Field(alias='VPN_URL_CREATE')
-    urn_delete: str = Field(alias='VPN_URL_DELETE', default="pass")
-    urn_update: str = Field(alias='VPN_URL_UPDATE')
-    urn_get: str = Field(alias='VPN_URL_GET')
     username: str = Field(alias='VPN_USERNAME')
     password: str = Field(alias='VPN_PASSWORD')
     secret: str = Field(alias='VPN_SECRET')
@@ -38,5 +31,3 @@ class Config:
     db = DataBase()
     vpn = VPN()
 
-
-config = Config()

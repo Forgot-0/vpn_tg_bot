@@ -1,31 +1,27 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any
+from uuid import UUID
 
+from domain.entities.server import Server
+from domain.events.subscriptions.paid import PaidSubscriptionEvent
 from infra.vpn_service.schema import Client, CreateVpnUrl
 
 
 
 @dataclass(kw_only=True)
 class BaseVpnService(ABC):
-    main_url: str
-    ip: str
-    pbk: str
+    
     username: str
     password: str
     secret: str
 
-    urn_login: str
-    urn_create: str
-    urn_update: str
-    urn_delete: str
-    urn_get: str
-
     @abstractmethod
-    async def create(self, data: CreateVpnUrl) -> str:
+    async def create(self, user_id: UUID, event: PaidSubscriptionEvent, server: Server) -> str | None:
         ...
 
     @abstractmethod
-    async def udate(self, data: Client) -> None:
+    async def udate(self, data: dict[str, Any]) -> None:
         ...
 
     @abstractmethod
@@ -37,29 +33,5 @@ class BaseVpnService(ABC):
         ...
 
     @abstractmethod
-    def get_vpn_urn(self, data: CreateVpnUrl) -> str:
+    def get_vpn_uri(self, user_id: UUID, tg_id: int, server: Server):
         ...
-
-    @property
-    def url(self) -> str:
-        return f'http://{self.main_url}'
-
-    @property
-    def uri_create(self) -> str:
-        return f'{self.url}/{self.urn_create}'
-
-    @property
-    def uri_delete(self) -> str:
-        return f'{self.url}/{self.urn_delete}'
-
-    @property
-    def uri_update(self) -> str:
-        return f'{self.url}/{self.urn_update}'
-
-    @property
-    def uri_get(self) -> str:
-        return f'{self.url}/{self.urn_get}'
-
-    @property
-    def uri_login(self) -> str:
-        return f'{self.url}/{self.urn_login}'

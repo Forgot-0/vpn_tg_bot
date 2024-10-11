@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import dataclass, field
 from json import dump, dumps, loads
 from aiohttp import ClientSession, FormData
 import requests
@@ -129,3 +130,22 @@ async def main():
     # await s.close()
 
 # asyncio.run(main())
+
+
+print(dumps({
+        'ip': '80.85.247.3',
+        'port': '55801',
+        'domain': 'server.domain',
+        'limit': 10,
+        'pbk': 'eA7IiJg2phKsbJLqVT6Yr3bEp69-L4qiU3tM1Dw7LWo',
+        'country': 'nl',
+        'free': 3,
+
+        'uri_login': 'http://80.85.247.3:55801/safsdfsadfa/login',
+        'uri_create': 'http://80.85.247.3:55801/safsdfsadfa/panel/inbound/addClient',
+        'uri_delete': 'server.uri_delete',
+        'uri_update': 'server.uri_update',
+        'uri_get': 'server.uri_get'
+    })
+)
+{"ip": "80.85.247.3", "port": "55801", "domain": "server.domain", "limit": 10, "pbk": "eA7IiJg2phKsbJLqVT6Yr3bEp69-L4qiU3tM1Dw7LWo", "country": "nl", "free": 3, "uri_login": "http://80.85.247.3:55801/safsdfsadfa/login", "uri_create": "http://80.85.247.3:55801/safsdfsadfa/panel/inbound/addClient", "uri_delete": "server.uri_delete", "uri_update": "server.uri_update", "uri_get": "server.uri_get"}

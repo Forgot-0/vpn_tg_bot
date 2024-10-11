@@ -1,7 +1,13 @@
+from aiogram import Bot
+from aiogram.client.default import DefaultBotProperties
 from punq import Container, Scope
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from infra.depends.init_repositories import init_mongo_subscription_repository, init_mongo_user_repository
+from infra.depends.init_repositories import (
+    init_mongo_server_repository, 
+    init_mongo_subscription_repository, 
+    init_mongo_user_repository
+)
 from infra.depends.init_vpn import init_vpn_service
 from infra.message_broker.base import BaseMessageBroker
 
@@ -9,6 +15,7 @@ from infra.depends.init_mediator import init_mediator
 from infra.depends.init_broker import create_message_broker
 
 from application.mediator.mediator import Mediator
+from infra.repositories.servers.base import BaseServerRepository
 from infra.repositories.subscriptions.base import BaseSubscriptionRepository
 from infra.repositories.users.base import BaseUserRepository
 from infra.vpn_service.base import BaseVpnService
@@ -54,11 +61,28 @@ def _init_container() -> Container:
         scope=Scope.singleton
     )
 
+    container.register(
+        BaseServerRepository, 
+        factory=lambda: init_mongo_server_repository(client),
+        scope=Scope.singleton
+    )
+    
+
     #VPN SERVICE
     container.register(
         BaseVpnService,
         factory=lambda: init_vpn_service(config),
         scope=Scope.singleton
+    )
+
+
+    # Bot aiogram
+    container.register(
+        Bot,
+        factory=lambda: Bot(
+            token=config.bot.token,
+            default=DefaultBotProperties(parse_mode='HTML')
+        )
     )
 
     # Mediator

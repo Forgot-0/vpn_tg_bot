@@ -1,11 +1,12 @@
 from punq import Container
 
+from application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
 from application.commands.subscriptions.paid import PaidSubscriptionCommand, PaidSubscriptionCommandHandler
 from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
 from application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from application.events.base import PublisherEventHandler
 
-from application.events.subscription.paid import PaidSubscriptionEventHandler
+from application.events.subscriptions.paid import PaidSubscriptionEventHandler
 from application.mediator.mediator import Mediator
 from application.mediator.event_mediator import EventMediator
 from domain.events.subscriptions.paid import PaidSubscriptionEvent
@@ -40,7 +41,10 @@ def init_mediator(container: Container) -> Mediator:
                 message_broker=container.resolve(BaseMessageBroker),
                 broker_topic='subscription'
             )
-            
         ]
     )
+
+
+    container.register(CreateServerCommandHandler)
+    mediator.register_command(CreateServerCommand, [container.resolve(CreateServerCommandHandler)])
     return mediator
