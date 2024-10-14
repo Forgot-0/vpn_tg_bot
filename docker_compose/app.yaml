@@ -9,9 +9,6 @@ services:
 
     env_file:
       - ../.env
-    depends_on:
-      kafka:
-        condition: service_healthy
     volumes:
       - ../app/:/app/
 

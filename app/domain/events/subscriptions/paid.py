@@ -12,6 +12,7 @@ class PaidSubscriptionEvent(BaseEvent):
 
     subscription_id: UUID
     tg_id: int
+    server_id: UUID
     product: int
     amount: int
     end_time: datetime

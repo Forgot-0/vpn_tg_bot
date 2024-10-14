@@ -6,9 +6,11 @@ from application.commands.subscriptions.create import CreateSubscriptionCommand,
 from application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from application.events.base import PublisherEventHandler
 
+from application.events.servers.decrement_free import UpdateCurrentServerEventHandler
 from application.events.subscriptions.paid import PaidSubscriptionEventHandler
 from application.mediator.mediator import Mediator
 from application.mediator.event_mediator import EventMediator
+from application.queries.subscriptions.get_active_subs import GetAllActiveSubsQuery, GetAllActiveSubsQueryHandler
 from domain.events.subscriptions.paid import PaidSubscriptionEvent
 from infra.message_broker.base import BaseMessageBroker
 
@@ -32,15 +34,20 @@ def init_mediator(container: Container) -> Mediator:
     container.register(PaidSubscriptionCommandHandler)
     mediator.register_command(PaidSubscriptionCommand, [container.resolve(PaidSubscriptionCommandHandler)])
 
+    container.register(GetAllActiveSubsQueryHandler)
+    mediator.register_query(GetAllActiveSubsQuery, container.resolve(GetAllActiveSubsQueryHandler))
+
     container.register(PaidSubscriptionEventHandler)
+    container.register(UpdateCurrentServerEventHandler)
     mediator.register_event(
         PaidSubscriptionEvent,
         [
             container.resolve(PaidSubscriptionEventHandler),
+            container.resolve(UpdateCurrentServerEventHandler),
             PublisherEventHandler(
                 message_broker=container.resolve(BaseMessageBroker),
                 broker_topic='subscription'
-            )
+            ),
         ]
     )
 

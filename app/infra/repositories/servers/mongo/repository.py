@@ -24,10 +24,14 @@ class MongoServerRepository(BaseServerRepository, BaseMongoDBRepository):
                 '_id': server_id
             },
             update={
-                '$inc': {'free': 1}
+                '$inc': {'free': -1}
             }
         )
 
     async def get_all(self) -> list[Server]:
         documents = await self._collection.find().to_list(length=None)
         return [convert_server_dict_to_entity(document) for document in documents]
+
+    async def get_by_id(self, server_id: UUID) -> Server | None:
+        document = await self._collection.find_one(filter={'_id': server_id})
+        if document: return convert_server_dict_to_entity(document)

@@ -7,6 +7,8 @@ class BOT(BaseSettings):
     token: str = Field(alias='BOT_TOKEN')
     provider_token: str = Field(alias='PROVIDER_TOKEN')
 
+    host: str = Field(alias='TELEGRAM_WEBHOOK_HOST')
+    urn: str = Field(alias='TELEGRAM_WEBHOOK_PATH')
 
 class DataBase(BaseSettings):
     url: str = Field(alias='DATABASE_URL')

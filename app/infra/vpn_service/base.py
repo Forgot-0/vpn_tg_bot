@@ -17,7 +17,7 @@ class BaseVpnService(ABC):
     secret: str
 
     @abstractmethod
-    async def create(self, user_id: UUID, event: PaidSubscriptionEvent, server: Server) -> str | None:
+    async def create(self, event: PaidSubscriptionEvent, server: Server) -> str:
         ...
 
     @abstractmethod
@@ -33,5 +33,5 @@ class BaseVpnService(ABC):
         ...
 
     @abstractmethod
-    def get_vpn_uri(self, user_id: UUID, tg_id: int, server: Server):
+    def get_vpn_uri(self, event: PaidSubscriptionEvent, server: Server):
         ...

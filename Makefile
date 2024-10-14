@@ -1,17 +1,16 @@
 DC = docker compose
 BOT_APP = docker_compose/app.yaml
 STORAGE = docker_compose/storage.yaml
-BROKER = docker_compose/broker.yaml
 ENV = --env-file .env
 
 
-.PHONY: bot_up
-bot_up:
-	${DC} -f ${BOT_APP} -f ${BROKER} ${ENV} up -d --build
+.PHONY: bot_up_dev
+bot_up_dev:
+	${DC} -f ${BOT_APP} ${ENV} up -d --build
 
 .PHONY: bot_down
 bot_down:
-	${DC} -f ${BOT_APP} -f ${BROKER} ${ENV} down
+	${DC} -f ${BOT_APP} ${ENV} down
 
 .PHONY: storage_up
 storage_up:
@@ -23,4 +22,4 @@ storage_down:
 
 .PHONY: app_down
 app_down:
-	${DC} -f ${BOT_APP} -f ${STORAGE} -f ${BROKER} ${ENV} down
+	${DC} -f ${BOT_APP} -f ${STORAGE} ${ENV} down

@@ -23,3 +23,7 @@ class BaseServerRepository(ABC):
     @abstractmethod
     async def get_all(self) -> list[Server]:
         ...
+    
+    @abstractmethod
+    async def get_by_id(self, server_id: UUID) -> Server | None:
+        ...

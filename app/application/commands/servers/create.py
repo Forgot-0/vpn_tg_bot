@@ -31,5 +31,6 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
             uri_delete=document['uri_delete'],
             uri_update=document['uri_update'],
             uri_get=document['uri_get'],
+            name=document['name']
         )
         await self.server_repository.create(server=server)

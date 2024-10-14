@@ -23,3 +23,15 @@ class BaseSubscriptionRepository(ABC):
     @abstractmethod
     async def get_by_id(self, id: UUID) -> Subscription | None:
         ...
+
+    @abstractmethod
+    async def delete_not_paid_sub(self, tg_id: int) -> None:
+        ...
+
+    @abstractmethod
+    async def get_active_subscription(self, tg_id: int) -> list[Subscription] | None:
+        ...
+
+    @abstractmethod
+    async def set_vpn_url(self, subs_id: UUID, vpn_url: str) -> None:
+        ...

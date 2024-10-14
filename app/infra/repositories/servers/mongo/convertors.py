@@ -18,7 +18,8 @@ def convert_server_entity_to_dict(server: Server) -> dict[str, Any]:
         'uri_create': server.uri_create,
         'uri_delete': server.uri_delete,
         'uri_update': server.uri_update,
-        'uri_get': server.uri_get
+        'uri_get': server.uri_get,
+        'name': server.name
     }
 
 def convert_server_dict_to_entity(document: dict[str, Any]) -> Server:
@@ -37,5 +38,6 @@ def convert_server_dict_to_entity(document: dict[str, Any]) -> Server:
         uri_delete=document['uri_delete'],
         uri_update=document['uri_update'],
         uri_get=document['uri_get'],
+        name=document['name']
     )
 

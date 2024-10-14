@@ -1,14 +1,13 @@
 from dataclasses import dataclass
-from json import dumps
 from typing import Any
-from uuid import UUID
 
 from aiohttp import ClientSession
 from domain.entities.server import Server
 from domain.events.subscriptions.paid import PaidSubscriptionEvent
 from infra.vpn_service.base import BaseVpnService
 from infra.vpn_service.convertors import convert_from_event_to_creat_client
-from infra.vpn_service.schema import Client, CreateVpnUrl
+from infra.vpn_service.schema import Client
+
 
 
 @dataclass
@@ -26,14 +25,14 @@ class AIVpnService(BaseVpnService):
         )
         return responce.cookies
 
-    async def create(self, user_id: UUID, event: PaidSubscriptionEvent, server: Server) -> str | None:
+    async def create(self, event: PaidSubscriptionEvent, server: Server) -> str:
         cookies = await self.login(server=server)
+
         json = convert_from_event_to_creat_client(
-            user_id=user_id,
             event=event
         )
 
-        url = self.get_vpn_uri(user_id=user_id, tg_id=event.tg_id, server=server)
+        url = self.get_vpn_uri(event=event, server=server)
 
         responce = await self.session.post(
             url=server.uri_create,
@@ -44,6 +43,8 @@ class AIVpnService(BaseVpnService):
         responce = await responce.json()
         if responce['success']:
             return url
+
+        return 'Что то пошло не так обратитесь в службу поддержки'
 
     async def udate(self, data: dict[str, Any]) -> None:
         # data = data.model_dump()
@@ -60,7 +61,5 @@ class AIVpnService(BaseVpnService):
         #     return Client(**data['obj'][0])
         ...
 
-    def get_vpn_uri(self, user_id: UUID, tg_id: int, server: Server) -> str:
-        return f"""vless://{user_id}@{server.ip}:443?security=reality&sni=google.com&fp=chrome&pbk={server.pbk}&sid=ce352f&spx=/&type=tcp&flow=xtls-rprx-vision&encryption=none#VLESS%20%D1%81%20XTLS-Reality-{tg_id}"""
-    
-    
+    def get_vpn_uri(self, event: PaidSubscriptionEvent, server: Server) -> str:
+        return f"""vless://{event.subscription_id}@{server.ip}:{server.port}?security=reality&sni=google.com&fp=chrome&pbk={server.pbk}&sid=ce352f&spx=/&type=tcp&flow=xtls-rprx-vision&encryption=none#{server.name}-{event.end_time.timestamp()//1}"""

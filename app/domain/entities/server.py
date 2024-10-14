@@ -28,3 +28,4 @@ class Server(AggregateRoot):
     uri_delete: str
     uri_update: str
     uri_get: str
+    name: str

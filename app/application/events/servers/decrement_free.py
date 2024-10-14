@@ -10,4 +10,4 @@ class UpdateCurrentServerEventHandler(BaseEventHandler[PaidSubscriptionEvent, No
     server_repository: BaseServerRepository
 
     async def handle(self, event: PaidSubscriptionEvent) -> None:
-        ...
+        await self.server_repository.update_decrement_free(server_id=event.server_id)
