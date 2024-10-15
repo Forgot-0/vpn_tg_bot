@@ -4,8 +4,8 @@ STORAGE = docker_compose/storage.yaml
 ENV = --env-file .env
 
 
-.PHONY: bot_up_dev
-bot_up_dev:
+.PHONY: bot_up
+bot_up:
 	${DC} -f ${BOT_APP} ${ENV} up -d --build
 
 .PHONY: bot_down

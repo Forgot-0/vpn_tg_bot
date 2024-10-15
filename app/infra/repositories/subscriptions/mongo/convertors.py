@@ -14,7 +14,8 @@ def convert_subscription_dict_to_entity(document: dict[str, Any]) -> Subscriptio
         end_time=document['end_time'],
         created_at=document['created_at'],
         is_pay=document['is_pay'],
-        vpn_url=document['vpn_url']
+        vpn_url=document['vpn_url'],
+        payment_id=document['payment_id']
     )
 
 def convert_subscription_entity_to_dict(subscription: Subscription) -> dict[str, Any]:
@@ -27,5 +28,6 @@ def convert_subscription_entity_to_dict(subscription: Subscription) -> dict[str,
         'end_time': subscription.end_time,
         'created_at': subscription.created_at,
         'is_pay': subscription.is_pay,
-        'vpn_url': subscription.vpn_url
+        'vpn_url': subscription.vpn_url,
+        'payment_id': subscription.payment_id
     }

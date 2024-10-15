@@ -23,7 +23,8 @@ class Subscription(AggregateRoot):
     amount: int = field(default=0, kw_only=True)
     end_time: datetime = field(default_factory=datetime.now())
     is_pay: bool = field(default=False, kw_only=True)
-    vpn_url: str = field(default_factory=str, kw_only=True)
+    vpn_url: str | None = field(default=None, kw_only=True)
+    payment_id: str | None = field(default=None, kw_only=True)
 
     @classmethod
     def create(cls, tg_id: int, product: ProductType, server_id: UUID) -> 'Subscription':

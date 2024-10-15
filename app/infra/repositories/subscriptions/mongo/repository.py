@@ -26,13 +26,13 @@ class MongoSubscriptionRepository(BaseSubscriptionRepository, BaseMongoDBReposit
         data = await self._collection.find_one({'tg_id': tg_id, 'is_pay': False})
         if data: return convert_subscription_dict_to_entity(data)
 
-    async def pay(self, id: UUID) -> None:
+    async def pay(self, id: UUID, payment_id: str) -> None:
         await self._collection.update_one(
             filter={
                 '_id': id
             },
             update={
-                "$set": {'is_pay': True}
+                "$set": {'is_pay': True, 'payment_id': payment_id}
             }
         )
 

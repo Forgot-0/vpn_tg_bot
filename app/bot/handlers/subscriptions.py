@@ -52,5 +52,8 @@ async def pre_checkout_query_hadnelr(pre_checkout_query: PreCheckoutQuery):
 @router.message(F.successful_payment)
 async def got_payment(message: Message, mediator: Mediator):
     await mediator.handle_command(
-        PaidSubscriptionCommand(tg_id=message.from_user.id)
+        PaidSubscriptionCommand(
+            tg_id=message.from_user.id, 
+            payment_id=message.successful_payment.provider_payment_charge_id
+            )
         )

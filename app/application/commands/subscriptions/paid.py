@@ -8,6 +8,7 @@ from infra.repositories.subscriptions.base import BaseSubscriptionRepository
 @dataclass(frozen=True)
 class PaidSubscriptionCommand(BaseCommand):
     tg_id: int
+    payment_id: str
 
 
 @dataclass(frozen=True)
@@ -18,5 +19,5 @@ class PaidSubscriptionCommandHandler(BaseCommandHandler[PaidSubscriptionCommand,
         subscription = await self.subscription_repository.get_by_tg_id(tg_id=command.tg_id)
         if not subscription: raise NotFoundException('Not Found Sub')
         subscription.paid()
-        await self.subscription_repository.pay(id=subscription.id)
+        await self.subscription_repository.pay(id=subscription.id, payment_id=command.payment_id)
         await self.mediator.publish(subscription.pull_events())

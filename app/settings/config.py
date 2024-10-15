@@ -8,7 +8,13 @@ class BOT(BaseSettings):
     provider_token: str = Field(alias='PROVIDER_TOKEN')
 
     host: str = Field(alias='TELEGRAM_WEBHOOK_HOST')
-    urn: str = Field(alias='TELEGRAM_WEBHOOK_PATH')
+    path: str = Field(alias='TELEGRAM_WEBHOOK_PATH')
+    url: str = Field(alias='TELEGRAM_WEBHOOK_URL')
+
+
+class WebApp(BaseSettings):
+    host: str = Field(alias='WEBAPP_WEBHOOK_HOST')
+    port: int = Field(alias='WEBAPP_WEBHOOK_PORT')
 
 class DataBase(BaseSettings):
     url: str = Field(alias='DATABASE_URL')
@@ -32,4 +38,5 @@ class Config:
     broker = Broker()
     db = DataBase()
     vpn = VPN()
+    webapp = WebApp()
 

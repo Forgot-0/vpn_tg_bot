@@ -15,5 +15,6 @@ async def send_invoice(container: Container, message: Message, subscription: Sub
         currency='rub',
         is_flexible=False,
         prices=[PRICE],
-        payload='some-invoice-payload-for-our-internal-use'
+        payload='some-invoice-payload-for-our-internal-use',
+        need_phone_number=True
     )

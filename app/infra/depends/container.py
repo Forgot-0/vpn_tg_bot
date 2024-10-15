@@ -1,4 +1,4 @@
-from aiogram import Bot
+from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from punq import Container, Scope
 
@@ -82,7 +82,14 @@ def _init_container() -> Container:
         factory=lambda: Bot(
             token=config.bot.token,
             default=DefaultBotProperties(parse_mode='HTML')
-        )
+        ),
+        scope=Scope.singleton
+    )
+
+    container.register(
+        Dispatcher,
+        factory=lambda: Dispatcher(),
+        scope=Scope.singleton
     )
 
     # Mediator
