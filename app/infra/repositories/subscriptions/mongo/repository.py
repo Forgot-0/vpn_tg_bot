@@ -26,13 +26,23 @@ class MongoSubscriptionRepository(BaseSubscriptionRepository, BaseMongoDBReposit
         data = await self._collection.find_one({'tg_id': tg_id, 'is_pay': False})
         if data: return convert_subscription_dict_to_entity(data)
 
-    async def pay(self, id: UUID, payment_id: str) -> None:
+    async def pay(self, id: UUID) -> None:
         await self._collection.update_one(
             filter={
                 '_id': id
             },
             update={
-                "$set": {'is_pay': True, 'payment_id': payment_id}
+                "$set": {'is_pay': True}
+            }
+        )
+
+    async def set_payment_id(self, id: UUID, payment_id: str) -> str:
+        await self._collection.update_one(
+            filter={
+                '_id': id
+            },
+            update={
+                "$set": {'payment_id': payment_id}
             }
         )
 
@@ -46,7 +56,8 @@ class MongoSubscriptionRepository(BaseSubscriptionRepository, BaseMongoDBReposit
 
     async def get_active_subscription(self, tg_id: int) -> list[Subscription] | None:
         documents = await self._collection.find(
-            {
+            {   
+                'tg_id': tg_id,
                 'is_pay': True,
                 'end_time': {'$gt': datetime.now()}
             }

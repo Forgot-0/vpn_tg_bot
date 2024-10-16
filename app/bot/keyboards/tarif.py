@@ -7,10 +7,10 @@ from bot.keyboards.menu import BackMainMenu
 
 
 class TarifsTextButtons(Enum):
-    ONE_MONTH = 'На 30 дней за 100 руб'
-    THREE_MONTH = 'На 90 дней за 300 руб'
-    SIX_MONTH = 'На 180 дней за 600 руб'
-    ONE_YEAR = 'На 365 дней за 1200 руб'
+    ONE_MONTH = '🎟 На 30 дней за 100 руб 🎟'
+    THREE_MONTH = '🎫 На 90 дней за 300 руб 🎫'
+    SIX_MONTH = '🏆 На 180 дней за 600 руб 🏆'
+    ONE_YEAR = '💎 На 365 дней за 1200 руб 💎'
 
 
 

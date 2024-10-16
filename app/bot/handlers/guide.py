@@ -31,12 +31,15 @@ async def get_guide(message: Message):
         video=GuideText.VIDEO_WINDOWS,
     )
 
-
 @router.message(F.text==TypeSystemButtons.LINUX)
 async def get_guide(message: Message):
     await message.answer(text=GuideText.DOWNLOAD_LINUX, parse_mode='MarkdownV2', disable_web_page_preview=True)
     await message.answer(text=GuideText.ROUTE_NEKORAY_SETTING, parse_mode='MarkdownV2')
 
+
+@router.message(F.text==TypeSystemButtons.ANDROID)
+async def get_guide(message: Message):
+    await message.answer(text=GuideText.DOWNLOAD_ANDROID, parse_mode='MarkdownV2', disable_web_page_preview=True)
     await message.answer_video(
-        video=GuideText.VIDEO_LINUX,
+        video=GuideText.VIDEO_ANDROID,
     )

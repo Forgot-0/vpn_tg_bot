@@ -16,7 +16,7 @@ class AIVpnService(BaseVpnService):
 
     async def login(self, server: Server):
         responce = await self.session.post(
-            url=server.uri_login,
+            url=server.url_login,
             data={
                 'username': self.username,
                 'password': self.password,
@@ -35,7 +35,7 @@ class AIVpnService(BaseVpnService):
         url = self.get_vpn_uri(event=event, server=server)
 
         responce = await self.session.post(
-            url=server.uri_create,
+            url=server.url_create,
             json=json,
             cookies=cookies
         )
@@ -46,20 +46,20 @@ class AIVpnService(BaseVpnService):
 
         return 'Что то пошло не так обратитесь в службу поддержки'
 
-    async def udate(self, data: dict[str, Any]) -> None:
-        # data = data.model_dump()
-        # await self.session.post(
-        #     url=f'{self.uri_update}/{data['id']}',
-        #     data=data
-        # )
-        ...
+    async def delete_not_active(self, server: Server) -> None:
+        cookies = await self.login(server=server)
+        await self.session.post(
+            url=server.url_delete_not_active,
+            cookies=cookies
+        )
 
-    async def get_by_id(self, id: str, server: Server) -> Client | None:
-        # data = await (await self.session.get(url=f"{self.uri_get}/{id}")).json()
-
-        # if data['success']:
-        #     return Client(**data['obj'][0])
-        ...
+    async def get_list(self, server: Server) -> dict[str, Any]:
+        cookies = await self.login(server=server)
+        responce = await self.session.get(
+            url=server.url_list,
+            cookies=cookies
+        )
+        return await responce.json()
 
     def get_vpn_uri(self, event: PaidSubscriptionEvent, server: Server) -> str:
-        return f"""vless://{event.subscription_id}@{server.ip}:{server.port}?security=reality&sni=google.com&fp=chrome&pbk={server.pbk}&sid=ce352f&spx=/&type=tcp&flow=xtls-rprx-vision&encryption=none#{server.name}-{event.end_time.timestamp()//1}"""
+        return f"""vless://{event.subscription_id}@{server.ip}:{server.port}?security=reality&sni=google.com&fp=chrome&pbk={server.pbk}&sid=ce352f&spx=/&type=tcp&flow=xtls-rprx-vision&encryption=none#{server.name}-{str(event.subscription_id)}"""

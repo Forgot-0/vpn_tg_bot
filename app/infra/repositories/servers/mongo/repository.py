@@ -35,3 +35,13 @@ class MongoServerRepository(BaseServerRepository, BaseMongoDBRepository):
     async def get_by_id(self, server_id: UUID) -> Server | None:
         document = await self._collection.find_one(filter={'_id': server_id})
         if document: return convert_server_dict_to_entity(document)
+
+    async def set_free(self, server_id: UUID, new_free: int) -> None:
+        await self._collection.update_one(
+            filter={
+                '_id': server_id
+            },
+            update={
+                '$set': {'free': new_free}
+            }
+        )

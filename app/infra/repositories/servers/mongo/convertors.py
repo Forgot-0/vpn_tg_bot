@@ -14,12 +14,9 @@ def convert_server_entity_to_dict(server: Server) -> dict[str, Any]:
         'country': server.country.value,
         'free': server.free,
 
-        'uri_login': server.uri_login,
-        'uri_create': server.uri_create,
-        'uri_delete': server.uri_delete,
-        'uri_update': server.uri_update,
-        'uri_get': server.uri_get,
-        'name': server.name
+        'name': server.name,
+        'panel_port': server.panel_port,
+        'panel_path': server.panel_path
     }
 
 def convert_server_dict_to_entity(document: dict[str, Any]) -> Server:
@@ -33,11 +30,8 @@ def convert_server_dict_to_entity(document: dict[str, Any]) -> Server:
         country=Country(document['country']),
         free=document['free'],
 
-        uri_login=document['uri_login'],
-        uri_create=document['uri_create'],
-        uri_delete=document['uri_delete'],
-        uri_update=document['uri_update'],
-        uri_get=document['uri_get'],
-        name=document['name']
+        name=document['name'],
+        panel_port=document['panel_port'],
+        panel_path=document['panel_path']
     )
 

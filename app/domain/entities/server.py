@@ -23,9 +23,22 @@ class Server(AggregateRoot):
     country: Country
     free: int
 
-    uri_login: str
-    uri_create: str
-    uri_delete: str
-    uri_update: str
-    uri_get: str
     name: str
+    panel_port: int
+    panel_path: str
+
+    @property
+    def url_login(self) -> str:
+        return f'http://{self.ip}:{self.panel_port}/{self.panel_path}/login'
+    @property
+    def url_create(self) -> str:
+        return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/addClient"
+
+    @property
+    def url_delete_not_active(self) -> str:
+        return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/delDepletedClients/-1"
+
+    @property
+    def url_list(self) -> str:
+        return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/list"
+

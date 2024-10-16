@@ -11,6 +11,9 @@ class BOT(BaseSettings):
     path: str = Field(alias='TELEGRAM_WEBHOOK_PATH')
     url: str = Field(alias='TELEGRAM_WEBHOOK_URL')
 
+class YooKassaPayment(BaseSettings):
+    account_id: str = Field(alias='PAYMENT_ID')
+    secret_id: str = Field(alias='PAYMENT_SECRET')
 
 class WebApp(BaseSettings):
     host: str = Field(alias='WEBAPP_WEBHOOK_HOST')
@@ -39,4 +42,5 @@ class Config:
     db = DataBase()
     vpn = VPN()
     webapp = WebApp()
+    yookass = YooKassaPayment()
 

@@ -30,19 +30,19 @@ class Subscription(AggregateRoot):
     def create(cls, tg_id: int, product: ProductType, server_id: UUID) -> 'Subscription':
 
         if product.value == 1:
-            end_date = datetime.now() + timedelta(days=30)
+            end_date = datetime.now() + timedelta(product.value*30)
             amount = 100
 
         elif product.value == 3:
-            end_date = datetime.now() + timedelta(days=3*30)
+            end_date = datetime.now() + timedelta(days=product.value*30)
             amount = 300
 
         elif product.value == 6:
-            end_date = datetime.now() + timedelta(days=6*30)
+            end_date = datetime.now() + timedelta(days=product.value*30)
             amount = 600
 
         elif product.value == 12:
-            end_date = datetime.now() + timedelta(days=12*30)
+            end_date = datetime.now() + timedelta(days=product.value*30)
             amount = 1200
 
         subscription = cls(

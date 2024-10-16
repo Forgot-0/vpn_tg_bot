@@ -3,13 +3,13 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 class MenuTextButtons:
-    BUY = 'Купить'
-    TARIFS = 'Тарифы'
-    HELP = 'Помощь'
-    GUIDE = 'Руководство по использованию'
+    BUY = '✅ Купить'
+    TARIFS = '💰 Тарифы'
+    HELP = '🆘 Помощь'
+    GUIDE = '📄 Руководство по использованию'
 
 class BackMainMenu:
-    BACK = 'Назад'
+    BACK = '🔙 Назад'
 
 
 

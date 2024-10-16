@@ -34,6 +34,10 @@ def set_routers(dp: Dispatcher, container: Container):
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
 
+async def on_startup(bot: Bot):
+    await bot.set_webhook(init_container().resolve(Config).bot.url, drop_pending_updates=True)
+
+
 
 def init_web_hook_bot():
     container: Container = init_container()
@@ -41,6 +45,6 @@ def init_web_hook_bot():
     bot: Bot = container.resolve(Bot)
 
     dp: Dispatcher = container.resolve(Dispatcher)
-    bot.set_webhook(config.bot.url)
+    dp.startup.register(on_startup)
     set_routers(dp=dp, container=container)
     add_middlewares(dp=dp)

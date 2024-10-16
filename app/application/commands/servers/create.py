@@ -26,11 +26,8 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
             country=Country(document['country']),
             free=document['free'],
 
-            uri_login=document['uri_login'],
-            uri_create=document['uri_create'],
-            uri_delete=document['uri_delete'],
-            uri_update=document['uri_update'],
-            uri_get=document['uri_get'],
-            name=document['name']
+            name=document['name'],
+            panel_port=document['panel_port'],
+            panel_path=document['panel_path']
         )
         await self.server_repository.create(server=server)

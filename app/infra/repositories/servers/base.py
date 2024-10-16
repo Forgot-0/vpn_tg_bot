@@ -27,3 +27,7 @@ class BaseServerRepository(ABC):
     @abstractmethod
     async def get_by_id(self, server_id: UUID) -> Server | None:
         ...
+    
+    @abstractmethod
+    async def set_free(self, server_id: UUID, new_free: int) -> None:
+        ...

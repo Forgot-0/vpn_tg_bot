@@ -7,6 +7,7 @@ from application.mediator.mediator import Mediator
 from bot.keyboards.menu import MenuTextButtons, keyboard_menu
 from bot.keyboards.tarif import BackMainMenu, TarifsTextButtons
 from bot.texts.menu import MenuText
+from bot.texts.subscriptions import SubscriptionText
 
 
 
@@ -38,4 +39,6 @@ async def back_to_main_menu(message: Message):
 
 @router.message(F.text==MenuTextButtons.TARIFS)
 async def back_to_main_menu(message: Message):
-    await message.answer(text='\n'.join(tarif.value for tarif in TarifsTextButtons), reply_markup=keyboard_menu())
+    text='Тарифы👇 \n└ ' + '\n└'.join(tarif.value for tarif in TarifsTextButtons)
+
+    await message.answer(text=text+"\n \n"+SubscriptionText.BUY, reply_markup=keyboard_menu())

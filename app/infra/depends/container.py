@@ -1,5 +1,6 @@
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
+from aiogram.fsm.storage.memory import MemoryStorage
 from punq import Container, Scope
 
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -9,12 +10,14 @@ from infra.depends.init_repositories import (
     init_mongo_user_repository
 )
 from infra.depends.init_vpn import init_vpn_service
+from infra.depends.init_youkass_payment import inti_youkass
 from infra.message_broker.base import BaseMessageBroker
 
 from infra.depends.init_mediator import init_mediator
 from infra.depends.init_broker import create_message_broker
 
 from application.mediator.mediator import Mediator
+from infra.payments.base import BasePaymentService
 from infra.repositories.servers.base import BaseServerRepository
 from infra.repositories.subscriptions.base import BaseSubscriptionRepository
 from infra.repositories.users.base import BaseUserRepository
@@ -45,7 +48,11 @@ def _init_container() -> Container:
             uuidRepresentation='standard'
         )
 
-    container.register(AsyncIOMotorClient, factory=create_mongodb_client, scope=Scope.singleton)
+    container.register(
+        AsyncIOMotorClient,
+        factory=create_mongodb_client,
+        scope=Scope.singleton
+    )
     client = container.resolve(AsyncIOMotorClient)
 
     # Repositories
@@ -88,7 +95,15 @@ def _init_container() -> Container:
 
     container.register(
         Dispatcher,
-        factory=lambda: Dispatcher(),
+        factory=lambda: Dispatcher(storage=MemoryStorage()),
+        scope=Scope.singleton
+    )
+
+    # PAYMENT
+
+    container.register(
+        BasePaymentService,
+        factory=lambda: inti_youkass(config=config),
         scope=Scope.singleton
     )
 

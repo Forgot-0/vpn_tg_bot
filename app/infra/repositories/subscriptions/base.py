@@ -13,7 +13,11 @@ class BaseSubscriptionRepository(ABC):
         ...
 
     @abstractmethod
-    async def pay(self, id: UUID, payment_id: str) -> None:
+    async def pay(self, id: UUID) -> None:
+        ...
+
+    @abstractmethod
+    async def set_payment_id(self, id: UUID, payment_id: str) -> str:
         ...
 
     @abstractmethod

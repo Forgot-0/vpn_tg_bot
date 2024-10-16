@@ -1,6 +1,10 @@
 from punq import Container
 
 from application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
+from application.commands.servers.delete_not_active_user import (
+    DeletNotActiveUserCommand, 
+    DeletNotActiveUserCommandHandler
+)
 from application.commands.subscriptions.paid import PaidSubscriptionCommand, PaidSubscriptionCommandHandler
 from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
 from application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
@@ -54,4 +58,7 @@ def init_mediator(container: Container) -> Mediator:
 
     container.register(CreateServerCommandHandler)
     mediator.register_command(CreateServerCommand, [container.resolve(CreateServerCommandHandler)])
+
+    container.register(DeletNotActiveUserCommandHandler)
+    mediator.register_command(DeletNotActiveUserCommand, [container.resolve(DeletNotActiveUserCommandHandler)])
     return mediator
