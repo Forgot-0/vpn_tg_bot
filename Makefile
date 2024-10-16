@@ -17,6 +17,10 @@ bot_down:
 app_up:
 	${DC} -f ${WEB_SERVER} -f ${BOT_APP} ${ENV} up -d --build
 
+.PHONY: app_down
+app_down:
+	${DC} -f ${WEB_SERVER} -f ${BOT_APP} -f ${STORAGE} ${ENV} down
+
 .PHONY: storage_up
 storage_up:
 	${DC} -f ${STORAGE} ${ENV} up -d --build
@@ -25,6 +29,3 @@ storage_up:
 storage_down:
 	${DC} -f ${STORAGE} ${ENV} down
 
-.PHONY: app_down
-app_down:
-	${DC} -f ${WEB_SERVER} -f ${BOT_APP} -f ${STORAGE} ${ENV} down
