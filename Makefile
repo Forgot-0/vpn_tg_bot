@@ -1,4 +1,4 @@
-DC = docker compose
+DC = docker-compose
 BOT_APP = docker_compose/app.yaml
 STORAGE = docker_compose/storage.yaml
 WEB_SERVER = docker_compose/webserver.yaml

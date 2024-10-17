@@ -13,5 +13,11 @@ services:
       - ../.env
     volumes:
       - ../app/:/app/
+    networks:
+      - shared_network
 
     command: python web_app.py
+
+networks:
+  shared_network:
+    external: true

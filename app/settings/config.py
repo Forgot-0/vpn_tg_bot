@@ -44,3 +44,4 @@ class Config:
     webapp = WebApp()
     yookass = YooKassaPayment()
 
+print(Config().db.url)
