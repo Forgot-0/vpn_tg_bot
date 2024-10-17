@@ -42,3 +42,5 @@ async def back_to_main_menu(message: Message):
     text='Тарифы👇 \n└ ' + '\n└'.join(tarif.value for tarif in TarifsTextButtons)
 
     await message.answer(text=text+"\n \n"+SubscriptionText.BUY, reply_markup=keyboard_menu())
+
+

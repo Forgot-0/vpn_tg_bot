@@ -1,5 +1,5 @@
 from aiogram import F, Router
-from aiogram.types import Message, PreCheckoutQuery, CallbackQuery
+from aiogram.types import Message, PreCheckoutQuery
 from punq import Container
 
 from application.commands.subscriptions.create import CreateSubscriptionCommand
@@ -8,7 +8,7 @@ from application.mediator.mediator import Mediator
 from application.queries.subscriptions.get_active_subs import GetAllActiveSubsQuery
 from bot.keyboards.menu import MenuTextButtons
 from bot.keyboards.tarif import TarifsTextButtons, keyboard_tarifs
-from bot.keyboards.yookassa import CheckPayCallbackData, yoo_kassa_keyboard
+from bot.keyboards.yookassa import yoo_kassa_keyboard
 from bot.texts.subscriptions import SubscriptionText
 from bot.utils import send_invoice
 from domain.entities.subscription import ProductType, Subscription
@@ -34,16 +34,11 @@ async def buy(message: Message, mediator: Mediator, container: Container):
         )
     )
     subscription, url, payment_id = data
-    await send_invoice(container=container, message=message, subscription=subscription)
+    # await send_invoice(container=container, message=message, subscription=subscription)
 
     await message.answer(
         'Оплата через YooKassa', 
         reply_markup=yoo_kassa_keyboard(payment_url=url, payment_id=payment_id))
-
-
-@router.message(F.video)
-async def send_video(message: Message):
-    print(message)
 
 
 @router.message(F.text=="/get_active_vpn_url")

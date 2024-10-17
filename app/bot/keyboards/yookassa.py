@@ -15,5 +15,4 @@ def yoo_kassa_keyboard(payment_url: str, payment_id: str):
     builder.add(
         InlineKeyboardButton(text='Оплатить', url=payment_url),
     )
-
     return builder.as_markup()

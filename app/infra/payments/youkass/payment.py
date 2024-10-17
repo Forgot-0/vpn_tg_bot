@@ -25,9 +25,6 @@ class YouKassaPaymentService(BasePaymentService):
                 'value': subscription.amount//100,
                 'currency': 'RUB',
             },
-            'payment_method_data': {
-                'type': 'bank_card'
-            },
             'confirmation': {
                 'type': 'redirect',
                 'return_url': 'https://t.me/forgot_vpn_bot'

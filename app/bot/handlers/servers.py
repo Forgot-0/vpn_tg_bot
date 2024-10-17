@@ -21,6 +21,8 @@ async def delete_not_active_user(message: Message, mediator: Mediator):
     await mediator.handle_command(DeletNotActiveUserCommand())
 
 
+
+
 def init_router(config: Config) -> Router:
     router = Router()
 
