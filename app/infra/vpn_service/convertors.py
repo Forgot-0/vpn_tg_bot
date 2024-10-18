@@ -13,7 +13,7 @@ def convert_from_event_to_creat_client(event: PaidSubscriptionEvent) -> dict[str
                     "flow": "xtls-rprx-vision",
                     "email": str(event.subscription_id),
                     "expiryTime": int(event.end_time.timestamp())*1000,
-                    "limitIp": 2,
+                    "limitIp": 1,
                     "enable": True,
                 }
             ]
