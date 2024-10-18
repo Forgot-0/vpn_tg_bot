@@ -14,3 +14,7 @@ class BaseUserRepository(ABC):
     @abstractmethod
     async def get_by_tg_id(self, tg_id: int) -> User | None:
         ...
+
+    @abstractmethod
+    async def create_indexes(self) -> None:
+        ...

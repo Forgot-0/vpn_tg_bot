@@ -4,6 +4,7 @@ from punq import Container
 
 from application.commands.subscriptions.create import CreateSubscriptionCommand
 from application.commands.subscriptions.paid import PaidSubscriptionCommand
+from application.commands.users.create import CreateUserCommand
 from application.mediator.mediator import Mediator
 from application.queries.subscriptions.get_active_subs import GetAllActiveSubsQuery
 from bot.keyboards.menu import MenuTextButtons
@@ -27,6 +28,12 @@ async def buy_sub(message: Message):
 
 @router.message(F.text.in_([tarif.value for tarif in TarifsTextButtons]))
 async def buy(message: Message, mediator: Mediator, container: Container):
+    await mediator.handle_command(CreateUserCommand(
+        tg_id=message.from_user.id,
+        tg_username=message.from_user.username,
+        is_premium=message.from_user.is_premium
+    ))
+
     data, *_ = await mediator.handle_command(
         CreateSubscriptionCommand(
             tg_id=message.from_user.id,

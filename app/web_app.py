@@ -7,6 +7,7 @@ from application.commands.subscriptions.paid import PaidSubscriptionCommand
 from application.mediator.mediator import Mediator
 from bot.main import init_web_hook_bot
 from infra.depends.init import get_mediator, init_container
+from infra.repositories.users.base import BaseUserRepository
 from settings.config import Config
 
 
@@ -25,7 +26,6 @@ async def paid(requests: web.Request):
         )
     )
     return web.Response(text='OK')
-
 
 def init_app():
     app = web.Application()

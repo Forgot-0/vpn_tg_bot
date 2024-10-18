@@ -4,6 +4,7 @@ from aiogram.types import BotCommand
 
 from punq import Container
 
+from bot.deepends import create_indexes
 from bot.handlers.guide import router as guide_router
 from bot.handlers.help import router as help_router
 from bot.handlers.menu import router as menu_router
@@ -13,6 +14,7 @@ from bot.handlers.subscriptions import router as sub_router
 
 from bot.middlewares.mediator import MediatorMiddleware
 from infra.depends.init import init_container
+from infra.repositories.users.base import BaseUserRepository
 from settings.config import Config
 
 
@@ -38,9 +40,10 @@ def set_routers(dp: Dispatcher, container: Container):
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
 
+
 async def on_startup(bot: Bot):
     await bot.set_webhook(init_container().resolve(Config).bot.url, drop_pending_updates=True)
-    await bot.get_webhook_info()
+    await create_indexes()
 
 
 def init_web_hook_bot():

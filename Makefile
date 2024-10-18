@@ -32,4 +32,4 @@ storage_down:
 
 .PHONY: certbot
 certbot:
-	${DC} -f ${WEB_SERVER} -f ${BOT_APP} ${ENV} run --rm certbot certonly --webroot --webroot-path=/var/www/certbot --dry-run -d my-backend-test.ru
+	${DC} -f ${WEB_SERVER} -f ${BOT_APP} ${ENV} run --rm certbot certonly --webroot --webroot-path=/var/www/certbot -d my-backend-test.ru
