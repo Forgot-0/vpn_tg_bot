@@ -17,6 +17,9 @@ class CreateUserCommandHandler(BaseCommandHandler[User, None]):
     user_repository: BaseUserRepository
 
     async def handle(self, command: User) -> None:
+        if await self.user_repository.get_by_tg_id(tg_id=command.tg_id):
+            return
+
         user = User.create(
             tg_id=command.tg_id,
             is_premium=command.is_premium,
