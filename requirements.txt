@@ -32,4 +32,3 @@ typing_extensions==4.12.2
 urllib3==2.2.3
 wrapt==1.16.0
 yarl==1.15.2
-yookassa==3.3.0

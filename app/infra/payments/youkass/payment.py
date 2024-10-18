@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from typing import Any
 from uuid import UUID
 import aiohttp
-from yookassa import Payment
+
 
 from domain.entities.subscription import Subscription
 from infra.payments.base import BasePaymentService
@@ -22,7 +21,7 @@ class YouKassaPaymentService(BasePaymentService):
 
         payment = {
             'amount': {
-                'value': subscription.amount//100,
+                'value': subscription.amount,
                 'currency': 'RUB',
             },
             'confirmation': {
@@ -35,7 +34,7 @@ class YouKassaPaymentService(BasePaymentService):
                 'subscription_id': str(subscription.id)
 
             },
-            "description": f"Подписка vpn за {subscription.amount//100}"
+            "description": f"Подписка vpn за {subscription.amount}"
 
         }
 

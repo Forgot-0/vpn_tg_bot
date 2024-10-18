@@ -43,5 +43,3 @@ class Config:
     vpn = VPN()
     webapp = WebApp()
     yookass = YooKassaPayment()
-
-print(Config().db.url)
