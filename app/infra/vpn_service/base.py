@@ -1,11 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
-from uuid import UUID
 
 from domain.entities.server import Server
 from domain.events.subscriptions.paid import PaidSubscriptionEvent
-from infra.vpn_service.schema import Client, CreateVpnUrl
 
 
 

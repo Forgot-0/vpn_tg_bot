@@ -20,6 +20,7 @@ class Subscription(AggregateRoot):
     tg_id: int
     product: ProductType
     server_id: UUID
+    limitIp: int = 1
     amount: int = field(default=0, kw_only=True)
     end_time: datetime = field(default_factory=datetime.now())
     is_pay: bool = field(default=False, kw_only=True)

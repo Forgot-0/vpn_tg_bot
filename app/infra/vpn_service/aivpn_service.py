@@ -6,7 +6,6 @@ from domain.entities.server import Server
 from domain.events.subscriptions.paid import PaidSubscriptionEvent
 from infra.vpn_service.base import BaseVpnService
 from infra.vpn_service.convertors import convert_from_event_to_creat_client
-from infra.vpn_service.schema import Client
 
 
 

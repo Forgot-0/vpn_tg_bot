@@ -30,6 +30,7 @@ class Server(AggregateRoot):
     @property
     def url_login(self) -> str:
         return f'http://{self.ip}:{self.panel_port}/{self.panel_path}/login'
+
     @property
     def url_create(self) -> str:
         return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/addClient"

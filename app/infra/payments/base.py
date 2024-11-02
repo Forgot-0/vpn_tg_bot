@@ -12,7 +12,7 @@ class BasePaymentService(ABC):
     @abstractmethod
     async def create(self, subscription: Subscription) -> tuple[str, str]:
         ...
-    
+
     @abstractmethod
     async def check(self, payment_id: UUID) -> dict[str, Any]:
         ...

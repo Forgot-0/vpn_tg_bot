@@ -26,6 +26,7 @@ services:
       - ../nginx/www:/var/www/certbot
     networks:
       - shared_network
+    entrypoint: /bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet --post-hook "nginx -s reload"; sleep 12h; done'
 
 networks:
   shared_network:

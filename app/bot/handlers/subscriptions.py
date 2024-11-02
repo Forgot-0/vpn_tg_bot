@@ -31,7 +31,7 @@ async def buy(message: Message, mediator: Mediator, container: Container):
     await mediator.handle_command(CreateUserCommand(
         tg_id=message.from_user.id,
         tg_username=message.from_user.username,
-        is_premium=message.from_user.is_premium
+        is_premium=message.from_user.is_premium,
     ))
 
     data, *_ = await mediator.handle_command(

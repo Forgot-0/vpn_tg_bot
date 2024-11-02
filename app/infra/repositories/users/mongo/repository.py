@@ -19,4 +19,4 @@ class MongoUserRepository(BaseUserRepository, BaseMongoDBRepository):
         if data: return convert_user_document_to_entity(data)
 
     async def create_indexes(self) -> None:
-        await self._collection.create_index([("field_name", ASCENDING)], unique=True)
+        await self._collection.create_index([("tg_id", ASCENDING)], unique=True)
