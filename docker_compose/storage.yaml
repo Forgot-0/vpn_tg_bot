@@ -13,9 +13,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME:?}
       MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD:?}
-      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
-    networks:
-      - shared_network
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
 
   mongo-express:
     image: mongo-express
@@ -26,16 +24,9 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${DATABASE_USERNAME:?}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${DATABASE_PASSWORD:?}
       ME_CONFIG_MONGODB_URL: mongodb://${DATABASE_USERNAME:?}:${DATABASE_PASSWORD:?}@mongo:27017/
-      ME_CONFIG_BASICAUTH: true
+      ME_CONFIG_BASICAUTH: 'true'
       ME_CONFIG_BASICAUTH_USERNAME: ${BASICAUTH_USERNAME:?}
       ME_CONFIG_BASICAUTH_PASSWORD: ${BASICAUTH_PASSWORD:?}
-    networks:
-      - shared_network
-
-
-networks:
-  shared_network:
-    external: true
 
 volumes:
   dbdata6:

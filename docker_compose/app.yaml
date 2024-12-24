@@ -6,18 +6,12 @@ services:
     build: 
       context: ..
       dockerfile: Dockerfile
-
+    restart: always
     ports:
       - "8080:8080"
     env_file:
       - ../.env
     volumes:
       - ../app/:/app/
-    networks:
-      - shared_network
 
-    command: python web_app.py
-
-networks:
-  shared_network:
-    external: true
+    command: python main.py

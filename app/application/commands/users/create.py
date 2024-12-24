@@ -2,28 +2,32 @@ from dataclasses import dataclass
 
 from application.commands.base import BaseCommand, BaseCommandHandler
 from domain.entities.user import User
-from infra.repositories.users.base import BaseUserRepository
+from domain.repositories.users import BaseUserRepository
 
 
 @dataclass(frozen=True)
 class CreateUserCommand(BaseCommand):
-    tg_id: int
+    id: int
     is_premium: bool
-    tg_username: str | None = None  
+    username: str | None
+    fullname: str | None
+    phone: str | None
 
 
 @dataclass(frozen=True)
-class CreateUserCommandHandler(BaseCommandHandler[User, None]):
+class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
     user_repository: BaseUserRepository
 
-    async def handle(self, command: User) -> None:
-        if await self.user_repository.get_by_tg_id(tg_id=command.tg_id):
+    async def handle(self, command: CreateUserCommand) -> None:
+        if await self.user_repository.get_by_id(id=command.id):
             return
 
-        user = User.create(
-            tg_id=command.tg_id,
+        user = User(
+            id=command.id,
             is_premium=command.is_premium,
-            tg_username=command.tg_username
+            username=command.username,
+            fullname=command.fullname,
+            phone=command.phone
         )
 
         await self.user_repository.create(user=user)

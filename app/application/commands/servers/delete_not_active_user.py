@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 from application.commands.base import BaseCommand, BaseCommandHandler
 from domain.entities.server import Server
-from infra.repositories.servers.base import BaseServerRepository
-from infra.vpn_service.base import BaseVpnService
+from domain.repositories.servers import BaseServerRepository
+from infrastructure.vpn_service.base import BaseVpnService
 
 
 @dataclass(frozen=True)

@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
 from domain.events.base import BaseEvent
-from infra.message_broker.base import BaseMessageBroker
-from infra.message_broker.convertors import convert_event_to_broker_message
+from infrastructure.message_broker.base import BaseMessageBroker
+from infrastructure.message_broker.convertors import convert_event_to_broker_message
 
 
 @dataclass(frozen=True)

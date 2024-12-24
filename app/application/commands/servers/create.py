@@ -3,7 +3,8 @@ from json import loads
 
 from application.commands.base import BaseCommand, BaseCommandHandler
 from domain.entities.server import Country, Server
-from infra.repositories.servers.base import BaseServerRepository
+from domain.repositories.servers import BaseServerRepository
+
 
 
 @dataclass(frozen=True)
@@ -17,6 +18,7 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
 
     async def handle(self, command: CreateServerCommand) -> None:
         document = loads(command.text)
+
         server = Server(
             ip=document['ip'],
             port=document['port'],
@@ -30,4 +32,5 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
             panel_port=document['panel_port'],
             panel_path=document['panel_path']
         )
+
         await self.server_repository.create(server=server)

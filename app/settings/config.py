@@ -43,3 +43,5 @@ class Config:
     vpn = VPN()
     webapp = WebApp()
     yookass = YooKassaPayment()
+
+settings = Config()

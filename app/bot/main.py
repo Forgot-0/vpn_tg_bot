@@ -1,54 +1,41 @@
 from aiogram import Bot, Dispatcher
-from aiogram.types import BotCommand
-
-from punq import Container
-
-from bot.depends import create_indexes
-from bot.handlers.guide import router as guide_router
-from bot.handlers.help import router as help_router
-from bot.handlers.menu import router as menu_router
-from bot.handlers.servers import init_router as init_server_router
-from bot.handlers.subscriptions import router as sub_router
-
-
 from bot.middlewares.mediator import MediatorMiddleware
-from infra.depends.init import init_container
-from settings.config import Config
+from infrastructure.depends.init import init_container
+from settings.config import settings
+
+from bot.handlers.menu import router as menu_router
+from bot.handlers.order import router as order_router
+from bot.handlers.start import router as start_router
+from bot.handlers.guide import router as guide_router
+from bot.handlers.server import router as server_router
+from bot.handlers.subscription import router as subscription_router
 
 
-
-async def set_commands(bot: Bot):
-    await bot.set_my_commands(
-        commands=[
-            BotCommand(command='/menu', description="Меню"),
-            BotCommand(command='/get_active_vpn_url', description="Получить все активные ссылки")
-        ]
+async def startup_bot(bot: Bot):
+    await bot.set_webhook(
+        url=settings.bot.url,
+        drop_pending_updates=True,
+        allowed_updates=["message", "inline_query", "callback_query"]
     )
-
-
-def set_routers(dp: Dispatcher, container: Container):
-    dp.include_router(guide_router)
-    dp.include_router(menu_router)
-    dp.include_router(help_router)
-    dp.include_router(sub_router)
-
-    dp.include_router(init_server_router(config=container.resolve(Config)))
-
 
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
 
 
-async def on_startup(bot: Bot):
-    await set_commands(bot=bot)
-    await bot.set_webhook(init_container().resolve(Config).bot.url, drop_pending_updates=True)
-    await create_indexes()
-
-
-def init_web_hook_bot():
-    container: Container = init_container()
+def init_bot():
+    container = init_container()
 
     dp: Dispatcher = container.resolve(Dispatcher)
-    dp.startup.register(on_startup)
-    set_routers(dp=dp, container=container)
+    dp.startup.register(startup_bot)
+
     add_middlewares(dp=dp)
+
+    dp.include_router(order_router)
+    dp.include_router(menu_router)
+    dp.include_router(start_router)
+    dp.include_router(guide_router)
+    dp.include_router(server_router)
+    dp.include_router(subscription_router)
+
+
+

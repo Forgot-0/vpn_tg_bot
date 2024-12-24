@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
+from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
 
@@ -7,14 +8,15 @@ from domain.entities.base import AggregateRoot
 
 
 class Country(Enum):
-    RU = 'ru'
-    NL = 'nl'
+    RU = 'RU'
+    NL = 'NL'
     AMERICA = 'USA'
     Germany = 'DE'
 
 
 @dataclass
 class Server(AggregateRoot):
+    id: UUID = field(default_factory=uuid4, kw_only=True)
     ip: str
     port: int
     domain: str
@@ -43,3 +45,5 @@ class Server(AggregateRoot):
     def url_list(self) -> str:
         return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/list"
 
+    def get_by_id(self, id: UUID) -> str:
+        return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/getClientTrafficsById/{id}"

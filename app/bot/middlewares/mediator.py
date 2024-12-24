@@ -3,7 +3,7 @@ from typing import Callable, Awaitable, Dict, Any
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
-from infra.depends.init import get_mediator, init_container
+from infrastructure.depends.init import get_mediator, init_container
 
 
 class MediatorMiddleware(BaseMiddleware):
