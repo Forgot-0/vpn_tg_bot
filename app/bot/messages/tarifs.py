@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from domain.entities.subscription import Subscription
+from application.dto.subscription import SubscriptionDTO
 
 
 
@@ -31,7 +31,7 @@ class TarifsMessage:
         ]
     )
 
-    def build(self, subscriptions: list[Subscription]):
+    def build(self, subscriptions: list[SubscriptionDTO]):
         self._text += "\nТарифы👇 \n"
         for subscription in subscriptions:
             self._text += f"└ {subscription.name} - ({subscription.description})\n"

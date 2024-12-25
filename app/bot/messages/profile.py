@@ -1,4 +1,4 @@
-from application.dto.profile import Profile
+from application.dto.profile import ProfileDTO
 
 
 class ProfileMessage:
@@ -7,7 +7,7 @@ class ProfileMessage:
     )
     _reply_markup = None
 
-    def build(self, profiles: list[Profile]):
+    def build(self, profiles: list[ProfileDTO]):
         for profile in profiles:
             self._text += (
                 "\n"

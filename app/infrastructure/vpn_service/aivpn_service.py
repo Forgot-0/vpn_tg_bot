@@ -5,12 +5,10 @@ from typing import Any
 from uuid import UUID
 
 from aiohttp import ClientSession
-from application.dto.profile import Profile
+from application.dto.profile import ProfileDTO
 from domain.entities.server import Server
 from domain.entities.subscription import Subscription
 from infrastructure.vpn_service.base import BaseVpnService
-from infrastructure.vpn_service.convertors import convert_profile_dict_to_dto
-
 
 
 @dataclass
@@ -28,7 +26,7 @@ class AIVpnService(BaseVpnService):
         )
         return responce.cookies
 
-    async def get_by_id(self, id: UUID, server: Server) -> Profile:
+    async def get_by_id(self, id: UUID, server: Server) -> ProfileDTO:
         cookies = await self.login(server=server)
 
         responce = await self.session.get(
@@ -42,7 +40,7 @@ class AIVpnService(BaseVpnService):
         if len(data) > 0:
             data = data[0]
             data['vpn_url'] = self.get_vpn_uri(id=id, server=server)
-            return convert_profile_dict_to_dto(data)
+            return ProfileDTO.from_dict(data)
         return None
 
     async def create(self, order_id: UUID, subscription: Subscription, server: Server) -> str:

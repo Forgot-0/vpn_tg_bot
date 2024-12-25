@@ -4,21 +4,23 @@ from aiogram.types import Message
 
 from application.commands.users.create import CreateUserCommand
 from application.mediator.mediator import Mediator
+from bot.messages.menu import BackMainMenu
 from bot.messages.start import StartMessageBuilder
 
 
 router = Router()
 
 
-@router.message(F.text, Command("start"))
+@router.message(F.text, Command("start"), F.text==BackMainMenu.BACK)
 async def start(message: Message, mediator: Mediator):
-    await mediator.handle_command(CreateUserCommand(
-        id=message.from_user.id,
-        is_premium=message.from_user.is_premium,
-        username=message.from_user.username,
-        fullname=f"{message.from_user.first_name}-{message.from_user.last_name}",
-        phone=None
-    ))
+    if message.text == '/start':
+        await mediator.handle_command(CreateUserCommand(
+            id=message.from_user.id,
+            is_premium=message.from_user.is_premium,
+            username=message.from_user.username,
+            fullname=f"{message.from_user.first_name}-{message.from_user.last_name}",
+            phone=None
+        ))
 
     data = StartMessageBuilder().build()
     await message.answer(**data)

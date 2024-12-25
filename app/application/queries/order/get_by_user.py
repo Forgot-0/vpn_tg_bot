@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.dto.profile import Profile
+from application.dto.profile import ProfileDTO
 from application.queries.base import BaseQuery, BaseQueryHandler
 from domain.repositories.orders import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
@@ -18,7 +18,7 @@ class GetByUserOrdersQueryHandler(BaseQueryHandler[GetByUserOrdersQuery, None]):
     order_repository: BaseOrderRepository
     server_repository: BaseServerRepository
 
-    async def handle(self, query: GetByUserOrdersQuery) -> list[Profile]:
+    async def handle(self, query: GetByUserOrdersQuery) -> list[ProfileDTO]:
         profiles = []
         orders = await self.order_repository.get_by_user_id(user_id=query.user_id)
         for order in orders:

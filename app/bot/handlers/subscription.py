@@ -14,7 +14,7 @@ router = Router()
 
 
 @router.message(
-    F.text=='/create_subscriptions',
+    F.text=='/create_subscription',
     F.from_user.id==settings.bot.owner
 )
 async def create_subscription(message: Message, state: FSMContext):

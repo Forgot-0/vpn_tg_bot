@@ -29,7 +29,7 @@ class PayOrderCommandHandler(BaseCommandHandler[PayOrderCommand, None]):
         await self.order_repository.pay(id=order.id)
         order.paid()
 
-        server = await self.server_repository.get_by_id(server_id=order.id)
+        server = await self.server_repository.get_by_id(server_id=order.server_id)
         url = await self.vpn_service.create(order_id=order.id, subscription=order.subscription, server=server)
         await self.bot.send_message(chat_id=order.user_id, text=f"`{url}`", parse_mode='MarkdownV2')
 

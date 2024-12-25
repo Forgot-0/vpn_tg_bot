@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from application.dto.profile import Profile
+from application.dto.profile import ProfileDTO
 from domain.entities.server import Server
 from domain.entities.subscription import Subscription
 
@@ -38,4 +38,4 @@ class BaseVpnService(ABC):
         ...
 
     @abstractmethod
-    async def get_by_id(self, id: UUID, server: Server) -> Profile: ...
+    async def get_by_id(self, id: UUID, server: Server) -> ProfileDTO: ...

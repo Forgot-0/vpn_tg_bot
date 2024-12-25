@@ -24,6 +24,8 @@ class Order(AggregateRoot):
         kw_only=True
     )
 
+    discount_id: UUID | None = field(default=None, kw_only=True)
+
     @classmethod
     def create(cls, subscription: Subscription, user_id: int, server_id: UUID) -> "Order":
         total_price = subscription.price

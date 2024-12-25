@@ -2,6 +2,7 @@
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
 
+from application.dto.subscription import SubscriptionDTO
 from application.mediator.mediator import Mediator
 from application.queries.subscriptions.get import GetListSubscriptionQuery
 from bot.messages.buy import BuyMessage
@@ -24,15 +25,9 @@ async def get_list_tarifs(message: Message, mediator: Mediator):
     await message.answer(**data)
 
 
-@router.message(F.text==BackMainMenu.BACK)
-async def back_to_menu(message: Message):
-    await message.delete()
-    await message.answer(text='Меню', reply_markup=get_menu_keyboards())
-
-
 @router.callback_query(F.data==BuyBotton.callback_data)
 async def buy_vpn(callback_query: CallbackQuery, mediator: Mediator):
-    subscriptions = await mediator.handle_query(
+    subscriptions: list[SubscriptionDTO] = await mediator.handle_query(
         GetListSubscriptionQuery(
             user_id=callback_query.from_user.id
         )

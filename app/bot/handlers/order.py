@@ -3,7 +3,7 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
 
 from application.commands.orders.create import CreateOrderCommand
-from application.dto.profile import Profile
+from application.dto.profile import ProfileDTO
 from application.mediator.mediator import Mediator
 from application.queries.order.get_by_user import GetByUserOrdersQuery
 from bot.messages.buy import UrlPaymentMessage
@@ -30,12 +30,11 @@ async def create_order(callback_query: CallbackQuery, mediator: Mediator):
 @router.message(F.text==MenuTextButtons.PROFILE)
 async def get_profile(message: Message, mediator: Mediator):
     await message.delete()
-    profiles: list[Profile] = await mediator.handle_query(
+    profiles: list[ProfileDTO] = await mediator.handle_query(
         GetByUserOrdersQuery(
             user_id=message.from_user.id
         )
     )
-    print(profiles)
     data = ProfileMessage().build(profiles=profiles)
     await message.answer(**data)
 

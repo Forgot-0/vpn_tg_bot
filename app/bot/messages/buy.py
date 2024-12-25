@@ -1,13 +1,13 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from domain.entities.subscription import Subscription
+from application.dto.subscription import SubscriptionDTO
 
 
 class BuyMessage:
     _text: str = "Выбирите тариф👇"
     _reply_markup = ...
 
-    def build(self, subscriptions: list[Subscription]):
+    def build(self, subscriptions: list[SubscriptionDTO]):
         inline_keyboard = []
 
         for subscription in subscriptions:
