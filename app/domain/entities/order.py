@@ -3,6 +3,7 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
+from domain.entities.discount import Discount
 from domain.entities.subscription import Subscription
 from domain.events.orders.paid import PaidOrderEvent
 
@@ -24,17 +25,26 @@ class Order(AggregateRoot):
         kw_only=True
     )
 
-    discount_id: UUID | None = field(default=None, kw_only=True)
+    discount: Discount | None = field(default=None, kw_only=True)
 
     @classmethod
-    def create(cls, subscription: Subscription, user_id: int, server_id: UUID) -> "Order":
+    def create(
+        cls,
+        subscription: Subscription,
+        user_id: int, server_id: UUID, discount: Discount | None=None
+    ) -> "Order":
+
         total_price = subscription.price
+
+        if discount:
+            total_price = discount.apply(price=total_price)
 
         order = cls(
             subscription=subscription,
             user_id=user_id,
             server_id=server_id,
-            total_price=total_price
+            total_price=total_price,
+            discount=discount
         )
 
         return order
@@ -45,7 +55,7 @@ class Order(AggregateRoot):
         self.register_event(
             PaidOrderEvent(
                 order_id=self.id,
-                user_id=self.id,
+                user_id=self.user_id,
                 server_id=self.server_id,
                 end_time=self.payment_date + self.subscription.duration
             )

@@ -32,5 +32,5 @@ class Subscription(AggregateRoot):
     def __hash__(self) -> int:
         return hash(self.id)
 
-    def __eq__(self, value: 'Subscription') -> bool:
-        return self.id == value.id
+    def __eq__(self, value: UUID) -> bool:
+        return self.id == value

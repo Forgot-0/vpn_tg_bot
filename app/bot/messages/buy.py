@@ -1,7 +1,13 @@
+from uuid import UUID
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.filters.callback_data import CallbackData
 
 from application.dto.subscription import SubscriptionDTO
 
+
+
+class BuyOrderCallback(CallbackData, prefix="buy_subscription"):
+    subscription_id: UUID
 
 class BuyMessage:
     _text: str = "Выбирите тариф👇"
@@ -14,7 +20,9 @@ class BuyMessage:
             inline_keyboard.append(
                 [InlineKeyboardButton(
                     text=subscription.name,
-                    callback_data=f"buy_subscription/{subscription.id}"
+                    callback_data=BuyOrderCallback(
+                        subscription_id=subscription.id,
+                    ).pack()
                 )]
             )
 

@@ -6,6 +6,7 @@ from domain.entities.order import Order
 from domain.repositories.orders import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
+from domain.services.discounts import DiscountService
 from infrastructure.payments.base import BasePaymentService
 
 
@@ -18,6 +19,7 @@ class CreateOrderCommand(BaseCommand):
 @dataclass(frozen=True)
 class CreateOrderCommandHandler(BaseCommandHandler[CreateOrderCommand, tuple[Order, str]]):
     order_repository: BaseOrderRepository
+    discount_service: DiscountService
     subscription_repository: BaseSubscriptionRepository
     server_reposiptry: BaseServerRepository
     payment_service: BasePaymentService
@@ -28,10 +30,14 @@ class CreateOrderCommandHandler(BaseCommandHandler[CreateOrderCommand, tuple[Ord
             raise
 
         subscription = await self.subscription_repository.get_by_id(id=command.subscription_id)
+
+        await self.discount_service.set_discounts(user_id=command.user_id, subscriptions=[subscription])
+
         order = Order.create(
             subscription=subscription,
             user_id=command.user_id,
-            server_id=server.id
+            server_id=server.id,
+            discount=subscription.discount
         )
 
         url, payment_id = await self.payment_service.create(order=order)

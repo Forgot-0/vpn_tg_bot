@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 
 from domain.entities.base import AggregateRoot
 from domain.events.users.created import NewUserEvent
+from domain.events.users.referred import ReferredUserEvent
 
 
 
@@ -13,6 +14,9 @@ class User(AggregateRoot):
     fullname: str | None = field(default=None)
     phone: str | None = field(default=None)
 
+    referred_by: int | None = field(default=None)
+    referrals_count: int = field(default=0)
+
     @classmethod
     def create(
             cls, 
@@ -20,7 +24,8 @@ class User(AggregateRoot):
             is_premium: bool,
             username: str | None=None,
             fullname: str | None=None,
-            phone: str | None=None
+            phone: str | None=None,
+            referred_by: int | None=None
         ) -> 'User':
 
         user = cls(
@@ -28,13 +33,15 @@ class User(AggregateRoot):
             is_premium=is_premium,
             username=username,
             fullname=fullname,
-            phone=phone
+            phone=phone,
+            referred_by=referred_by
         )
 
-        # user.register_event(
-        #     event=NewUserEvent(
-        #         id=user.id,
-        #         username=user.username
-        #     )
-        # )
+        if referred_by:
+            user.register_event(
+                ReferredUserEvent(
+                    reffered_by=referred_by
+                )
+            )
+
         return user

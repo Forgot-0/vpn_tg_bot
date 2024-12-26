@@ -27,5 +27,5 @@ class GetByUserOrdersQueryHandler(BaseQueryHandler[GetByUserOrdersQuery, None]):
                 await self.vpn_service.get_by_id(id=order.id, server=server)
             )
         return profiles
-            
+
 

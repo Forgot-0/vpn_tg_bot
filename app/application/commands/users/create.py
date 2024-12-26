@@ -12,6 +12,7 @@ class CreateUserCommand(BaseCommand):
     username: str | None
     fullname: str | None
     phone: str | None
+    referred_by: int | None
 
 
 @dataclass(frozen=True)
@@ -22,12 +23,13 @@ class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
         if await self.user_repository.get_by_id(id=command.id):
             return
 
-        user = User(
+        user = User.create(
             id=command.id,
             is_premium=command.is_premium,
             username=command.username,
             fullname=command.fullname,
-            phone=command.phone
+            phone=command.phone,
+            referred_by=command.referred_by
         )
 
         await self.user_repository.create(user=user)

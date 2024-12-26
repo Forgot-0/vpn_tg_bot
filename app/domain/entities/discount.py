@@ -1,14 +1,13 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
-from domain.entities.subscription import Subscription
 
 
 @dataclass
 class Discount(AggregateRoot):
-    id: UUID
+    id: UUID = field(default_factory=uuid4, kw_only=True)
     name: str
     description: str
     percent: float
@@ -21,8 +20,18 @@ class Discount(AggregateRoot):
     uses: int = field(default=0)
     is_active: bool = field(default=True)
 
-    def apply(self, price: float) -> float:
-        return (1-self.percent)*price
+    def apply(self, price: float) -> int:
+        return int((1-self.percent/100)*price)
+
+    def is_valid(self) -> bool:
+        flag = True
+        if self.end_time:
+            flag = flag and self.end_time > datetime.now()
+
+        if self.max_uses:
+            flag = flag and self.max_uses > self.uses
+
+        return flag
 
 
 @dataclass
@@ -30,26 +39,3 @@ class DiscountUser(AggregateRoot):
     discount_id: UUID
     user_id: int
     count: int
-
-"""
-user_id = 1
-list_subs = []
-list_discount = []
-user_uses = {}
-
-for discount in list_discount:
-    if discount.max_per_user:
-        if user_uses[user_id] > discount.max_per_user:
-            continue
-
-    if max_uses < uses:
-        continue
-
-    if discount.subs_id:
-        subs = list_subs.get(id)
-        discount.apply(subs)
-    else:
-        for subs in list_subs:
-            discount.apply(subs)
-
-"""

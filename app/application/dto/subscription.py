@@ -3,6 +3,7 @@ from typing import Any
 from uuid import UUID
 
 from application.dto.base import BaseDTO
+from application.dto.discount import DiscountDTO
 from domain.entities.subscription import Subscription
 
 
@@ -12,7 +13,7 @@ class SubscriptionDTO(BaseDTO):
     name: str
     description: str
     price: float
-    discount_id: UUID | None
+    discount: DiscountDTO | None
     price_with_discount: float | None
 
     @classmethod
@@ -33,6 +34,6 @@ class SubscriptionDTO(BaseDTO):
             name=subscription.name,
             description=subscription.description,
             price=subscription.price,
-            discount_id=subscription.discount.id,
+            discount=DiscountDTO.from_entity(subscription.discount) if subscription.discount else None,
             price_with_discount=subscription.price_with_discount
         )

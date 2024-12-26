@@ -27,8 +27,6 @@ class MongoDiscountRepository(BaseDiscountRepository, BaseMongoDBRepository):
         documents = await self._collection.find(
             {
                 'is_active': True,
-                'end_time': {'$gte': datetime.now()},
-                '$expr': {'$gte': ['$max_uses', '$discounts.uses']}
             }
         ).to_list(length=None)
         if documents: return [convert_discount_dict_to_entity(document) for document in documents]

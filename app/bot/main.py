@@ -8,7 +8,9 @@ from bot.handlers.order import router as order_router
 from bot.handlers.start import router as start_router
 from bot.handlers.guide import router as guide_router
 from bot.handlers.server import router as server_router
+from bot.handlers.referral import router as referral_router
 from bot.handlers.subscription import router as subscription_router
+
 
 
 async def startup_bot(bot: Bot):
@@ -30,11 +32,12 @@ def init_bot():
 
     add_middlewares(dp=dp)
 
-    dp.include_router(order_router)
     dp.include_router(menu_router)
     dp.include_router(start_router)
+    dp.include_router(order_router)
     dp.include_router(guide_router)
     dp.include_router(server_router)
+    dp.include_router(referral_router)
     dp.include_router(subscription_router)
 
 

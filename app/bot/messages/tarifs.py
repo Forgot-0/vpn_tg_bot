@@ -34,7 +34,14 @@ class TarifsMessage:
     def build(self, subscriptions: list[SubscriptionDTO]):
         self._text += "\nТарифы👇 \n"
         for subscription in subscriptions:
-            self._text += f"└ {subscription.name} - ({subscription.description})\n"
+            price_with_discount = subscription.price_with_discount
+            self._text += (
+                f"└ {subscription.name} - ({subscription.description}) "
+                f"за {subscription.price} руб "
+            )
+            self._text += (
+                f"но cо скидкой {price_with_discount} \n" if price_with_discount else "\n"
+            )
 
         content = {"text": self._text}
         content["reply_markup"] = self._reply_markup

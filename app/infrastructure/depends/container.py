@@ -11,6 +11,7 @@ from domain.repositories.orders import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
+from domain.services.discounts import DiscountService
 from infrastructure.depends.init_broker import create_message_broker
 from infrastructure.depends.init_mediator import init_mediator
 from infrastructure.depends.init_repositories import (
@@ -95,6 +96,9 @@ def _init_container() -> Container:
         factory=lambda: init_mong_discount_user_repository(client),
         scope=Scope.singleton
     )
+
+    # SERVICES
+    container.register(DiscountService, scope=Scope.singleton)
 
     #VPN SERVICE
     container.register(
