@@ -12,3 +12,6 @@ class BaseUserRepository(ABC):
 
     @abstractmethod
     async def get_by_id(self, id: int) -> User | None: ...
+
+    @abstractmethod
+    async def update(self, user: User) -> None: ...

@@ -7,7 +7,7 @@ class MenuTextButtons:
     TARIFS = '💰 Тарифы'
     HELP = '🆘 Помощь'
     GUIDE = '📄 Руководство по использованию'
-    REF = "Реферальная система"
+    REWARD = "🎁 Подарки"
     PROFILE = "👤 Профиль"
 
 
@@ -19,7 +19,7 @@ def get_menu_keyboards() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
             keyboard=[
                 [KeyboardButton(text=MenuTextButtons.TARIFS), KeyboardButton(text=MenuTextButtons.PROFILE)],
-                [KeyboardButton(text=MenuTextButtons.REF), KeyboardButton(text=MenuTextButtons.HELP)],
+                [KeyboardButton(text=MenuTextButtons.REWARD), KeyboardButton(text=MenuTextButtons.HELP)],
                 [KeyboardButton(text=MenuTextButtons.GUIDE)]
             ]
         )

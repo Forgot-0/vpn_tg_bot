@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from application.dto.profile import ProfileDTO
 from application.queries.base import BaseQuery, BaseQueryHandler
@@ -21,11 +22,17 @@ class GetByUserOrdersQueryHandler(BaseQueryHandler[GetByUserOrdersQuery, None]):
     async def handle(self, query: GetByUserOrdersQuery) -> list[ProfileDTO]:
         profiles = []
         orders = await self.order_repository.get_by_user_id(user_id=query.user_id)
+
+        if not orders:
+            raise 
+
         for order in orders:
-            server = await self.server_repository.get_by_id(server_id=order.server_id)
-            profiles.append(
-                await self.vpn_service.get_by_id(id=order.id, server=server)
-            )
+            if order.payment_date + order.subscription.duration > datetime.now():
+                server = await self.server_repository.get_by_id(server_id=order.server_id)
+                profiles.append(
+                    await self.vpn_service.get_by_id(id=order.id, server=server)
+                )
+
         return profiles
 
 

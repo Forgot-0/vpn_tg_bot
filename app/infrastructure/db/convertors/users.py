@@ -12,7 +12,8 @@ def convert_user_document_to_entity(document: dict[str, Any]) -> User:
         username=document['username'],
         fullname=document['fullname'],
         phone=document['phone'],
-        referred_by=document.get('referred_by', None)
+        referred_by=document.get('referred_by', None),
+        referrals_count=document.get('referrals_count', 0),
     )
 
 
@@ -23,5 +24,6 @@ def convert_user_entity_to_document(user: User) -> dict[str, Any]:
         'username': user.username,
         'fullname': user.fullname,
         'phone': user.phone,
-        'referred_by': user.referred_by
+        'referred_by': user.referred_by,
+        'referrals_count': user.referrals_count,
     }

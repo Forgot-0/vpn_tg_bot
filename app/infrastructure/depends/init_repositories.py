@@ -3,6 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from infrastructure.db.repositories.discounts import MongoDiscountRepository, MongoDiscountUserRepository
 from infrastructure.db.repositories.orders import MongoOrderRepository
+from infrastructure.db.repositories.rewards import MongoRewardRepository, MongoRewardUserRepository
 from infrastructure.db.repositories.servers import MongoServerRepository
 from infrastructure.db.repositories.subscription import MongoSubscriptionRepository
 from infrastructure.db.repositories.users import MongoUserRepository
@@ -38,16 +39,30 @@ def init_mongo_server_repository(client: AsyncIOMotorClient):
         mongo_db_collection_name='servers',
     )
 
-def init_mong_discount_repository(client: AsyncIOMotorClient):
+def init_mongo_discount_repository(client: AsyncIOMotorClient):
     return MongoDiscountRepository(
         mongo_db_client=client,
         mongo_db_db_name='test',
         mongo_db_collection_name='discounts',
     )
 
-def init_mong_discount_user_repository(client: AsyncIOMotorClient):
+def init_mongo_discount_user_repository(client: AsyncIOMotorClient):
     return MongoDiscountUserRepository(
         mongo_db_client=client,
         mongo_db_db_name='test',
         mongo_db_collection_name='discount_users',
+    )
+
+def init_mongo_reward_repository(client: AsyncIOMotorClient):
+    return MongoRewardRepository(
+        mongo_db_client=client,
+        mongo_db_db_name='test',
+        mongo_db_collection_name='rewards',
+    )
+
+def init_mongo_reward_user_repository(client: AsyncIOMotorClient):
+    return MongoRewardUserRepository(
+        mongo_db_client=client,
+        mongo_db_db_name='test',
+        mongo_db_collection_name='reward_user',
     )

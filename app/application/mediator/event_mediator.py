@@ -8,26 +8,30 @@ from dataclasses import (
     dataclass,
     field,
 )
+from typing import TYPE_CHECKING, Generic
 
 from domain.events.base import BaseEvent
-from application.events.base import (
-    ER,
-    ET,
-    BaseEventHandler,
-)
+
+if TYPE_CHECKING:
+    from application.events.base import (
+        ER,
+        ET,
+        BaseEventHandler,
+    )
+
 
 
 @dataclass(eq=False)
 class EventMediator(ABC):
-    events_map: dict[ET, BaseEventHandler] = field(
+    events_map: dict['ET', 'BaseEventHandler'] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True,
     )
 
     @abstractmethod
-    def register_event(self, event: ET, event_handlers: Iterable[BaseEventHandler[ET, ER]]):
+    def register_event(self, event: 'ET', event_handlers: Iterable['BaseEventHandler']):
         ...
 
     @abstractmethod
-    async def publish(self, events: Iterable[BaseEvent]) -> Iterable[ER]:
+    async def publish(self, events: Iterable[BaseEvent]) -> Iterable['ER']:
         ...

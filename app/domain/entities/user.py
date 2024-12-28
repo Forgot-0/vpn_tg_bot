@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 
 from domain.entities.base import AggregateRoot
-from domain.events.users.created import NewUserEvent
-from domain.events.users.referred import ReferredUserEvent
+from domain.events.users.referred import ReferralAssignedEvent, ReferredUserEvent
 
 
 
@@ -17,9 +17,11 @@ class User(AggregateRoot):
     referred_by: int | None = field(default=None)
     referrals_count: int = field(default=0)
 
+    created_at: datetime = field(default_factory=datetime.now)
+
     @classmethod
     def create(
-            cls, 
+            cls,
             id: int,
             is_premium: bool,
             username: str | None=None,
@@ -40,8 +42,21 @@ class User(AggregateRoot):
         if referred_by:
             user.register_event(
                 ReferredUserEvent(
-                    reffered_by=referred_by
+                    referred_by=referred_by
                 )
             )
 
         return user
+
+    def assignReferral(self, referral_id: int) -> None:
+        if self.id == referral_id:
+            raise
+
+        self.referrals_count += 1
+
+        self.register_event(
+            ReferralAssignedEvent(
+                user_id=self.id,
+                referral_id=referral_id
+            )
+        )

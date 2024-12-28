@@ -34,5 +34,6 @@ def convert_order_dict_to_entity(document: dict[str, Any]) -> Order:
         payment_date=document['payment_date'],
         payment_id=document['payment_id'],
         created_at=document['created_at'],
-        discount=convert_discount_dict_to_entity(document['discount']) if document['discount'] else None
+        discount=convert_discount_dict_to_entity(document['discount']) if document.get('discount') else None
     )
+

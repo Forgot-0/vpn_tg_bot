@@ -17,3 +17,9 @@ class MongoUserRepository(BaseUserRepository, BaseMongoDBRepository):
         data = await self._collection.find_one(filter={'_id': id})
         if data: return convert_user_document_to_entity(data)
 
+    async def update(self, user: User) -> None:
+        data = convert_user_entity_to_document(user)
+        await self._collection.update_one(
+            filter={'_id': user.id},
+            update=data
+        )

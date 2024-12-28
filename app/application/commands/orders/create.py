@@ -45,6 +45,6 @@ class CreateOrderCommandHandler(BaseCommandHandler[CreateOrderCommand, tuple[Ord
         order.payment_id = payment_id
         await self.order_repository.create(order=order)
 
-        await self.mediator.publish(subscription.pull_events())
+        await self.mediator.publish(order.pull_events())
 
         return url

@@ -8,16 +8,20 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from application.mediator.mediator import Mediator
 from domain.repositories.discounts import BaseDiscountRepository, BaseDiscountUserRepository
 from domain.repositories.orders import BaseOrderRepository
+from domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
 from domain.services.discounts import DiscountService
+from domain.services.rewards import RewardService
 from infrastructure.depends.init_broker import create_message_broker
 from infrastructure.depends.init_mediator import init_mediator
 from infrastructure.depends.init_repositories import (
-    init_mong_discount_repository,
-    init_mong_discount_user_repository,
+    init_mongo_discount_repository,
+    init_mongo_discount_user_repository,
     init_mongo_order_repository,
+    init_mongo_reward_repository,
+    init_mongo_reward_user_repository,
     init_mongo_server_repository,
     init_mongo_subscription_repository,
     init_mongo_user_repository
@@ -87,18 +91,32 @@ def _init_container() -> Container:
 
     container.register(
         BaseDiscountRepository, 
-        factory=lambda: init_mong_discount_repository(client),
+        factory=lambda: init_mongo_discount_repository(client),
         scope=Scope.singleton
     )
 
     container.register(
         BaseDiscountUserRepository, 
-        factory=lambda: init_mong_discount_user_repository(client),
+        factory=lambda: init_mongo_discount_user_repository(client),
+        scope=Scope.singleton
+    )
+
+    container.register(
+        BaseRewardRepository, 
+        factory=lambda: init_mongo_reward_repository(client),
+        scope=Scope.singleton
+    )
+
+    container.register(
+        BaseRewardUserRepository, 
+        factory=lambda: init_mongo_reward_user_repository(client),
         scope=Scope.singleton
     )
 
     # SERVICES
     container.register(DiscountService, scope=Scope.singleton)
+    container.register(RewardService, scope=Scope.singleton)
+
 
     #VPN SERVICE
     container.register(
