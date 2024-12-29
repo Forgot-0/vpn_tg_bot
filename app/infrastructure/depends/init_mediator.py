@@ -14,14 +14,17 @@ from application.events.base import PublisherEventHandler
 
 from application.events.rewards.buying_referral import BuyingReferralEventHandler
 from application.events.rewards.new_referral import CheckNewRewardEventHandler
+from application.events.rewards.new_user import TrialRewardEventHandler
 from application.events.servers.decrement_free import UpdateCurrentServerEventHandler
 from application.events.users.referred import ReferredUserEventHandler
 from application.mediator.mediator import Mediator
 from application.mediator.event_mediator import EventMediator
-from application.queries.order.get_by_user import GetByUserOrdersQuery, GetByUserOrdersQueryHandler
+from application.queries.orders.get_by_user import GetByUserOrdersQuery, GetByUserOrdersQueryHandler
 from application.queries.rewards.get_users import GetRewardsByUserQuery, GetRewardsByUserQueryHandler
 from application.queries.subscriptions.get import GetListSubscriptionQuery, GetListSubscriptionQueryHandler
+from application.queries.users.get import GetByUserIdQuery, GetByUserIdQueryHandler
 from domain.events.orders.paid import PaidOrderEvent
+from domain.events.users.created import NewUserEvent
 from domain.events.users.referred import ReferralAssignedEvent, ReferredUserEvent
 
 
@@ -41,14 +44,15 @@ def init_mediator(container: Container) -> Mediator:
     container.register(ReferredUserEventHandler)
     mediator.register_event(ReferredUserEvent, [container.resolve(ReferredUserEventHandler)])
 
+    container.register(GetByUserIdQueryHandler)
+    mediator.register_query(GetByUserIdQuery, container.resolve(GetByUserIdQueryHandler))
+
     #Server
     container.register(CreateServerCommandHandler)
     mediator.register_command(CreateServerCommand, [container.resolve(CreateServerCommandHandler)])
 
     container.register(DeletNotActiveUserCommandHandler)
     mediator.register_command(DeletNotActiveUserCommand, [container.resolve(DeletNotActiveUserCommandHandler)])
-
-    container.register(UpdateCurrentServerEventHandler)
 
     #Subscription
     container.register(CreateSubscriptionCommnadHandler)
@@ -72,20 +76,23 @@ def init_mediator(container: Container) -> Mediator:
     mediator.register_command(ReceiveRewardCommand, [container.resolve(ReceiveRewardCommandHandler)])
 
     container.register(GetRewardsByUserQueryHandler)
-    mediator.register_query(GetRewardsByUserQuery, [container.resolve(GetRewardsByUserQueryHandler)])
+    mediator.register_query(GetRewardsByUserQuery, container.resolve(GetRewardsByUserQueryHandler))
 
     container.register(CheckNewRewardEventHandler)
     mediator.register_event(ReferralAssignedEvent, [container.resolve(CheckNewRewardEventHandler)])
-
-    container.register(BuyingReferralEventHandler)
     
 
     #Events
+    container.register(UpdateCurrentServerEventHandler)
+    container.register(BuyingReferralEventHandler)
     mediator.register_event(PaidOrderEvent, [
         container.resolve(UpdateCurrentServerEventHandler),
         container.resolve(BuyingReferralEventHandler)
     ])
 
-
+    container.register(TrialRewardEventHandler)
+    mediator.register_event(NewUserEvent, [
+        container.resolve(TrialRewardEventHandler)
+    ])
 
     return mediator

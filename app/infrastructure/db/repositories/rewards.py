@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 from uuid import UUID
 
 from domain.entities.reward import Reward, RewardUser
@@ -24,6 +25,12 @@ class MongoRewardRepository(BaseRewardRepository, BaseMongoDBRepository):
 
     async def get_by_id(self, id: UUID) -> Reward:
         document = await self._collection.find_one({'_id': id})
+        if document: return convert_reward_dict_to_entity(document)
+
+    async def get_by_conditions(self, filters: dict[str, Any]) -> Reward:
+        document = await self._collection.find_one(
+            filter=filters
+        )
         if document: return convert_reward_dict_to_entity(document)
 
 

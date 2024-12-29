@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from domain.entities.base import AggregateRoot
+from domain.events.users.created import NewUserEvent
 from domain.events.users.referred import ReferralAssignedEvent, ReferredUserEvent
 
 
@@ -45,6 +46,13 @@ class User(AggregateRoot):
                     referred_by=referred_by
                 )
             )
+
+        user.register_event(
+            NewUserEvent(
+                user_id=user.id,
+                username=user.username
+            )
+        )
 
         return user
 

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from application.events.base import BaseEventHandler
-from domain.events.orders.paid import PaidOrderEvent
 from domain.events.users.referred import ReferralAssignedEvent
 from domain.services.rewards import RewardService
 

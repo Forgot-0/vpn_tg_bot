@@ -13,71 +13,6 @@ This project implements a Telegram bot that integrates with the YooKassa payment
 - **SSL Certificates**: [Certbot](https://certbot.eff.org/)
 - **ORM**: [Motor](https://motor.readthedocs.io/en/stable/)
 
-## Project structure
-
-```bash
-$ tree "app"
-app
-├── bot/
-  ├── texts/
-  ├── handlers/
-  ├── main.py
-  ├── utils.py
-  ├── keyboards/
-  ├── middlewares/
-  ├── deepends.py
-├── infra/
-  ├── message_broker/
-  ├── depends/ #инициализация контейнера с зависимостями
-  ├── repositories/
-    ├── base.py
-    ├── filters.py
-    ├── users/
-      ├── base.py
-      ├── mongo/
-    ├── subscriptions/
-      ├── base.py
-      ├── mongo/
-    ├── servers/
-      ├── base.py
-      ├── mongo/
-  ├── vpn_service/
-    ├── base.py
-    ├── aivpn_service.py
-    ├── schema.py
-    ├── convertors.py
-  ├── payments/
-    ├── base.py
-    ├── youkass/
-├── application/
-  ├── exeption.py
-  ├── commands/
-    ├── base.py
-    ├── users/
-    ├── subscriptions/
-    ├── servers/
-  ├── queries/
-    ├── base.py
-    ├── subscriptions/
-  ├── events/
-    ├── base.py
-    ├── subscriptions/
-    ├── servers/
-  ├── mediator/
-├── settings/
-  ├── config.py
-├── web_app.py
-├── api/
-├── domain/
-  ├── values/
-  ├── entities/
-  ├── exception/
-    ├── base.py
-  ├── events/
-    ├── base.py
-    ├── users/
-    ├── subscriptions/
-```
 
 ### Environment Variables
 
@@ -86,7 +21,7 @@ Create a `.env` file in the root directory with the following variables:
 BOT_TOKEN=
 PROVIDER_TOKEN=
 OWNER=
-TELEGRAM_WEBHOOK_HOST=yout_domain
+TELEGRAM_WEBHOOK_HOST=your_domain
 TELEGRAM_WEBHOOK_PATH='/webhook'
 TELEGRAM_WEBHOOK_URL=${TELEGRAM_WEBHOOK_HOST}${TELEGRAM_WEBHOOK_PATH}
 
@@ -106,7 +41,7 @@ DATABASE_URL=mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@mongo:27017/
 BASICAUTH_USERNAME=
 BASICAUTH_PASSWORD=
 
-BROKER_URL=kafka:29092
+BROKER_URL=...
 
 VPN_USERNAME=
 VPN_PASSWORD=

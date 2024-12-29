@@ -5,5 +5,5 @@ from domain.events.base import BaseEvent
 
 @dataclass(frozen=True)
 class NewUserEvent(BaseEvent):
-    id: int
+    user_id: int
     username: str | None = field(default=None)

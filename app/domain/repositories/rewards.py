@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Any
 from uuid import UUID
 
 from domain.entities.reward import Reward, RewardUser
@@ -16,6 +17,9 @@ class BaseRewardRepository(ABC):
 
     @abstractmethod
     async def get_by_id(self, id: UUID) -> Reward: ...
+
+    @abstractmethod
+    async def get_by_conditions(self, filters: dict[str, Any]) -> Reward: ...
 
 
 @dataclass

@@ -71,3 +71,10 @@ class AlreadyDeletedException(ApplicationException):
     def message(self):
         return 'AlreadyDeletedException'
 
+
+@dataclass(eq=False)
+class NotFoundRewardsException(ApplicationException):
+    @property
+    def message(self):
+        return 'У вас нет подарков'
+

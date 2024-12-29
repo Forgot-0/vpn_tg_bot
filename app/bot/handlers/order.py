@@ -5,7 +5,7 @@ from application.commands.orders.create import CreateOrderCommand
 from application.dto.profile import ProfileDTO
 from application.dto.subscription import SubscriptionDTO
 from application.mediator.mediator import Mediator
-from application.queries.order.get_by_user import GetByUserOrdersQuery
+from application.queries.orders.get_by_user import GetByUserOrdersQuery
 from application.queries.subscriptions.get import GetListSubscriptionQuery
 from bot.messages.buy import BuyMessage, BuyOrderCallback, UrlPaymentMessage
 from bot.messages.menu import MenuTextButtons
