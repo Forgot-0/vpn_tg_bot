@@ -20,5 +20,5 @@ class GetRewardsByUserQueryHandler(BaseQueryHandler[GetRewardsByUserQuery, list[
         rewards = await self.reward_service.get_rewerds_user(
             user_id=query.user_id
         )
-
+        
         return [RewardDTO.from_entity(reward) for reward in rewards]

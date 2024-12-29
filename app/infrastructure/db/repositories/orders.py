@@ -37,7 +37,7 @@ class MongoOrderRepository(BaseOrderRepository, BaseMongoDBRepository):
                 "$expr": {
                     "$gte": [
                         { "$add": ["$payment_date", "$subscription.duration"] },
-                        current_date
+                        current_date.isoformat()
                     ]
                 }
             }

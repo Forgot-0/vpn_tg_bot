@@ -1,5 +1,5 @@
 from uuid import UUID
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 
@@ -18,7 +18,7 @@ class RewardMessage(BaseMessageBuilder):
     _text = ""
     _reply_markup = ...
 
-    def build(self, user: UserDTO, rewards: list[RewardDTO]):
+    def build(self, user: UserDTO, rewards: list[RewardDTO] | None):
         url = f"https://t.me/forgot_vpn_bot?start={user.id}"
         self._text = (
             "╔═ 👑 БОНУСНАЯ СИСТЕМА 👑 ═╗\n"
@@ -32,7 +32,6 @@ class RewardMessage(BaseMessageBuilder):
             "\n"
             "🔗 ВАША РЕФЕРАЛЬНАЯ ССЫЛКА:\n"
             f"└─ {url}\n"
-
         )
 
         inline_keyboard=InlineKeyboardBuilder()
@@ -42,6 +41,9 @@ class RewardMessage(BaseMessageBuilder):
                 switch_inline_query="🔒 Безопасный и быстрый VPN! Присоединяйся по моей ссылке: " + url
             )
         )
+
+        if rewards is None:
+            rewards = list()
 
         for reward in rewards:
             # self._text += (
@@ -53,7 +55,6 @@ class RewardMessage(BaseMessageBuilder):
                     callback_data=ReceiveRewardCallback(reward_id=reward.id).pack()
                 )
             )
-        
 
         self._reply_markup = inline_keyboard.as_markup()
 

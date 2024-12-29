@@ -21,5 +21,5 @@ class MongoUserRepository(BaseUserRepository, BaseMongoDBRepository):
         data = convert_user_entity_to_document(user)
         await self._collection.update_one(
             filter={'_id': user.id},
-            update=data
+            update={"$set": data}
         )

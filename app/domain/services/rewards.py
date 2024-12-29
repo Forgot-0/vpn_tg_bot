@@ -44,7 +44,6 @@ class RewardService:
                 "conditions.referrals_count": user.referrals_count
             }
         )
-
         if reward:
             await self._set_user_reward(reward_id=reward.id, user_id=user_id)
 
@@ -72,7 +71,7 @@ class RewardService:
         )
 
         if rewads_user is None:
-            raise NotFoundRewardsException()
+            rewads_user = []
 
         rewards = []
 

@@ -12,7 +12,7 @@ class BuyBotton:
 
 class TarifsMessage:
     _text = (
-        "Приобретая подписку на VPN vless - Вы получаете 👇 \n"
+        "Приобретая подписку на VPN vless \\- Вы получаете 👇 \n"
         "└ 🚀 Высокую скорость и стабильность \n"
         "└ 👥 Поддержку в чате 24/7 \n"
         "└✅ Безлимитный трафик \n"
@@ -36,14 +36,18 @@ class TarifsMessage:
         for subscription in subscriptions:
             price_with_discount = subscription.price_with_discount
             self._text += (
-                f"└ {subscription.name} - ({subscription.description}) "
-                f"за {subscription.price} руб "
+                f"└ {subscription.name} \\- "
             )
-            self._text += (
-                f"но cо скидкой {price_with_discount} \n" if price_with_discount else "\n"
-            )
+            if price_with_discount:
+                self._text += (
+                    f"за ~{subscription.price}~ {price_with_discount} руб \n"
+                )
+            else:
+                self._text += (
+                    f"за {subscription.price} руб \n"
+                )
 
         content = {"text": self._text}
         content["reply_markup"] = self._reply_markup
-
+        content['parse_mode'] = "MarkdownV2"
         return content

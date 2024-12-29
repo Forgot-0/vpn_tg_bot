@@ -22,9 +22,8 @@ class GetByUserOrdersQueryHandler(BaseQueryHandler[GetByUserOrdersQuery, None]):
     async def handle(self, query: GetByUserOrdersQuery) -> list[ProfileDTO]:
         profiles = []
         orders = await self.order_repository.get_by_user_id(user_id=query.user_id)
-
         if not orders:
-            raise 
+            orders = []
 
         for order in orders:
             if order.payment_date + order.subscription.duration > datetime.now():

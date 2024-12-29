@@ -11,6 +11,6 @@ class ReferredUserEventHandler(BaseEventHandler[ReferredUserEvent, None]):
 
     async def handle(self, event: ReferredUserEvent) -> None:
         user = await self.user_repository.get_by_id(id=event.referred_by)
-        user.assignReferral(referral_id=event.referred_by)
+        user.assignReferral(referral_id=event.referral_id)
         await self.user_repository.update(user=user)
         await self.mediator.publish(user.pull_events())

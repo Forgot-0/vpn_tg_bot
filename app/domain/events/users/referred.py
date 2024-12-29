@@ -5,6 +5,7 @@ from domain.events.base import BaseEvent
 
 @dataclass(frozen=True)
 class ReferredUserEvent(BaseEvent):
+    referral_id: int
     referred_by: int
 
 

@@ -1,5 +1,8 @@
 from aiogram import Bot, Dispatcher
+from aiogram.filters.exception import ExceptionTypeFilter
+from aiogram.types import ErrorEvent
 from bot.middlewares.mediator import MediatorMiddleware
+from domain.exception.base import ApplicationException
 from infrastructure.depends.init import init_container
 from settings.config import settings
 
@@ -24,6 +27,9 @@ def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
 
 
+async def handle_exception(event: ErrorEvent):
+    await event.update.message.answer(text=event.exception.message)
+
 def init_bot():
     container = init_container()
 
@@ -40,5 +46,5 @@ def init_bot():
     dp.include_router(reward_router)
     dp.include_router(subscription_router)
 
-
+    dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
 

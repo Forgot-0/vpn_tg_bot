@@ -43,6 +43,7 @@ class User(AggregateRoot):
         if referred_by:
             user.register_event(
                 ReferredUserEvent(
+                    referral_id=user.id,
                     referred_by=referred_by
                 )
             )
