@@ -12,5 +12,4 @@ class PaidOrderEvent(BaseEvent):
     event_title: ClassVar[str] = 'Paid Payment'
     order_id: UUID
     user_id: int
-    server_id: UUID
     end_time: datetime

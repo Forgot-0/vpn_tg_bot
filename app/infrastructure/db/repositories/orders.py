@@ -43,3 +43,9 @@ class MongoOrderRepository(BaseOrderRepository, BaseMongoDBRepository):
             }
         ).to_list(length=None)
         if documents: return [convert_order_dict_to_entity(document) for document in documents]
+
+    async def update(self, order: Order) -> None:
+        await self._collection.update_one(
+            filter={"_id": order.id},
+            update={"$set": convert_order_entity_to_dict(order)}
+        )

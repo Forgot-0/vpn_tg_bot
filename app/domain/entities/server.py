@@ -45,5 +45,8 @@ class Server(AggregateRoot):
     def url_list(self) -> str:
         return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/list"
 
-    def get_by_id(self, id: UUID) -> str:
+    def get_by_id(self, id: str) -> str:
         return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/getClientTrafficsById/{id}"
+
+    def update_by_id(self, id: str) -> str:
+        return f"http://{self.ip}:{self.panel_port}/{self.panel_path}/panel/api/inbounds/updateClient/{id}"

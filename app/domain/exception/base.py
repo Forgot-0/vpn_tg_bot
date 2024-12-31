@@ -78,3 +78,10 @@ class NotFoundRewardsException(ApplicationException):
     def message(self):
         return 'У вас нет подарков'
 
+
+@dataclass(eq=False)
+class AlredyReceiveRewardException(ApplicationException):
+    @property
+    def message(self):
+        return 'Вы уже получили этот подарок'
+

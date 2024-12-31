@@ -22,13 +22,12 @@ class GetListSubscriptionQueryHandler(BaseQueryHandler[GetListSubscriptionQuery,
     async def handle(self, query: GetListSubscriptionQuery) -> list[SubscriptionDTO]:
 
         subscriptions: list[Subscription] = await self.subscription_repository.get()
-        
+
         await self.discount_service.set_discounts(user_id=query.user_id, subscriptions=subscriptions)
 
         subs = [
             SubscriptionDTO.from_entity(sub)
             for sub in subscriptions
         ]
-
 
         return subs

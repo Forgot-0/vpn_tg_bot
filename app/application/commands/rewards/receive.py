@@ -20,6 +20,7 @@ class ReceiveRewardCommand(BaseCommand):
 
 @dataclass(frozen=True)
 class ReceiveRewardCommandHandler(BaseCommandHandler[ReceiveRewardCommand, None]):
+    user_repository: BaseUserRepository
     reward_service: RewardService
     order_repository: BaseOrderRepository
     server_repository: BaseServerRepository
@@ -32,18 +33,18 @@ class ReceiveRewardCommandHandler(BaseCommandHandler[ReceiveRewardCommand, None]
             reward_id=command.reward_id
         )
 
-        server = await self.server_repository.get_by_max_free()
+        user = await self.user_repository.get_by_id(id=command.user_id)
+        server = await self.server_repository.get_by_id(user.server_id)
 
         order = Order.create(
             subscription=reward.present,
             user_id=command.user_id,
-            server_id=server.id
         )
 
         await self.order_repository.create(order=order)
         await self.order_repository.pay(id=order.id)
 
-        url = await self.vpn_service.create(order_id=order.id, subscription=order.subscription, server=server)
+        url = await self.vpn_service.create(id=user.uuid, subscription=order.subscription, server=server)
         await self.bot.send_message(chat_id=order.user_id, text=f"`{url}`", parse_mode='MarkdownV2')
 
         await self.mediator.publish(reward.pull_events())

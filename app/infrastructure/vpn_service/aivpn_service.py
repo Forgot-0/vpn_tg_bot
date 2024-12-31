@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from json import dumps
 from typing import Any
-from uuid import UUID
 
 from aiohttp import ClientSession
 from application.dto.profile import ProfileDTO
@@ -26,7 +25,7 @@ class AIVpnService(BaseVpnService):
         )
         return responce.cookies
 
-    async def get_by_id(self, id: UUID, server: Server) -> ProfileDTO:
+    async def get_by_id(self, id: str, server: Server) -> ProfileDTO:
         cookies = await self.login(server=server)
 
         responce = await self.session.get(
@@ -43,42 +42,34 @@ class AIVpnService(BaseVpnService):
             return ProfileDTO.from_dict(data)
         return None
 
-    async def create(self, order_id: UUID, subscription: Subscription, server: Server) -> str:
+    async def create(self, id: str, subscription: Subscription, server: Server) -> str:
         cookies = await self.login(server=server)
 
-        expiryTime = int(
-            (
-                subscription.duration + datetime.now()
-            ).timestamp())*1000 if subscription.duration.total_seconds() != 0 else 0
+        data = await self.get_by_id(id=id, server=server)
+        url_vpn = self.get_vpn_uri(id=id, server=server)
 
-        json = {
-                'id': 1,
-                'settings': dumps({
-                    "clients": [
-                        {
-                            "id": str(order_id),
-                            "flow": "xtls-rprx-vision",
-                            "email": str(order_id),
-                            "expiryTime": expiryTime,
-                            "limitIp": subscription.limit_ip,
-                            "totalGB": subscription.limit_trafic,
-                            "enable": True,
-                        }
-                    ]
-                })
-            }
+        expiryTime = int((subscription.duration + datetime.now()).timestamp())*1000
 
-        url = self.get_vpn_uri(id=order_id, server=server)
+        if data:
+
+            if data.end_time >datetime.now():
+                expiryTime = int((subscription.duration + data.end_time).timestamp())*1000
+            url = server.update_by_id(id=id)
+
+        else:
+            url = server.url_create
+
+        json = self.get_json_data(id=id, expiryTime=expiryTime, subscription=subscription)
 
         responce = await self.session.post(
-            url=server.url_create,
+            url=url,
             json=json,
             cookies=cookies
         )
 
         responce = await responce.json()
         if responce['success']:
-            return url
+            return url_vpn
 
         raise
 
@@ -97,8 +88,26 @@ class AIVpnService(BaseVpnService):
         )
         return await responce.json()
 
-    def get_vpn_uri(self, id: UUID, server: Server) -> str:
+    def get_vpn_uri(self, id: str, server: Server) -> str:
         return (
             f"vless://{id}@{server.ip}:{server.port}?security=reality&sni=google.com&fp=chrome&pbk={server.pbk}&"
             f"sid=ce352f&spx=/&type=tcp&flow=xtls-rprx-vision&encryption=none#{server.name}-{str(id)}"
         )
+
+    def get_json_data(self, id: str, expiryTime: int, subscription: Subscription) -> dict[str, Any]: 
+        return {
+                'id': 1,
+                'settings': dumps({
+                    "clients": [
+                        {
+                            "id": str(id),
+                            "flow": "xtls-rprx-vision",
+                            "email": str(id),
+                            "expiryTime": expiryTime,
+                            "limitIp": subscription.limit_ip,
+                            "totalGB": subscription.limit_trafic,
+                            "enable": True,
+                        }
+                    ]
+                })
+            }

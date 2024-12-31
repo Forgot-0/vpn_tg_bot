@@ -82,3 +82,11 @@ class WrongException(LogicException):
     @property
     def message(self):
         return f'WrongException {self.name}'
+
+
+@dataclass(eq=False)
+class NotFoundActiveSubscriptionException(LogicException):
+
+    @property
+    def message(self):
+        return f'У вас нет активных подписок'

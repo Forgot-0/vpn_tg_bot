@@ -5,8 +5,8 @@ from application.commands.orders.create import CreateOrderCommand
 from application.dto.profile import ProfileDTO
 from application.dto.subscription import SubscriptionDTO
 from application.mediator.mediator import Mediator
-from application.queries.orders.get_by_user import GetByUserOrdersQuery
 from application.queries.subscriptions.get import GetListSubscriptionQuery
+from application.queries.users.get_profile import GetProfileVpnQuery
 from bot.messages.buy import BuyMessage, BuyOrderCallback, UrlPaymentMessage
 from bot.messages.menu import MenuTextButtons
 from bot.messages.profile import ProfileMessage
@@ -44,11 +44,11 @@ async def buy_vpn(callback_query: CallbackQuery, mediator: Mediator):
 @router.message(F.text==MenuTextButtons.PROFILE)
 async def get_profile(message: Message, mediator: Mediator):
     await message.delete()
-    profiles: list[ProfileDTO] = await mediator.handle_query(
-        GetByUserOrdersQuery(
+    profile: ProfileDTO = await mediator.handle_query(
+        GetProfileVpnQuery(
             user_id=message.from_user.id
         )
     )
-    data = ProfileMessage().build(profiles=profiles)
+    data = ProfileMessage().build(profile=profile)
     await message.answer(**data)
 

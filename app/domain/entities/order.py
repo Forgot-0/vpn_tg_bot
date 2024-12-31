@@ -14,7 +14,6 @@ class Order(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
     subscription: Subscription
     user_id: int
-    server_id: UUID
 
     total_price: float
 
@@ -31,7 +30,8 @@ class Order(AggregateRoot):
     def create(
         cls,
         subscription: Subscription,
-        user_id: int, server_id: UUID, discount: Discount | None=None
+        user_id: int,
+        discount: Discount | None=None
     ) -> "Order":
 
         total_price = subscription.price
@@ -42,7 +42,6 @@ class Order(AggregateRoot):
         order = cls(
             subscription=subscription,
             user_id=user_id,
-            server_id=server_id,
             total_price=total_price,
             discount=discount
         )
@@ -56,7 +55,6 @@ class Order(AggregateRoot):
             PaidOrderEvent(
                 order_id=self.id,
                 user_id=self.user_id,
-                server_id=self.server_id,
                 end_time=self.payment_date + self.subscription.duration
             )
         )

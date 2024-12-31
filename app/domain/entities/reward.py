@@ -3,7 +3,6 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
-from domain.entities.discount import Discount
 from domain.entities.subscription import Subscription
 
 

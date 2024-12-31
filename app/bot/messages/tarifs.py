@@ -40,13 +40,12 @@ class TarifsMessage:
             )
             if price_with_discount:
                 self._text += (
-                    f"за ~{subscription.price}~ {price_with_discount} руб \n"
+                    f"за ~{int(subscription.price)}~ {price_with_discount} руб \n"
                 )
             else:
                 self._text += (
-                    f"за {subscription.price} руб \n"
+                    f"за {int(subscription.price)} руб \n"
                 )
-
         content = {"text": self._text}
         content["reply_markup"] = self._reply_markup
         content['parse_mode'] = "MarkdownV2"

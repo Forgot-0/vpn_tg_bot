@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
 from domain.events.users.created import NewUserEvent
@@ -10,6 +11,10 @@ from domain.events.users.referred import ReferralAssignedEvent, ReferredUserEven
 @dataclass
 class User(AggregateRoot):
     id: int
+
+    server_id: UUID
+    uuid: UUID = field(default_factory=uuid4, kw_only=True)
+
     is_premium: bool = field(default=False)
     username: str | None = field(default=None)
     fullname: str | None = field(default=None)
@@ -24,6 +29,7 @@ class User(AggregateRoot):
     def create(
             cls,
             id: int,
+            server_id: UUID,
             is_premium: bool,
             username: str | None=None,
             fullname: str | None=None,
@@ -33,6 +39,7 @@ class User(AggregateRoot):
 
         user = cls(
             id=id,
+            server_id=server_id,
             is_premium=is_premium,
             username=username,
             fullname=fullname,

@@ -19,10 +19,10 @@ from application.events.servers.decrement_free import UpdateCurrentServerEventHa
 from application.events.users.referred import ReferredUserEventHandler
 from application.mediator.mediator import Mediator
 from application.mediator.event_mediator import EventMediator
-from application.queries.orders.get_by_user import GetByUserOrdersQuery, GetByUserOrdersQueryHandler
 from application.queries.rewards.get_users import GetRewardsByUserQuery, GetRewardsByUserQueryHandler
 from application.queries.subscriptions.get import GetListSubscriptionQuery, GetListSubscriptionQueryHandler
 from application.queries.users.get import GetByUserIdQuery, GetByUserIdQueryHandler
+from application.queries.users.get_profile import GetProfileVpnQuery, GetProfileVpnQueryHandler
 from domain.events.orders.paid import PaidOrderEvent
 from domain.events.users.created import NewUserEvent
 from domain.events.users.referred import ReferralAssignedEvent, ReferredUserEvent
@@ -47,6 +47,10 @@ def init_mediator(container: Container) -> Mediator:
     container.register(GetByUserIdQueryHandler)
     mediator.register_query(GetByUserIdQuery, container.resolve(GetByUserIdQueryHandler))
 
+    container.register(GetProfileVpnQueryHandler)
+    mediator.register_query(GetProfileVpnQuery, container.resolve(GetProfileVpnQueryHandler))
+
+
     #Server
     container.register(CreateServerCommandHandler)
     mediator.register_command(CreateServerCommand, [container.resolve(CreateServerCommandHandler)])
@@ -67,9 +71,6 @@ def init_mediator(container: Container) -> Mediator:
 
     container.register(PayOrderCommandHandler)
     mediator.register_command(PayOrderCommand, [container.resolve(PayOrderCommandHandler)])
-
-    container.register(GetByUserOrdersQueryHandler)
-    mediator.register_query(GetByUserOrdersQuery, container.resolve(GetByUserOrdersQueryHandler))
 
     #Reward
     container.register(ReceiveRewardCommandHandler)

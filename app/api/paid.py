@@ -19,4 +19,6 @@ async def paid(requests: web.Request):
             order_id=UUID(hex=data['object']['metadata']['order_id']),
         )
     )
+    print(data)
+    return web.Response()
 

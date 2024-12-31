@@ -19,3 +19,6 @@ class BaseOrderRepository(ABC):
 
     @abstractmethod
     async def get_by_user_id(self, user_id: int) -> list[Order]: ...
+
+    @abstractmethod
+    async def update(self, order: Order) -> None: ...

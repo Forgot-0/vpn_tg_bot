@@ -21,13 +21,9 @@ class CreateOrderCommandHandler(BaseCommandHandler[CreateOrderCommand, tuple[Ord
     order_repository: BaseOrderRepository
     discount_service: DiscountService
     subscription_repository: BaseSubscriptionRepository
-    server_reposiptry: BaseServerRepository
     payment_service: BasePaymentService
 
     async def handle(self, command: CreateOrderCommand) -> tuple[Order, str]:
-        server = await self.server_reposiptry.get_by_max_free()
-        if server.free <= 0: 
-            raise
 
         subscription = await self.subscription_repository.get_by_id(id=command.subscription_id)
 
@@ -36,7 +32,6 @@ class CreateOrderCommandHandler(BaseCommandHandler[CreateOrderCommand, tuple[Ord
         order = Order.create(
             subscription=subscription,
             user_id=command.user_id,
-            server_id=server.id,
             discount=subscription.discount
         )
 

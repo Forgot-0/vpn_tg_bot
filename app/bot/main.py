@@ -28,7 +28,11 @@ def add_middlewares(dp: Dispatcher):
 
 
 async def handle_exception(event: ErrorEvent):
-    await event.update.message.answer(text=event.exception.message)
+    if event.update.message:
+        await event.update.message.answer(text=event.exception.message)
+    else:
+        await event.update.callback_query.message.answer(event.exception.message)
+
 
 def init_bot():
     container = init_container()

@@ -19,7 +19,7 @@ class RewardMessage(BaseMessageBuilder):
     _reply_markup = ...
 
     def build(self, user: UserDTO, rewards: list[RewardDTO] | None):
-        url = f"https://t.me/forgot_vpn_bot?start={user.id}"
+        url = f"https://t.me/tg1532_bot?start={user.id}"
         self._text = (
             "╔═ 👑 БОНУСНАЯ СИСТЕМА 👑 ═╗\n"
             "\n"
@@ -56,6 +56,7 @@ class RewardMessage(BaseMessageBuilder):
                 )
             )
 
+        inline_keyboard.adjust(1)
         self._reply_markup = inline_keyboard.as_markup()
 
         content = {
