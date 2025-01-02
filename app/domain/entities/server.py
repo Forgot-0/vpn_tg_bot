@@ -12,6 +12,7 @@ class Country(Enum):
     NL = 'NL'
     AMERICA = 'USA'
     GERMANY = 'DE'
+    SE = "SE"
 
 
 @dataclass

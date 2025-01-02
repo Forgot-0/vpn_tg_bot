@@ -27,7 +27,7 @@ from infrastructure.depends.init_repositories import (
     init_mongo_user_repository
 )
 from infrastructure.depends.init_vpn import init_vpn_service
-from infrastructure.depends.init_youkass_payment import inti_youkass
+from infrastructure.depends.init_yookass_payment import inti_yookass
 from infrastructure.message_broker.base import BaseMessageBroker
 from infrastructure.payments.base import BasePaymentService
 from infrastructure.vpn_service.base import BaseVpnService
@@ -146,7 +146,7 @@ def _init_container() -> Container:
 
     container.register(
         BasePaymentService,
-        factory=lambda: inti_youkass(config=config),
+        factory=lambda: inti_yookass(config=config),
         scope=Scope.singleton
     )
 

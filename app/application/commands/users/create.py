@@ -20,7 +20,6 @@ class CreateUserCommand(BaseCommand):
 class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
     user_repository: BaseUserRepository
     server_reposiptry: BaseServerRepository
-    
 
     async def handle(self, command: CreateUserCommand) -> None:
         if await self.user_repository.get_by_id(id=command.id):

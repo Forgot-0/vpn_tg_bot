@@ -18,6 +18,7 @@ router = Router()
 
 @router.callback_query(BuyOrderCallback.filter())
 async def create_order(callback_query: CallbackQuery, callback_data: BuyOrderCallback,  mediator: Mediator):
+    await callback_query.answer()
     url, *_ = await mediator.handle_command(
         CreateOrderCommand(
             subscription_id=callback_data.subscription_id,
@@ -27,7 +28,6 @@ async def create_order(callback_query: CallbackQuery, callback_data: BuyOrderCal
     data = UrlPaymentMessage().build(url=url)
     await callback_query.message.delete()
     await callback_query.message.answer(**data)
-
 
 @router.callback_query(F.data==BuyBotton.callback_data)
 async def buy_vpn(callback_query: CallbackQuery, mediator: Mediator):
@@ -39,7 +39,6 @@ async def buy_vpn(callback_query: CallbackQuery, mediator: Mediator):
 
     data = BuyMessage().build(subscriptions=subscriptions)
     await callback_query.message.answer(**data)
-
 
 @router.message(F.text==MenuTextButtons.PROFILE)
 async def get_profile(message: Message, mediator: Mediator):
