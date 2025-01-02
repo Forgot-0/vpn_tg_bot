@@ -22,6 +22,7 @@ class User(AggregateRoot):
 
     referred_by: int | None = field(default=None)
     referrals_count: int = field(default=0)
+    referrals_buy: int = field(default=0)
 
     created_at: datetime = field(default_factory=datetime.now)
 

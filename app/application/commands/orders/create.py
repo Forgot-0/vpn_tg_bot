@@ -27,8 +27,6 @@ class CreateOrderCommandHandler(BaseCommandHandler[CreateOrderCommand, tuple[Ord
 
         subscription = await self.subscription_repository.get_by_id(id=command.subscription_id)
 
-        await self.discount_service.set_discounts(user_id=command.user_id, subscriptions=[subscription])
-
         order = Order.create(
             subscription=subscription,
             user_id=command.user_id,

@@ -1,5 +1,3 @@
-
-
 from typing import Any
 
 from domain.entities.user import User
@@ -16,6 +14,7 @@ def convert_user_document_to_entity(document: dict[str, Any]) -> User:
         phone=document['phone'],
         referred_by=document.get('referred_by', None),
         referrals_count=document.get('referrals_count', 0),
+        referrals_buy=document.get('referrals_buy', 0),
     )
 
 
@@ -30,4 +29,5 @@ def convert_user_entity_to_document(user: User) -> dict[str, Any]:
         'phone': user.phone,
         'referred_by': user.referred_by,
         'referrals_count': user.referrals_count,
+        'referrals_buy': user.referrals_buy,
     }

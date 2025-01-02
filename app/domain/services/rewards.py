@@ -27,19 +27,26 @@ class RewardService:
 
 
     async def set_rewards_for_buy_referral(self, user_id: int, order: Order) -> None:
+        user = await self.user_repository.get_by_id(id=user_id)
+        user.referrals_buy += 1
+        await self.user_repository.update(user)
+
+        if user.referrals_buy%2:
+            return
+
         reward = await self.reward_repository.get_by_conditions(
             {
-                "conditions.buy_subscription": order.subscription.id
+                "conditions.referrals_buy": user.referrals_buy
             }
         )
 
         if not reward:
             subscription = deepcopy(order.subscription)
-            subscription.duration = subscription.duration//10
+            subscription.duration = timedelta(days=30)
             reward = Reward(
-                name='За покупку реферала',
-                description="За покупку реферала",
-                conditions={'buy_subscription': order.subscription.id},
+                name='За покупки рефералов',
+                description="За каждые две покупки рефералов",
+                conditions={'referrals_buy': user.referrals_buy},
                 present=subscription
             )
             await self.reward_repository.create(reward=reward)

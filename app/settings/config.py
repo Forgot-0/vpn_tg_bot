@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 class BOT(BaseSettings):
     owner: int = Field(alias="OWNER")
     token: str = Field(alias='BOT_TOKEN')
-    provider_token: str = Field(alias='PROVIDER_TOKEN')
+    username: str = Field(alias='USENAME_BOT')
 
     host: str = Field(alias='TELEGRAM_WEBHOOK_HOST')
     path: str = Field(alias='TELEGRAM_WEBHOOK_PATH')

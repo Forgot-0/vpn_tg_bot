@@ -7,6 +7,7 @@ from aiogram.filters.callback_data import CallbackData
 from application.dto.rewards import RewardDTO
 from application.dto.user import UserDTO
 from bot.messages.base import BaseMessageBuilder
+from settings.config import settings
 
 
 class ReceiveRewardCallback(CallbackData, prefix="receive_reward"):
@@ -19,7 +20,7 @@ class RewardMessage(BaseMessageBuilder):
     _reply_markup = ...
 
     def build(self, user: UserDTO, rewards: list[RewardDTO] | None):
-        url = f"https://t.me/tg1532_bot?start={user.id}"
+        url = f"https://t.me/{settings.bot.username}?start={user.id}"
         self._text = (
             "╔═ 👑 БОНУСНАЯ СИСТЕМА 👑 ═╗\n"
             "\n"
@@ -27,8 +28,7 @@ class RewardMessage(BaseMessageBuilder):
             f"└─ 👥 Приглашено друзей: {user.referrals_count}\n"
             "\n"
             "🌟 БОНУСНАЯ ПРОГРАММА:\n"
-            "├─ 🎯 За каждые 10 друзей = подписка на 7 дней\n"
-            "└─ 📦 Так же за покупку своего реферала вы получите подписку с длительностью 10% от его\n"
+            "└─ 📦За каждую покупку двух рефераллов - подписка на месяц бесплатно\n"
             "\n"
             "🔗 ВАША РЕФЕРАЛЬНАЯ ССЫЛКА:\n"
             f"└─ {url}\n"
