@@ -44,7 +44,7 @@ class MongoDiscountUserRepository(BaseDiscountUserRepository, BaseMongoDBReposit
                 'discount_id': discount_id,
             }
         )
-        if document: convert_discount_user_dict_to_entity(document)
+        if document: return convert_discount_user_dict_to_entity(document)
     
     async def incr_count(self, discount_id: UUID, user_id: UUID, incr: int = 1) -> None:
         await self._collection.update_one(
@@ -56,5 +56,6 @@ class MongoDiscountUserRepository(BaseDiscountUserRepository, BaseMongoDBReposit
                 "$inc": {
                     'count': incr
                 }
-            }
+            },
+            upsert=True
         )

@@ -8,8 +8,6 @@ services:
     restart: always
     depends_on:
       - certbot
-    networks:
-      - shared_network
     ports:
       - "80:80"
       - "443:443"

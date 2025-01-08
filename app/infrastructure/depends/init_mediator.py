@@ -12,6 +12,7 @@ from application.commands.subscription.create import CreateSubscriptionCommnad, 
 from application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from application.events.base import PublisherEventHandler
 
+from application.events.discounts_user.used import UsedDiscountEventHandler
 from application.events.rewards.buying_referral import BuyingReferralEventHandler
 from application.events.rewards.new_referral import CheckNewRewardEventHandler
 from application.events.rewards.new_user import TrialRewardEventHandler
@@ -86,9 +87,11 @@ def init_mediator(container: Container) -> Mediator:
     #Events
     container.register(UpdateCurrentServerEventHandler)
     container.register(BuyingReferralEventHandler)
+    container.register(UsedDiscountEventHandler)
     mediator.register_event(PaidOrderEvent, [
         container.resolve(UpdateCurrentServerEventHandler),
-        container.resolve(BuyingReferralEventHandler)
+        container.resolve(BuyingReferralEventHandler),
+        container.resolve(UsedDiscountEventHandler)
     ])
 
     container.register(TrialRewardEventHandler)

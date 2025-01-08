@@ -20,3 +20,4 @@ venv/
 
 .env
 test.py
+users.json

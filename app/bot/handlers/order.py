@@ -31,6 +31,7 @@ async def create_order(callback_query: CallbackQuery, callback_data: BuyOrderCal
 
 @router.callback_query(F.data==BuyBotton.callback_data)
 async def buy_vpn(callback_query: CallbackQuery, mediator: Mediator):
+    await callback_query.answer()
     subscriptions: list[SubscriptionDTO] = await mediator.handle_query(
         GetListSubscriptionQuery(
             user_id=callback_query.from_user.id

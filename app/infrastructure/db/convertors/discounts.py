@@ -9,10 +9,7 @@ def convert_discount_entity_to_dict(discount: Discount) -> dict[str, Any]:
         'name': discount.name,
         'description': discount.description,
         'percent': discount.percent,
-        'subscription_ids': discount.subscription_ids,
-        'end_time': discount.end_time,
-        'max_per_user': discount.max_per_user,
-        'max_uses': discount.max_uses,
+        'conditions': discount.conditions,
         'uses': discount.uses,
         'is_active': discount.is_active
     }
@@ -24,10 +21,7 @@ def convert_discount_dict_to_entity(data: dict[str, Any]) -> Discount:
         name=data['name'],
         description=data['description'],
         percent=data['percent'],
-        subscription_ids=data['subscription_ids'],
-        end_time=data['end_time'],
-        max_per_user=data['max_per_user'],
-        max_uses=data['max_uses'],
+        conditions=data['conditions'],
         uses=data['uses'],
         is_active=data['is_active']
     )

@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
@@ -12,10 +13,7 @@ class Discount(AggregateRoot):
     description: str
     percent: float
 
-    subscription_ids: list[UUID] | None = field(default_factory=list)
-    end_time: datetime | None = field(default=None)
-    max_per_user: int = field(default=0)
-    max_uses: int | None = field(default=None)
+    conditions: dict[str, Any]
 
     uses: int = field(default=0)
     is_active: bool = field(default=True)
@@ -25,11 +23,11 @@ class Discount(AggregateRoot):
 
     def is_valid(self) -> bool:
         flag = True
-        if self.end_time:
-            flag = flag and self.end_time > datetime.now()
+        if self.conditions.get('end_time'):
+            flag = flag and self.conditions['end_time'] > datetime.now()
 
-        if self.max_uses:
-            flag = flag and self.max_uses > self.uses
+        if self.conditions.get('max_uses'):
+            flag = flag and self.conditions['max_uses'] > self.uses
 
         return flag
 

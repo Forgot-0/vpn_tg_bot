@@ -17,17 +17,16 @@ class DiscountService:
                 if not discount.is_valid():
                     continue
 
-                if discount.max_per_user:
+                if discount.conditions.get('max_per_user'):
                     discount_user = await self.discount_user_repository.get_by_discount_user(
                         user_id=user_id,
                         discount_id=discount.id
                     )
-
-                    if discount_user is not None and discount_user.count > discount.max_per_user:
+                    if discount_user is not None and discount_user.count >= discount.conditions['max_per_user']:
                         continue
 
-                if discount.subscription_ids:
-                    for subscription_id in discount.subscription_ids:
+                if discount.conditions.get('subscription_ids'):
+                    for subscription_id in discount.conditions['subscription_ids']:
                         try:
                             index_subs = subscriptions.index(subscription_id)
                             subscriptions[index_subs].set_discount(discount=discount)
