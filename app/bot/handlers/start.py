@@ -36,4 +36,4 @@ async def start(message: Message, mediator: Mediator):
 @router.message(F.text==BackMainMenu.BACK)
 async def start(message: Message):
     data = StartMessageBuilder().build()
-    await message.answer(**data)
+    await message.answer(text="Используйте меню: ", reply_markup=data['reply_markup'])

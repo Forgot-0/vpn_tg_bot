@@ -7,6 +7,7 @@ from aiogram.filters.callback_data import CallbackData
 from application.dto.rewards import RewardDTO
 from application.dto.user import UserDTO
 from bot.messages.base import BaseMessageBuilder
+from settings.config import settings
 
 
 class ReceiveRewardCallback(CallbackData, prefix="receive_reward"):
@@ -19,7 +20,7 @@ class RewardMessage(BaseMessageBuilder):
     _reply_markup = ...
 
     def build(self, user: UserDTO, rewards: list[RewardDTO] | None):
-        url = f"https://t.me/tg1532_bot?start={user.id}"
+        url = f"https://t.me/{settings.bot.name}?start={user.id}"
         self._text = (
             "╔═ 👑 БОНУСНАЯ СИСТЕМА 👑 ═╗\n"
             "\n"

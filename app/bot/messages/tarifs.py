@@ -40,7 +40,7 @@ class TarifsMessage:
             )
             if price_with_discount:
                 self._text += (
-                    f"за ~{int(subscription.price)}~ {price_with_discount} руб \n"
+                    f"за ~{int(subscription.price)}~ со скидкой {price_with_discount} руб \n"
                 )
             else:
                 self._text += (

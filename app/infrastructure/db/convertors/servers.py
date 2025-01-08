@@ -11,6 +11,7 @@ def convert_server_entity_to_dict(server: Server) -> dict[str, Any]:
         'domain': server.domain,
         'limit': server.limit,
         'pbk': server.pbk,
+        'short_id': server.short_id,
         'country': server.country.value,
         'free': server.free,
 
@@ -27,6 +28,7 @@ def convert_server_dict_to_entity(document: dict[str, Any]) -> Server:
         domain=document['domain'],
         limit=document['limit'],
         pbk=document['pbk'],
+        short_id=document['short_id'],
         country=Country(document['country']),
         free=document['free'],
 

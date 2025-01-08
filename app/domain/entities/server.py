@@ -23,6 +23,7 @@ class Server(AggregateRoot):
     domain: str
     limit: int
     pbk: str
+    short_id: str
     country: Country
     free: int
 

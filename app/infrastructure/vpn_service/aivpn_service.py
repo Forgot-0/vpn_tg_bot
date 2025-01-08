@@ -91,7 +91,7 @@ class AIVpnService(BaseVpnService):
     def get_vpn_uri(self, id: str, server: Server) -> str:
         return (
             f"vless://{id}@{server.ip}:{server.port}?security=reality&sni=google.com&fp=chrome&pbk={server.pbk}&"
-            f"sid=ce352f&spx=/&type=tcp&flow=xtls-rprx-vision&encryption=none#{server.name}-{str(id)}"
+            f"sid={server.short_id}&spx=%2F&type=tcp&flow=xtls-rprx-vision#{server.name}-{str(id)}"
         )
 
     def get_json_data(self, id: str, expiryTime: int, subscription: Subscription) -> dict[str, Any]: 
