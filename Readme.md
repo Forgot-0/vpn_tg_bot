@@ -19,9 +19,10 @@ This project implements a Telegram bot that integrates with the YooKassa payment
 Create a `.env` file in the root directory with the following variables:
 ```bash
 BOT_TOKEN=
-PROVIDER_TOKEN=
 OWNER=
-TELEGRAM_WEBHOOK_HOST=your_domain
+DOMAIN=
+USERNAME_BOT=
+TELEGRAM_WEBHOOK_HOST=https://${DOMAIN}
 TELEGRAM_WEBHOOK_PATH='/webhook'
 TELEGRAM_WEBHOOK_URL=${TELEGRAM_WEBHOOK_HOST}${TELEGRAM_WEBHOOK_PATH}
 
@@ -41,7 +42,7 @@ DATABASE_URL=mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@mongo:27017/
 BASICAUTH_USERNAME=
 BASICAUTH_PASSWORD=
 
-BROKER_URL=...
+BROKER_URL=""
 
 VPN_USERNAME=
 VPN_PASSWORD=

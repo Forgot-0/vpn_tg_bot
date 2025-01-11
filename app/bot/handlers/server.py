@@ -21,9 +21,10 @@ async def create_server(message: Message, mediator: Mediator):
     )
 
 @router.message(
-        F.text.startswith('{"ip":'),
+        F.text=='/delete_not_active_user',
         F.from_user.id==settings.bot.owner
     )
 async def delete_not_active_user(message: Message, mediator: Mediator):
     await mediator.handle_command(DeletNotActiveUserCommand())
+    await message.answer('Success')
 

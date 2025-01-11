@@ -9,6 +9,7 @@ from application.dto.subscription import SubscriptionDTO
 class BuyOrderCallback(CallbackData, prefix="buy_subscription"):
     subscription_id: UUID
 
+
 class BuyMessage:
     _text: str = "Выбирите тариф👇"
     _reply_markup = ...
@@ -31,6 +32,7 @@ class BuyMessage:
         content["reply_markup"] = self._reply_markup
 
         return content
+
 
 class UrlPaymentMessage:
     _text: str = "Оплатите подписку 👇"

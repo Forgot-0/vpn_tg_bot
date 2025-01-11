@@ -54,7 +54,7 @@ async def set_duration(message: Message, state: FSMContext):
     SubscriptionState.price
 )
 async def set_price(message: Message, state: FSMContext):
-    await state.update_data(price=float(message.text))
+    await state.update_data(price=int(message.text))
     await message.answer("Введите лимит устройств или укажите 0")
     await state.set_state(SubscriptionState.limit_ip)
 

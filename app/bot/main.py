@@ -26,13 +26,11 @@ async def startup_bot(bot: Bot):
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
 
-
 async def handle_exception(event: ErrorEvent):
     if event.update.message:
         await event.update.message.answer(text=event.exception.message)
     else:
         await event.update.callback_query.message.answer(event.exception.message)
-
 
 def init_bot():
     container = init_container()

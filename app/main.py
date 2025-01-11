@@ -25,12 +25,8 @@ def init_app():
     rq_handler.register(app, path=config.bot.path)
     setup_application(app, dp, bot=bot)
 
-
     app.add_routes(routes=paid_router)
     web.run_app(app=app, host=config.webapp.host, port=config.webapp.port)
-
-
-
 
 
 init_app()

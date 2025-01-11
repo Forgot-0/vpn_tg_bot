@@ -15,7 +15,6 @@ router = Router()
 async def start(message: Message, mediator: Mediator):
 
     referred_by = message.text.split()
-
     if len(referred_by) == 2:
         referred_by = int(referred_by[1])
     else:
