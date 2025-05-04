@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
 from domain.entities.subscription import Subscription
+from domain.values.users import UserId
 
 
 
@@ -25,7 +26,7 @@ class Reward(AggregateRoot):
 @dataclass
 class RewardUser(AggregateRoot):
     reward_id: UUID
-    user_id: int
+    user_id: UserId
     count: int = field(default=0)
 
     def __hash__(self) -> int:

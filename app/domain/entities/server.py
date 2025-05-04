@@ -54,3 +54,4 @@ class Server(AggregateRoot):
 class ProtocolConfig(AggregateRoot):
     config: dict[str, Any]
     protocol_type: ProtocolType
+

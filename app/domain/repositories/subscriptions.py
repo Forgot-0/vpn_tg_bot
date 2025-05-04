@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from uuid import UUID
 
 from domain.entities.subscription import Subscription
+from domain.values.subscriptions import SubscriptionId
 
 
 @dataclass
@@ -12,13 +12,13 @@ class BaseSubscriptionRepository(ABC):
     async def create(self, subscription: Subscription) -> None: ...
 
     @abstractmethod
-    async def deactivate(self, id: UUID) -> None: ...
+    async def deactivate(self, id: SubscriptionId) -> None: ...
 
     @abstractmethod
-    async def activate(self, id: UUID) -> None: ...
+    async def activate(self, id: SubscriptionId) -> None: ...
 
     @abstractmethod
     async def get(self) -> list[Subscription]: ...
 
     @abstractmethod
-    async def get_by_id(self, id: UUID) -> Subscription | None: ...
+    async def get_by_id(self, id: SubscriptionId) -> Subscription | None: ...

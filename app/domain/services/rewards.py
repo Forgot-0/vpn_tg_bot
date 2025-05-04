@@ -7,6 +7,7 @@ from domain.entities.reward import Reward, RewardUser
 from domain.exception.base import AlredyReceiveRewardException
 from domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
 from domain.repositories.users import BaseUserRepository
+from domain.values.users import UserId
 
 
 @dataclass
@@ -16,14 +17,14 @@ class RewardService:
     user_repository: BaseUserRepository
 
 
-    async def _set_user_reward(self, reward_id: UUID, user_id: int) -> None:
+    async def _set_user_reward(self, reward_id: UUID, user_id: UserId) -> None:
         reward_user = RewardUser(
             reward_id=reward_id,
             user_id=user_id,
         )
         await self.reward_user_repository.create(reward_user=reward_user)
 
-    async def set_rewards_for_buy_referral(self, user_id: int, order: Order) -> None:
+    async def set_rewards_for_buy_referral(self, user_id: UserId, order: Order) -> None:
         reward = await self.reward_repository.get_by_conditions(
             {
                 "conditions.buy_subscription": order.subscription.id
@@ -44,7 +45,7 @@ class RewardService:
         if reward:
             await self._set_user_reward(reward_id=reward.id, user_id=user_id)
 
-    async def set_rewards_for_referral(self, user_id: int) -> None:
+    async def set_rewards_for_referral(self, user_id: UserId) -> None:
         user = await self.user_repository.get_by_id(id=user_id)
 
         if not user: return 
@@ -58,7 +59,7 @@ class RewardService:
         if reward:
             await self._set_user_reward(reward_id=reward.id, user_id=user_id)
 
-    async def set_reward_for_trial_period(self, user_id: int) -> None:
+    async def set_reward_for_trial_period(self, user_id: UserId) -> None:
         reward = await self.reward_repository.get_by_conditions(
             {
                 "conditions.trial": True
