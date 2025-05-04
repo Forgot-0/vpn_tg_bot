@@ -26,7 +26,7 @@ class Reward(AggregateRoot):
 class RewardUser(AggregateRoot):
     reward_id: UUID
     user_id: int
-    is_received: bool = field(default=False)
+    count: int = field(default=0)
 
     def __hash__(self) -> int:
         return hash(self.reward_id)

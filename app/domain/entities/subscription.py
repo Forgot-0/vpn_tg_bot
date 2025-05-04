@@ -1,36 +1,37 @@
 from dataclasses import dataclass, field
-from datetime import timedelta
+from datetime import datetime, timedelta
 from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
-from domain.entities.discount import Discount
-
+from domain.values.servers import ProtocolType, Region
+from domain.values.subscriptions import SubscriptionId
 
 
 @dataclass
 class Subscription(AggregateRoot):
-    id: UUID = field(default_factory=uuid4, kw_only=True)
-    name: str
-    description: str
-    limit_ip: int = field(default=1, kw_only=True)
-    limit_trafic: int = field(default=0, kw_only=True)
-    duration: timedelta = field(default_factory=timedelta, kw_only=True)
-    price: float
-    is_active: bool = field(default=True, kw_only=True)
+    id: SubscriptionId = field(default_factory=lambda: SubscriptionId(uuid4()), kw_only=True)
+    duration: int
+    start_date: datetime
 
-    discount: Discount | None = field(default=None, kw_only=True)
-    price_with_discount: float | None = field(default=None, kw_only=True)
+    device_count: int
 
-    def set_discount(self, discount: Discount) -> None:
-        if self.discount:
-            if self.discount.percent > discount.percent:
-                return
+    server_id: UUID
+    region: Region
 
-        self.discount = discount
-        self.price_with_discount = self.discount.apply(price=self.price)
+    protocol_types: list[ProtocolType]
 
-    def __hash__(self) -> int:
-        return hash(self.id)
+    @property
+    def end_date(self) -> datetime:
+        return self.start_date + timedelta(days=self.duration)
 
-    def __eq__(self, value: UUID) -> bool:
-        return self.id == value
+    def is_active(self) -> bool:
+        return datetime.now() < self.start_date + timedelta(days=self.duration)
+
+    def upgrade_devices(self, new_device_count: int):
+        self.device_count = new_device_count
+
+    def change_region(self, new_region: Region):
+        self.region = new_region
+
+    def calculate_price(self) -> int:
+        return 3*self.device_count*self.duration*len(self.protocol_types)
