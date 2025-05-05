@@ -31,7 +31,7 @@ class User(AggregateRoot):
     @classmethod
     def create(
             cls,
-            id: UserId,
+            telegram_id: int,
             is_premium: bool,
             username: str | None=None,
             fullname: str | None=None,
@@ -40,7 +40,7 @@ class User(AggregateRoot):
         ) -> 'User':
 
         user = cls(
-            id=id,
+            telegram_id=telegram_id,
             is_premium=is_premium,
             username=username,
             fullname=fullname,
