@@ -9,7 +9,7 @@ from domain.services.ports import BaseProtocolBuilder
 
 
 @dataclass
-class Vless3xuiProtocolBuilder(BaseProtocolBuilder):
+class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
 
     def build_params(self, user: User, subscription: Subscription, server: Server) -> dict[str, Any]:
         return {

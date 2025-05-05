@@ -19,14 +19,6 @@ class TitleLong(ApplicationException):
         return f'Very long title {len(self.text)}'
 
 
-@dataclass(eq=False)
-class NotValidMark(ApplicationException):
-    mark: str
-
-    @property
-    def message(self):
-        return f'NotValidMark {self.mark}'
-
 
 @dataclass(eq=False)
 class TextLong(ApplicationException):
@@ -52,7 +44,7 @@ class SlugOnlyAscii(ApplicationException):
 
 
 @dataclass(eq=False)
-class NotValidUrl(ApplicationException):
+class InvalidUrl(ApplicationException):
     @property
     def message(self):
         return 'Url is not valid'

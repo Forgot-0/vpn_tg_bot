@@ -23,7 +23,6 @@ class A3xUiApiClient(BaseApiClient):
     def create_url(self, server: Server) -> str:
         return f"{self._base_url(server)}/panel/api/inbounds/addClient"
 
-
     async def create_subscription(self, user: User, subscription: Subscription, server: Server) -> None:
         async with ClientSession() as session:
             cookie = (await session.post(self.login_url(server=server))).cookies
@@ -41,3 +40,8 @@ class A3xUiApiClient(BaseApiClient):
 
                     if not resp['success']:
                         pass 
+
+    async def upgrade_client(self, user: User, subscription: Subscription, server: Server) -> None:
+        ...
+
+    async def delete_inactive_clients(self) -> None: ...

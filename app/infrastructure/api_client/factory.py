@@ -1,5 +1,5 @@
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Type
 from domain.services.ports import BaseApiClient
 from domain.values.servers import ApiType
@@ -7,10 +7,10 @@ from domain.values.servers import ApiType
 
 @dataclass
 class ApiClientFactory:
-    _registy: dict[ApiType, BaseApiClient]
+    _registry: dict[ApiType, BaseApiClient] = field(default_factory=dict)
 
-    def registy(self, api_type: ApiType, api_client: BaseApiClient) -> None:
-        self._registy[api_type] = api_client
+    def register(self, api_type: ApiType, api_client: BaseApiClient) -> None:
+        self._registry[api_type] = api_client
 
     def get(self, api_type: ApiType) -> BaseApiClient:
-        return self._registy[api_type]
+        return self._registry[api_type]
