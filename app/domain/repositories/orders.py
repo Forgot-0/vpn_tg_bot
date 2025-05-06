@@ -18,6 +18,9 @@ class BaseOrderRepository(ABC):
     async def get_by_id(self, id: UUID) -> Order | None: ...
 
     @abstractmethod
+    async def get_by_payment_id(self, payment_id: UUID) -> Order | None: ...
+
+    @abstractmethod
     async def get_by_user_id(self, user_id: int) -> list[Order]: ...
 
     @abstractmethod

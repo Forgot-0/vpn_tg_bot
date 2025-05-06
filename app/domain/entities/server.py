@@ -34,6 +34,12 @@ class Country(Enum):
 
 
 @dataclass
+class ProtocolConfig(AggregateRoot):
+    config: dict[str, Any]
+    protocol_type: ProtocolType
+
+
+@dataclass
 class Server(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
     ip: str
@@ -47,11 +53,5 @@ class Server(AggregateRoot):
 
     api_config: dict[str, Any]
 
-    protocol_configs: list['ProtocolConfig'] = field(default_factory=list)
-
-
-@dataclass
-class ProtocolConfig(AggregateRoot):
-    config: dict[str, Any]
-    protocol_type: ProtocolType
+    protocol_configs: dict[ProtocolType, ProtocolConfig] = field(default_factory=dict)
 

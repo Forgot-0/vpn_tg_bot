@@ -11,7 +11,7 @@ from domain.values.subscriptions import SubscriptionId
 class Subscription(AggregateRoot):
     id: SubscriptionId = field(default_factory=lambda: SubscriptionId(uuid4()), kw_only=True)
     duration: int
-    start_date: datetime
+    start_date: datetime = field(default_factory=datetime.now, kw_only=True)
 
     device_count: int
 

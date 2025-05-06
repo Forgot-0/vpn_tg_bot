@@ -21,4 +21,4 @@ class ProtocolBuilderFactory:
     def get(self, api_type: ApiType, protocol_config: ProtocolConfig) -> BaseProtocolBuilder:
         builder_cls = self._registry[(api_type, protocol_config.protocol_type)]
 
-        return builder_cls(protocol_config.config)
+        return builder_cls(protocol_config.protocol_type)

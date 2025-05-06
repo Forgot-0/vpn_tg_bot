@@ -7,6 +7,7 @@ from domain.entities.base import AggregateRoot
 from domain.entities.discount import Discount
 from domain.entities.subscription import Subscription
 from domain.events.orders.paid import PaidOrderEvent
+from domain.values.users import UserId
 
 
 
@@ -19,7 +20,7 @@ class PaymentStatus(Enum):
 class Order(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
     subscription: Subscription
-    user_id: int
+    user_id: UserId
 
     total_price: float
 
@@ -38,7 +39,7 @@ class Order(AggregateRoot):
     def create(
         cls,
         subscription: Subscription,
-        user_id: int,
+        user_id: UserId,
         discount: Discount | None=None
     ) -> "Order":
 

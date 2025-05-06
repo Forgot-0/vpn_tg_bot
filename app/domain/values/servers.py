@@ -9,6 +9,10 @@ class ProtocolType(Enum):
 class ApiType(Enum):
     x_ui = "3X-UI"
 
+@dataclass
+class VPNConfig:
+    protocol_type: ProtocolType
+    config: str
 
 @dataclass(frozen=True)
 class Region:

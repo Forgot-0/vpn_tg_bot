@@ -5,11 +5,12 @@ from typing import ClassVar
 from uuid import UUID
 
 from domain.events.base import BaseEvent
+from domain.values.users import UserId
 
 
 @dataclass(frozen=True)
 class PaidOrderEvent(BaseEvent):
     event_title: ClassVar[str] = 'Paid Payment'
     order_id: UUID
-    user_id: int
+    user_id: UserId
     end_time: datetime
