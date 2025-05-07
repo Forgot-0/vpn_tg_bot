@@ -120,9 +120,13 @@ def _init_container() -> Container:
     factory_builder = ProtocolBuilderFactory()
     factory_builder.register(ApiType("3X-UI"), ProtocolType("VLESS"), Vless3XUIProtocolBuilder)
 
+    container.register(ProtocolBuilderFactory, instance=factory_builder)
+
     #API CLIENT
     factory_client = ApiClientFactory()
     factory_client.register(ApiType("3X-UI"), A3xUiApiClient(builder_factory=factory_builder))
+
+    container.register(ApiClientFactory, instance=factory_client)
 
     # Bot aiogram
     container.register(

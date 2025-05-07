@@ -13,6 +13,7 @@ class Subscription(AggregateRoot):
     duration: int
     start_date: datetime = field(default_factory=datetime.now, kw_only=True)
 
+    server_id: UUID
     device_count: int
 
     server_id: UUID

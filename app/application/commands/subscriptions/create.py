@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
+from application.dtos.payments.url import PaymentUrlDTO
 from domain.entities.order import Order, PaymentStatus
 from domain.entities.subscription import Subscription
 from domain.repositories.orders import BaseOrderRepository
@@ -24,14 +25,14 @@ class CreateSubscriptionCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, str]):
+class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, PaymentUrlDTO]):
     user_repository: BaseUserRepository
     order_repository: BaseOrderRepository
     server_repository: BaseServerRepository
     subscription_repository: BaseSubscriptionRepository
     payment_service: BasePaymentService
 
-    async def handle(self, command: CreateSubscriptionCommand) -> str:
+    async def handle(self, command: CreateSubscriptionCommand) -> PaymentUrlDTO:
         server = await self.server_repository.get_by_max_free()
 
         if not server:
@@ -67,4 +68,4 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         await self.order_repository.create(order=order)
 
-        return url
+        return PaymentUrlDTO(url)
