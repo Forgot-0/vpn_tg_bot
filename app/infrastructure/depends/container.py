@@ -30,6 +30,8 @@ from infrastructure.depends.init_repositories import (
 )
 # from infrastructure.message_broker.base import BaseMessageBroker
 from infrastructure.payments.base import BasePaymentService
+from infrastructure.tgbot.aiobot import AiohramTelegramBot
+from infrastructure.tgbot.base import BaseTelegramBot
 from settings.config import Config
 
 
@@ -141,6 +143,13 @@ def _init_container() -> Container:
     container.register(
         Dispatcher,
         factory=lambda: Dispatcher(storage=MemoryStorage()),
+        scope=Scope.singleton
+    )
+
+    # Bot telegram (for application)
+    container.register(
+        BaseTelegramBot,
+        factory=lambda: AiohramTelegramBot(container.resolve(Bot)),
         scope=Scope.singleton
     )
 

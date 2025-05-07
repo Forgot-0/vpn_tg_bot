@@ -4,10 +4,12 @@ from enum import Enum
 
 class ProtocolType(Enum):
     vless = "VLESS"
+    mock = "MOCK"
 
 
 class ApiType(Enum):
     x_ui = "3X-UI"
+    mock = "MOCK"
 
 @dataclass
 class VPNConfig:

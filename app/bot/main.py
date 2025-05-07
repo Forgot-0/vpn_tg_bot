@@ -34,4 +34,5 @@ def init_dispatch() -> Dispatcher:
     add_middlewares(dp=dp)
 
     dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
+
     return dp

@@ -4,6 +4,7 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
+from domain.values.users import UserId
 
 
 @dataclass
@@ -35,5 +36,5 @@ class Discount(AggregateRoot):
 @dataclass
 class DiscountUser(AggregateRoot):
     discount_id: UUID
-    user_id: int
+    user_id: UserId
     count: int
