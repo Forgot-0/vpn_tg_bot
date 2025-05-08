@@ -1,0 +1,46 @@
+import pytest
+
+from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
+from application.dtos.payments.url import PaymentUrlDTO
+from domain.values.servers import ProtocolType
+
+
+@pytest.mark.asyncio
+async def test_create_subscription_command_handler(
+    mock_subscription_repository,
+    mock_user_repository,
+    mock_order_repository,
+    mock_server_repository,
+    mock_payment_service,
+    mock_event_mediator,
+    dummy_user,
+    dummy_subscription,
+    dummy_server,
+):
+    mock_server_repository._data[dummy_server.id] = dummy_server
+    mock_user_repository._data[dummy_user.id] = dummy_user
+
+    command = CreateSubscriptionCommand(
+        telegram_id=dummy_user.telegram_id,
+        duration=dummy_subscription.duration,
+        device_count=dummy_subscription.device_count,
+        flag=dummy_subscription.region.flag,
+        name=dummy_subscription.region.name,
+        code=dummy_subscription.region.code,
+        protocol_types=[ProtocolType.mock.value],
+    )
+
+    handler = CreateSubscriptionCommandHandler(
+        user_repository=mock_user_repository,
+        subscription_repository=mock_subscription_repository,
+        order_repository=mock_order_repository,
+        server_repository=mock_server_repository,
+        payment_service=mock_payment_service,
+        mediator=mock_event_mediator
+    )
+
+    result: PaymentUrlDTO = await handler.handle(command)
+    assert isinstance(result, PaymentUrlDTO)
+    assert result.url.startswith("http://")
+    updated_user = mock_user_repository._data.get(dummy_user.id)
+    assert any(sub.server_id == dummy_server.id for sub in updated_user.subscriptions)

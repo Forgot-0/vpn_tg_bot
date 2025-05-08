@@ -32,7 +32,7 @@ class User(AggregateRoot):
     def create(
             cls,
             telegram_id: int,
-            is_premium: bool,
+            is_premium: bool=False,
             username: str | None=None,
             fullname: str | None=None,
             phone: str | None=None,
