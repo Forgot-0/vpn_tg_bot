@@ -42,5 +42,8 @@ class PaidOrderCommandHandler(BaseCommandHandler[PaidOrderCommand, str]):
         api_client = self.api_panel_factory.get(server.api_type)
         vpn_configs = await api_client.create_subscription(user=user, subscription=order.subscription, server=server)
 
+
         if user.telegram_id:
             await self.bot.send_vpn_configs(user.telegram_id, vpn_configs=vpn_configs)
+
+        await self.mediator.publish(order.pull_events())

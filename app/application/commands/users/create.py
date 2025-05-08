@@ -10,7 +10,7 @@ from domain.values.users import UserId
 @dataclass(frozen=True)
 class CreateUserCommand(BaseCommand):
     tg_id: int
-    is_premium: bool
+    is_premium: bool | None
     username: str | None
     fullname: str | None
     phone: str | None

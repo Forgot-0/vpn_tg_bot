@@ -14,7 +14,7 @@ def bot_webhook():
     dp = init_dispatch()
     app = web.Application()
     web.run_app(app=app, host=settings.WEBAPP_WEBHOOK_HOST, port=settings.WEBAPP_WEBHOOK_PORT)
-    
+
     rq_handler = SimpleRequestHandler(dispatcher=dp, bot=bot)
     rq_handler.register(app, path=settings.TELEGRAM_WEBHOOK_PATH)
     setup_application(app, dp, bot=bot)
@@ -27,5 +27,6 @@ def bot_pool():
     bot = Bot(settings.BOT_TOKEN)
     dp = init_dispatch()
     asyncio.run(dp.start_polling(bot))
+
 
 bot_webhook()

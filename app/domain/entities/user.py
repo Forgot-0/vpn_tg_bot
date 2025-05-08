@@ -32,7 +32,7 @@ class User(AggregateRoot):
     def create(
             cls,
             telegram_id: int,
-            is_premium: bool=False,
+            is_premium: bool | None=False,
             username: str | None=None,
             fullname: str | None=None,
             phone: str | None=None,
@@ -41,27 +41,27 @@ class User(AggregateRoot):
 
         user = cls(
             telegram_id=telegram_id,
-            is_premium=is_premium,
+            is_premium=is_premium if is_premium else False,
             username=username,
             fullname=fullname,
             phone=phone,
             referred_by=referred_by
         )
 
-        if referred_by:
-            user.register_event(
-                ReferredUserEvent(
-                    referral_id=user.id,
-                    referred_by=referred_by
-                )
-            )
+        # if referred_by:
+        #     user.register_event(
+        #         ReferredUserEvent(
+        #             referral_id=user.id,
+        #             referred_by=referred_by
+        #         )
+        #     )
 
-        user.register_event(
-            NewUserEvent(
-                user_id=user.id,
-                username=user.username
-            )
-        )
+        # user.register_event(
+        #     NewUserEvent(
+        #         user_id=user.id,
+        #         username=user.username
+        #     )
+        # )
 
         return user
 

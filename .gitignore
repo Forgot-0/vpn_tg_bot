@@ -19,3 +19,4 @@ pip-delete-this-directory.txt
 
 .pytest_cache
 .env
+.vscode

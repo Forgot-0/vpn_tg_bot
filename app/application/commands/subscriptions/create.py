@@ -68,4 +68,8 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         await self.order_repository.create(order=order)
 
+        await self.mediator.publish(
+            user.pull_events()+order.pull_events()+subscription.pull_events()+server.pull_events()
+        )
+
         return PaymentUrlDTO(url)
