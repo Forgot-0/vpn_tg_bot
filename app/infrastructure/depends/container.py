@@ -32,7 +32,7 @@ from infrastructure.depends.init_repositories import (
 from infrastructure.payments.base import BasePaymentService
 from infrastructure.tgbot.aiobot import AiohramTelegramBot
 from infrastructure.tgbot.base import BaseTelegramBot
-from settings.config import Config
+from configs.app import settings
 
 
 
@@ -40,8 +40,6 @@ from settings.config import Config
 def _init_container() -> Container:
     container = Container()
 
-    container.register(Config, instance=Config(), scope=Scope.singleton)
-    config: Config = container.resolve(Config)
 
     # Broker
     # container.register(
@@ -51,19 +49,12 @@ def _init_container() -> Container:
     # )
 
     # MongoDB
-    def create_mongodb_client():
-        return AsyncIOMotorClient(
-            config.db.url,
+
+    client: AsyncIOMotorClient = AsyncIOMotorClient(
+            settings.mongo_url,
             serverSelectionTimeoutMS=3000,
             uuidRepresentation='standard'
         )
-
-    container.register(
-        AsyncIOMotorClient,
-        factory=create_mongodb_client,
-        scope=Scope.singleton
-    )
-    client: AsyncIOMotorClient = container.resolve(AsyncIOMotorClient)
 
     # Repositories
     container.register(
@@ -120,36 +111,25 @@ def _init_container() -> Container:
 
     # BUILDER PROTOCOL
     factory_builder = ProtocolBuilderFactory()
-    factory_builder.register(ApiType("3X-UI"), ProtocolType("VLESS"), Vless3XUIProtocolBuilder)
+    factory_builder.register(ApiType.x_ui, ProtocolType.vless, Vless3XUIProtocolBuilder)
 
     container.register(ProtocolBuilderFactory, instance=factory_builder)
 
     #API CLIENT
     factory_client = ApiClientFactory()
-    factory_client.register(ApiType("3X-UI"), A3xUiApiClient(builder_factory=factory_builder))
+    factory_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=factory_builder))
 
     container.register(ApiClientFactory, instance=factory_client)
 
-    # Bot aiogram
-    container.register(
-        Bot,
-        factory=lambda: Bot(
-            token=config.bot.token,
-            default=DefaultBotProperties(parse_mode='HTML')
-        ),
-        scope=Scope.singleton
-    )
-
-    container.register(
-        Dispatcher,
-        factory=lambda: Dispatcher(storage=MemoryStorage()),
-        scope=Scope.singleton
-    )
 
     # Bot telegram (for application)
     container.register(
         BaseTelegramBot,
-        factory=lambda: AiohramTelegramBot(container.resolve(Bot)),
+        factory=lambda: AiohramTelegramBot(Bot(
+            token=settings.BOT_TOKEN,
+            default=DefaultBotProperties(parse_mode='HTML')
+            ),
+        ),
         scope=Scope.singleton
     )
 
@@ -157,7 +137,7 @@ def _init_container() -> Container:
 
     container.register(
         BasePaymentService,
-        factory=lambda: inti_yookass(config=config),
+        factory=lambda: inti_yookass(),
         scope=Scope.singleton
     )
 

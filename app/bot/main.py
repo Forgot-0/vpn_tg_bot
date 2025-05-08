@@ -1,15 +1,16 @@
 from aiogram import Bot, Dispatcher
 from aiogram.filters.exception import ExceptionTypeFilter
 from aiogram.types import ErrorEvent
+from aiogram.fsm.storage.memory import MemoryStorage
+
 from bot.middlewares.mediator import MediatorMiddleware
 from domain.exception.base import ApplicationException
-from infrastructure.depends.init import init_container
-from settings.config import settings
+from configs.app import settings
 
 
 async def startup_bot(bot: Bot):
     await bot.set_webhook(
-        url=settings.bot.url,
+        url=settings.webhook_url,
         drop_pending_updates=False,
         allowed_updates=["message", "inline_query", "callback_query"]
     )
@@ -20,15 +21,13 @@ def add_middlewares(dp: Dispatcher):
 
 async def handle_exception(event: ErrorEvent):
     if event.update.message:
-        await event.update.message.answer(text=event.exception.message)
+        await event.update.message.answer(text=event.exception.message) # type: ignore
     else:
-        await event.update.callback_query.message.answer(event.exception.message)
+        await event.update.callback_query.message.answer(event.exception.message) # type: ignore
 
 
 def init_dispatch() -> Dispatcher:
-    container = init_container()
-
-    dp: Dispatcher = container.resolve(Dispatcher)
+    dp = Dispatcher(storage=MemoryStorage())
     dp.startup.register(startup_bot)
 
     add_middlewares(dp=dp)

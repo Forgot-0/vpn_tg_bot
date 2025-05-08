@@ -13,4 +13,4 @@ def init_container() -> Container:
 
 @lru_cache(1)
 def get_mediator() -> Mediator:
-    return _init_container().resolve(Mediator)
+    return _init_container().resolve(Mediator) # type: ignore

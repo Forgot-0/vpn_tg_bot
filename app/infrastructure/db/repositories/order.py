@@ -31,3 +31,7 @@ class OrderRepository(BaseMongoDBRepository, BaseOrderRepository):
     async def update(self, order: Order) -> None:
         doc = convert_order_entity_to_document(order)
         await self._collection.replace_one({"_id": order.id}, doc)
+    
+    async def get_by_payment_id(self, payment_id: UUID) -> Order | None:
+        document = await self._collection.find_one({"payment_id": payment_id})
+        return convert_order_document_to_entity(document) if document else None
