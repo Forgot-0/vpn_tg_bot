@@ -5,7 +5,7 @@ from application.commands.users.create import CreateUserCommand, CreateUserComma
 
 
 @pytest.mark.asyncio
-async def create_user_command(
+async def test_create_user_command(
     mock_user_repository,
     mock_event_mediator
 ) -> None:
@@ -23,6 +23,6 @@ async def create_user_command(
         user_repository=mock_user_repository
     )
     await handler.handle(command=command)
-    user = mock_user_repository.get_by_telegram_id(telegram_id=123456)
+    user = await mock_user_repository.get_by_telegram_id(telegram_id=123456)
     assert user is not None
     assert len(mock_event_mediator.published) > 0

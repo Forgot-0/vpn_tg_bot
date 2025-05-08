@@ -7,7 +7,7 @@ from domain.entities.base import AggregateRoot
 from domain.values.servers import ApiType, ProtocolType, Region
 
 
-class Country(Enum):
+class CountryCode(Enum):
     RUSSIA = 'RU'
     VIETNAM = 'VN'
     THAILAND = 'TH'
@@ -22,10 +22,8 @@ class Country(Enum):
     INDONESIA = 'ID'
     AMERICA = 'USA'
     GERMANY = 'DE'
-    SE = "SE"
     FRANCE = "FR"
     POLAND = "PL"
-    UK = "UK"
     ITALY = "IT"
     CANADA = "CA"
     BRAZIL = "BR"

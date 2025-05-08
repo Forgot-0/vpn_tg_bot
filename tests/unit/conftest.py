@@ -85,7 +85,7 @@ def dummy_subscription(dummy_server) -> Subscription:
 @pytest.fixture
 def dummy_server() -> Server:
     dummy_protocol_config = ProtocolConfig(
-         config={"inbound_id": "inb_123", "flow": "dummy_flow"},
+         config={"inbound_id": "inb_123"},
          protocol_type=ProtocolType.mock
     )
     return Server(
