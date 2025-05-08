@@ -1,8 +1,8 @@
 from domain.entities.user import User
 from domain.entities.subscription import Subscription
 from domain.entities.server import Server
-from domain.values.servers import ProtocolType, VPNConfig
 from domain.services.ports import BaseApiClient
+from domain.values.servers import ProtocolType, VPNConfig
 
 class MockApiClient(BaseApiClient):
     def __init__(self) -> None:

@@ -1,8 +1,10 @@
-DC = docker-compose
+DC = docker compose
+EXEC = docker exec -it
 BOT_APP = docker_compose/app.yaml
 STORAGE = docker_compose/storage.yaml
 WEB_SERVER = docker_compose/webserver.yaml
 ENV = --env-file .env
+APP_CONTAINER = app
 
 
 .PHONY: bot_up
@@ -32,3 +34,8 @@ storage_down:
 .PHONY: certbot
 certbot:
 	${DC} -f ${WEB_SERVER} -f ${BOT_APP} ${ENV} run --rm certbot certonly --webroot --webroot-path=/var/www/certbot -d my-backend-test.ru
+
+
+.PHONY: test
+test:
+	${EXEC} ${APP_CONTAINER} pytest
