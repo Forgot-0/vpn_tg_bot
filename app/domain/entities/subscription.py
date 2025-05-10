@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 from domain.entities.base import AggregateRoot
 from domain.values.servers import ProtocolType, Region
 from domain.values.subscriptions import SubscriptionId
+from domain.values.users import UserId
 
 
 @dataclass
@@ -13,11 +14,12 @@ class Subscription(AggregateRoot):
     duration: int
     start_date: datetime = field(default_factory=datetime.now, kw_only=True)
 
-    server_id: UUID
     device_count: int
 
     server_id: UUID
     region: Region
+    
+    user_id: UserId
 
     protocol_types: list[ProtocolType]
 

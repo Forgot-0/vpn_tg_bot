@@ -3,7 +3,7 @@ from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
 from application.dtos.payments.url import PaymentUrlDTO
-from domain.entities.order import Order, PaymentStatus
+from domain.entities.order import Order
 from domain.entities.subscription import Subscription
 from domain.repositories.orders import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
@@ -11,6 +11,7 @@ from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
 from domain.values.servers import ProtocolType, Region
 from infrastructure.payments.base import BasePaymentService
+
 
 
 @dataclass(frozen=True)
@@ -37,6 +38,10 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         if not server:
             raise
+        
+        user = await self.user_repository.get_by_telegram_id(telegram_id=command.telegram_id)
+        if not user:
+            raise 
 
         subscription = Subscription(
             duration=command.duration,
@@ -47,15 +52,10 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
                 name=command.name,
                 code=command.code
             ),
+            user_id=user.id,
             protocol_types=[ProtocolType(t) for t in command.protocol_types]
         )
-        user = await self.user_repository.get_by_telegram_id(telegram_id=command.telegram_id)
 
-        if not user:
-            raise 
-
-        user.subscriptions.append(subscription)
-        await self.user_repository.update(user=user)
         await self.subscription_repository.create(subscription=subscription)
 
         order = Order.create(

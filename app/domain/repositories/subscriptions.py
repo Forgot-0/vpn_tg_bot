@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from domain.entities.subscription import Subscription
 from domain.values.subscriptions import SubscriptionId
+from domain.values.users import UserId
 
 
 @dataclass
@@ -22,3 +23,6 @@ class BaseSubscriptionRepository(ABC):
 
     @abstractmethod
     async def get_by_id(self, id: SubscriptionId) -> Subscription | None: ...
+
+    @abstractmethod
+    async def get_by_user(self, user_id: UserId) -> list[Subscription]: ...

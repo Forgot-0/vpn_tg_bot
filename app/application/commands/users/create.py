@@ -14,7 +14,7 @@ class CreateUserCommand(BaseCommand):
     username: str | None
     fullname: str | None
     phone: str | None
-    referred_by: UUID | None
+    referred_by: str | None
 
 
 @dataclass(frozen=True)
@@ -29,7 +29,7 @@ class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
             username=command.username,
             fullname=command.fullname,
             phone=command.phone,
-            referred_by=UserId(command.referred_by) if command.referred_by else None
+            referred_by=UserId(UUID(command.referred_by)) if command.referred_by else None
         )
 
         await self.user_repository.create(user=user)

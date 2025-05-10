@@ -1,6 +1,7 @@
 from domain.entities.subscription import Subscription
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.values.subscriptions import SubscriptionId
+from domain.values.users import UserId
 from infrastructure.db.convertors.subscription import (
     convert_subscription_document_to_entity,
     convert_subscription_entity_to_document
@@ -32,3 +33,7 @@ class SubscriptionRepository(BaseMongoDBRepository, BaseSubscriptionRepository):
     async def get_by_id(self, id: SubscriptionId) -> Subscription | None:
         doc = await self._collection.find_one({"_id": id.value})
         return convert_subscription_document_to_entity(doc) if doc else None
+
+    async def get_by_user(self, user_id: UserId) -> list[Subscription]:
+        docs = await self._collection.find({"user_id": user_id.value}).to_list(length=None)
+        return [convert_subscription_document_to_entity(d) for d in docs]
