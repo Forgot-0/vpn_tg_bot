@@ -16,24 +16,31 @@ def init_mediator(container: Container) -> Mediator:
 
     container.register(EventMediator, instance=mediator)
 
+    container.register(CreateUserCommandHandler)
     mediator.register_command(
         CreateUserCommand,
         [container.resolve(CreateUserCommandHandler)]
     )
+
+    container.register(PaidOrderCommandHandler)
     mediator.register_command(
         PaidOrderCommand,
         [container.resolve(PaidOrderCommandHandler)]
     )
+
+    container.register(CreateSubscriptionCommandHandler)
     mediator.register_command(
         CreateSubscriptionCommand,
         [container.resolve(CreateSubscriptionCommandHandler)]
     )
 
+    container.register(GetByTgIdQueryHandler)
     mediator.register_query(
         GetByTgIdQuery,
         container.resolve(GetByTgIdQueryHandler)
     )
 
+    container.register(DecrementFreeServerEventHandler)
     mediator.register_event(
         PaidOrderEvent,
         [container.resolve(DecrementFreeServerEventHandler)]
