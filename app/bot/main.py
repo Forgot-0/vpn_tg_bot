@@ -31,7 +31,6 @@ async def handle_exception(event: ErrorEvent):
 def init_dispatch() -> Dispatcher:
     dp = Dispatcher(storage=MemoryStorage())
     dp.startup.register(startup_bot)
-
     add_middlewares(dp=dp)
 
     dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
