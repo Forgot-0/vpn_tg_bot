@@ -3,6 +3,7 @@ from uuid import UUID
 from domain.entities.subscription import Subscription
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.values.subscriptions import SubscriptionId
+from domain.values.users import UserId
 
 
 class MockSubscriptionRepository(BaseSubscriptionRepository):
@@ -27,3 +28,10 @@ class MockSubscriptionRepository(BaseSubscriptionRepository):
 
     async def get_by_id(self, id: SubscriptionId) -> Optional[Subscription]:
         return self._data.get(id)
+
+    async def get_by_user(self, user_id: UserId) -> List[Subscription]:
+        res = []
+        for subs in self._data.values():
+            if subs.user_id == user_id:
+                res.append(res)
+        return res

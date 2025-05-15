@@ -42,5 +42,4 @@ async def test_create_subscription_command_handler(
     result: PaymentUrlDTO = await handler.handle(command)
     assert isinstance(result, PaymentUrlDTO)
     assert result.url.startswith("http://")
-    updated_user = mock_user_repository._data.get(dummy_user.id)
-    assert any(sub.server_id == dummy_server.id for sub in updated_user.subscriptions)
+    assert len(await mock_subscription_repository.get_by_user(dummy_user.id)) == 1

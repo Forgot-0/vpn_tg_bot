@@ -73,8 +73,9 @@ def dummy_user() -> User:
     return User(telegram_id=123456)
 
 @pytest.fixture
-def dummy_subscription(dummy_server) -> Subscription:
+def dummy_subscription(dummy_server, dummy_user) -> Subscription:
     return Subscription(
+        user_id=dummy_user.id,
         duration=30,
         server_id=dummy_server.id,
         device_count=1,

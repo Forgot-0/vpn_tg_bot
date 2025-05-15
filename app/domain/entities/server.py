@@ -42,7 +42,7 @@ class Server(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
     ip: str
     port: int
-    domain: str
+    domain: str | None
     limit: int
     region: Region
     free: int

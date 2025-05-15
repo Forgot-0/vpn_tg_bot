@@ -19,9 +19,6 @@ class CreateSubscriptionCommand(BaseCommand):
     telegram_id: int
     duration: int
     device_count: int
-    flag: str
-    name: str
-    code: str
     protocol_types: list[str]
 
 
@@ -38,7 +35,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         if not server:
             raise
-        
+
         user = await self.user_repository.get_by_telegram_id(telegram_id=command.telegram_id)
         if not user:
             raise 
@@ -48,9 +45,9 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
             device_count=command.device_count,
             server_id=server.id,
             region=Region(
-                flag=command.flag,
-                name=command.name,
-                code=command.code
+                flag=server.region.flag,
+                name=server.region.name,
+                code=server.region.code
             ),
             user_id=user.id,
             protocol_types=[ProtocolType(t) for t in command.protocol_types]

@@ -1,5 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+from bot.messages.base import BaseMessageBuilder
+
 
 class VPNButton:
     text = "🔐 VPN"
@@ -7,7 +9,8 @@ class VPNButton:
 
 class HelpButton:
     text = "🆘 Поддержка"
-    callback_data = "support"
+    url = "https://t.me/VPNHE1P"
+    callback_data = "help"
 
 class RewardButton:
     text = "🎁 Реферальная система"
@@ -18,7 +21,7 @@ class AboutButton:
     callback_data = "about"
 
 class BackButton:
-    text = "🔙 Назад"
+    text = "🔙 Главное меню"
     callback_data = "back"
 
 
@@ -32,3 +35,13 @@ def get_menu_keyboards() -> InlineKeyboardMarkup:
         ]
     )
     return keyboard
+
+
+class HelpMessage(BaseMessageBuilder):
+    _text = "Напишите свою проблему сюда 👇"
+    _reply_markup = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=HelpButton.text, url=HelpButton.url)],
+            [InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]
+        ]
+    )

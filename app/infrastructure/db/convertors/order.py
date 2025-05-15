@@ -10,7 +10,7 @@ def convert_order_entity_to_document(order: Order) -> dict[str, Any]:
     return {
         "_id": order.id,
         "subscription": convert_subscription_entity_to_document(order.subscription),
-        "user_id": order.user_id,
+        "user_id": order.user_id.value,
         "total_price": order.total_price,
         "status": order.status.value,
         "payment_id": order.payment_id,

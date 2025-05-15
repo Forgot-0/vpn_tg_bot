@@ -9,6 +9,7 @@ from domain.exception.base import ApplicationException
 from configs.app import settings
 
 from bot.handlers.start import router as start_router
+from bot.handlers.subscription import router as subscription_router
 
 async def startup_bot(bot: Bot):
     await bot.set_webhook(
@@ -36,4 +37,5 @@ def init_dispatch() -> Dispatcher:
     dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
 
     dp.include_router(start_router)
+    dp.include_router(subscription_router)
     return dp
