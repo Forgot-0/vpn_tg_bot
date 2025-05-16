@@ -67,7 +67,5 @@ async def process_protocol(
     payment_response, *_ = await mediator.handle_command(command)
     await callback_query.message.edit_text(**SubscriptionMessage().build(payment_response))
 
-    payment_id = payment_response.url.split("=")[-1]
-    await mediator.handle_command(PaidOrderCommand(payment_id=UUID(hex=payment_id)))
     await state.clear()
     await callback_query.answer()
