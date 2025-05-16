@@ -15,14 +15,16 @@ async def test_paid_order_command_handler(
     dummy_subscription,
     dummy_server,
     mock_event_mediator,
-    mock_telegram_bot
+    mock_telegram_bot,
+    subs_price_service
 ):
     mock_bot = mock_telegram_bot
 
     order = Order.create(
         subscription=dummy_subscription,
         user_id=dummy_user.id,
-        discount=None
+        discount=None,
+        price=subs_price_service.calculate(dummy_subscription)
     )
     order.payment_id = uuid4()
     order.status = PaymentStatus.pending

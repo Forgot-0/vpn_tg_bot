@@ -25,33 +25,35 @@ async def subscribe_command(callback_query: types.CallbackQuery, state: FSMConte
 
 @router.callback_query(DaysCallbackData.filter(), SubscriptionStates.waiting_for_days)
 async def process_days(
-    callback_query: types.CallbackQuery,
-    callback_data: DaysCallbackData,
-    state: FSMContext):
+        callback_query: types.CallbackQuery,
+        callback_data: DaysCallbackData,
+        state: FSMContext
+    ):
     await state.update_data(days=callback_data.days)
     await callback_query.message.edit_text(**DeviceMessage().build())
     await state.set_state(SubscriptionStates.waiting_for_devices)
 
 @router.callback_query(DeviceCallbackData.filter(), SubscriptionStates.waiting_for_devices)
 async def process_devices(
-    callback_query: types.CallbackQuery,
-    callback_data: DeviceCallbackData,
-    state: FSMContext):
+        callback_query: types.CallbackQuery,
+        callback_data: DeviceCallbackData,
+        state: FSMContext
+    ):
     await state.update_data(devices=callback_data.device)
     await callback_query.message.edit_text(**ProtocolTypeMessage().build())
     await state.set_state(SubscriptionStates.waiting_for_protocol)
 
 @router.callback_query(ProtocolTypeCallbackData.filter(), SubscriptionStates.waiting_for_protocol)
 async def process_protocol(
-    callback_query: types.CallbackQuery,
-    callback_data: ProtocolTypeCallbackData,
-    state: FSMContext,
-    mediator: Mediator
+        callback_query: types.CallbackQuery,
+        callback_data: ProtocolTypeCallbackData,
+        state: FSMContext,
+        mediator: Mediator
     ):
 
     data = await state.get_data()
-    days = data.get("days")
-    devices = data.get("devices")
+    days = data.get("days", 30)
+    devices = data.get("devices", 1)
 
     command = CreateSubscriptionCommand(
         telegram_id=callback_query.from_user.id,

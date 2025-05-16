@@ -2,5 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class PaymentUrlDTO:
+class PaymentDTO:
     url: str
+    price: float
+    discount: int | None = None

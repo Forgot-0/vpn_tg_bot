@@ -35,6 +35,3 @@ class Subscription(AggregateRoot):
 
     def change_region(self, new_region: Region):
         self.region = new_region
-
-    def calculate_price(self) -> int:
-        return 3*self.device_count*self.duration*len(self.protocol_types)

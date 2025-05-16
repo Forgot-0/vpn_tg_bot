@@ -2,7 +2,7 @@ from typing import Any
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 
-from application.dtos.payments.url import PaymentUrlDTO
+from application.dtos.payments.url import PaymentDTO
 from bot.messages.base import BaseMessageBuilder
 from bot.messages.menu import BackButton
 from domain.values.servers import ProtocolType
@@ -25,17 +25,17 @@ class ProtocolTypeCallbackData(CallbackData, prefix="protocol"):
 
 class DaysMessage(BaseMessageBuilder):
     _text = (
-        "Выберите кол-во дней подписки: "
+        "Выберите длительность подписки: "
     )
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="30 дней", callback_data=DaysCallbackData(days=30).pack()),
-                InlineKeyboardButton(text="60 дней", callback_data=DaysCallbackData(days=60).pack()),
+                InlineKeyboardButton(text="🎟 1 месяц 🎟", callback_data=DaysCallbackData(days=30).pack()),
+                InlineKeyboardButton(text="🎫 3 месяца 🎫", callback_data=DaysCallbackData(days=60).pack()),
             ],
             [
-                InlineKeyboardButton(text="90 дней", callback_data=DaysCallbackData(days=90).pack()),
-                InlineKeyboardButton(text="180 дней", callback_data=DaysCallbackData(days=180).pack()),
+                InlineKeyboardButton(text="🏆 6 месяцев 🏆", callback_data=DaysCallbackData(days=90).pack()),
+                InlineKeyboardButton(text="💎 1 год 💎", callback_data=DaysCallbackData(days=180).pack()),
             ],
             [InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]
         ]
@@ -84,8 +84,8 @@ class SubscriptionMessage(BaseMessageBuilder):
     _reply_markup = None
 
 
-    def build(self, payment_data: PaymentUrlDTO) -> dict[str, Any]:
-        content = super().build()
+    def build(self, payment_data: PaymentDTO) -> dict[str, Any]:
+        content = {}
         content["text"] = (
             "Оплатите подписку: "
         )

@@ -15,7 +15,8 @@ from domain.repositories.users import BaseUserRepository
 from domain.services.discounts import DiscountService
 from domain.services.rewards import RewardService
 # from infrastructure.depends.init_broker import create_message_broker
-from domain.values.servers import ApiType, ProtocolType
+from domain.services.subscription import SubscriptionPricingService
+from domain.values.servers import ApiType, ProtocolType, Region
 from infrastructure.api_client.factory import ApiClientFactory
 from infrastructure.api_client.x_ui.aclient import A3xUiApiClient
 from infrastructure.builders_params.factory import ProtocolBuilderFactory
@@ -108,6 +109,19 @@ def _init_container() -> Container:
     # SERVICES
     container.register(DiscountService, scope=Scope.singleton)
     container.register(RewardService, scope=Scope.singleton)
+    container.register(
+        SubscriptionPricingService,
+        instance=SubscriptionPricingService(
+            daily_rate=2,
+            device_rate_multiplier=0.5,
+            region_multipliers={
+                Region("🇳🇱", "Нидерланды", "NL"): 1.0,
+            },
+            protocol_multipliers={
+                ProtocolType.vless: 0.15
+            }
+        )
+    )
 
     # BUILDER PROTOCOL
     factory_builder = ProtocolBuilderFactory()

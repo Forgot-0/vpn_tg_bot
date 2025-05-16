@@ -2,13 +2,14 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
-from application.dtos.payments.url import PaymentUrlDTO
+from application.dtos.payments.url import PaymentDTO
 from domain.entities.order import Order
 from domain.entities.subscription import Subscription
 from domain.repositories.orders import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
+from domain.services.subscription import SubscriptionPricingService
 from domain.values.servers import ProtocolType, Region
 from infrastructure.payments.base import BasePaymentService
 
@@ -23,14 +24,15 @@ class CreateSubscriptionCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, PaymentUrlDTO]):
+class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, PaymentDTO]):
     user_repository: BaseUserRepository
     order_repository: BaseOrderRepository
     server_repository: BaseServerRepository
     subscription_repository: BaseSubscriptionRepository
+    subs_price_service: SubscriptionPricingService
     payment_service: BasePaymentService
 
-    async def handle(self, command: CreateSubscriptionCommand) -> PaymentUrlDTO:
+    async def handle(self, command: CreateSubscriptionCommand) -> PaymentDTO:
         server = await self.server_repository.get_by_max_free()
 
         if not server:
@@ -58,6 +60,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
         order = Order.create(
             subscription=subscription,
             user_id=user.id,
+            price=self.subs_price_service.calculate(subscription)
         )
 
         url, payment_id = await self.payment_service.create(order=order)
@@ -69,4 +72,4 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
             user.pull_events()+order.pull_events()+subscription.pull_events()+server.pull_events()
         )
 
-        return PaymentUrlDTO(url)
+        return PaymentDTO(url, order.total_price)

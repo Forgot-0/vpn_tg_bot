@@ -5,8 +5,7 @@ from aiogram.types import Message, CallbackQuery
 
 from application.commands.users.create import CreateUserCommand
 from application.mediator.mediator import Mediator
-from bot.messages.menu import BackButton, HelpButton, HelpMessage
-from bot.messages.start import StartMessageBuilder
+from bot.messages.menu import BackButton, HelpButton, HelpMessage, StartMessageBuilder
 
 
 router = Router()

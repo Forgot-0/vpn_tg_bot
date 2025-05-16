@@ -40,10 +40,11 @@ class Order(AggregateRoot):
         cls,
         subscription: Subscription,
         user_id: UserId,
+        price: float,
         discount: Discount | None=None
     ) -> "Order":
 
-        total_price = subscription.calculate_price()
+        total_price = price
 
         if discount:
             total_price = discount.apply(price=total_price)

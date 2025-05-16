@@ -1,7 +1,7 @@
 import pytest
 
 from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
-from application.dtos.payments.url import PaymentUrlDTO
+from application.dtos.payments.url import PaymentDTO
 from domain.values.servers import ProtocolType
 
 
@@ -12,6 +12,7 @@ async def test_create_subscription_command_handler(
     mock_order_repository,
     mock_server_repository,
     mock_payment_service,
+    subs_price_service,
     mock_event_mediator,
     dummy_user,
     dummy_subscription,
@@ -24,9 +25,6 @@ async def test_create_subscription_command_handler(
         telegram_id=dummy_user.telegram_id,
         duration=dummy_subscription.duration,
         device_count=dummy_subscription.device_count,
-        flag=dummy_subscription.region.flag,
-        name=dummy_subscription.region.name,
-        code=dummy_subscription.region.code,
         protocol_types=[ProtocolType.mock.value],
     )
 
@@ -36,10 +34,11 @@ async def test_create_subscription_command_handler(
         order_repository=mock_order_repository,
         server_repository=mock_server_repository,
         payment_service=mock_payment_service,
+        subs_price_service=subs_price_service,
         mediator=mock_event_mediator
     )
 
-    result: PaymentUrlDTO = await handler.handle(command)
-    assert isinstance(result, PaymentUrlDTO)
+    result: PaymentDTO = await handler.handle(command)
+    assert isinstance(result, PaymentDTO)
     assert result.url.startswith("http://")
     assert len(await mock_subscription_repository.get_by_user(dummy_user.id)) == 1

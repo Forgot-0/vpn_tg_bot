@@ -37,6 +37,14 @@ def get_menu_keyboards() -> InlineKeyboardMarkup:
     return keyboard
 
 
+class StartMessageBuilder(BaseMessageBuilder):
+    _text = (
+        "👋 Привет! Я бот для продажи впн \n"
+        "Используй меню:"
+    )
+    _reply_markup = get_menu_keyboards()
+
+
 class HelpMessage(BaseMessageBuilder):
     _text = "Напишите свою проблему сюда 👇"
     _reply_markup = InlineKeyboardMarkup(

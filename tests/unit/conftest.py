@@ -4,6 +4,7 @@ import pytest
 from domain.entities.server import ProtocolConfig, Server
 from domain.entities.subscription import Subscription
 from domain.entities.user import User
+from domain.services.subscription import SubscriptionPricingService
 from domain.values.servers import ApiType, ProtocolType, Region
 from infrastructure.api_client.factory import ApiClientFactory
 from infrastructure.builders_params.factory import ProtocolBuilderFactory
@@ -67,6 +68,18 @@ def mock_discount_user_repository():
 def mock_payment_service():
     return MockPaymentService()
 
+@pytest.fixture
+def subs_price_service():
+    return SubscriptionPricingService(
+            daily_rate=2,
+            device_rate_multiplier=0.5,
+            region_multipliers={
+                Region("🇳🇱", "Нидерланды", "NL"): 1.0,
+            },
+            protocol_multipliers={
+                ProtocolType.vless: 0.15
+            }
+        )
 
 @pytest.fixture
 def dummy_user() -> User:

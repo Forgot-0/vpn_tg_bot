@@ -11,6 +11,7 @@ from configs.app import settings
 from bot.handlers.start import router as start_router
 from bot.handlers.subscription import router as subscription_router
 
+
 async def startup_bot(bot: Bot):
     await bot.set_webhook(
         url=settings.webhook_url,
