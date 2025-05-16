@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from bot.messages.base import BaseMessageBuilder
+from bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
 
 
 class VPNButton:
@@ -37,19 +37,29 @@ def get_menu_keyboards() -> InlineKeyboardMarkup:
     return keyboard
 
 
-class StartMessageBuilder(BaseMessageBuilder):
-    _text = (
-        "👋 Привет! Я бот для продажи впн \n"
-        "Используй меню:"
-    )
+class StartMessageBuilder(BaseMediaBuilder):
+    _photo = "AgACAgIAAxkBAAILuWgnngoR_nxX7vX1R5NVJCrPltJsAAJO_jEb-kBASZj30nWKgZFtAQADAgADcwADNgQ"
     _reply_markup = get_menu_keyboards()
 
 
-class HelpMessage(BaseMessageBuilder):
-    _text = "Напишите свою проблему сюда 👇"
+class HelpMessage(BaseMediaBuilder):
+    _photo = "AgACAgIAAxkBAAILvGgnpvsEEMfCw1c8ZYXD5gi8bSj1AAJ4_jEb-kBASUq06bbZWde9AQADAgADcwADNgQ"
+    _caption = "Напишите свою проблему сюда 👇"
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text=HelpButton.text, url=HelpButton.url)],
             [InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]
         ]
     )
+
+class AboutMessage(BaseMediaBuilder):
+    _photo = "AgACAgIAAxkBAAILuGgnneLXEXLtXUfQP8Z3_IEdcyUTAAJN_jEb-kBASYW-CgZHT8xtAQADAgADcwADNgQ"
+    _caption = (
+        ""
+    )
+    _reply_markup = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]
+        ]
+    )
+

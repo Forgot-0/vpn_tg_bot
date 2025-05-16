@@ -5,11 +5,14 @@ from aiogram.types import Message, CallbackQuery
 
 from application.commands.users.create import CreateUserCommand
 from application.mediator.mediator import Mediator
-from bot.messages.menu import BackButton, HelpButton, HelpMessage, StartMessageBuilder
+from bot.messages.menu import AboutButton, AboutMessage, BackButton, HelpButton, HelpMessage, StartMessageBuilder
 
 
 router = Router()
 
+# @router.message()
+# async def s(message: Message):
+#     print(message)
 
 @router.message(Command("start"))
 async def start(message: Message, mediator: Mediator):
@@ -32,16 +35,21 @@ async def start(message: Message, mediator: Mediator):
     ))
 
     data = StartMessageBuilder().build()
-    await message.answer(**data) # type: ignore
+    await message.answer_photo(**data) # type: ignore
 
 @router.callback_query(F.data==BackButton.callback_data)
 async def menu(callback_query: CallbackQuery, state: FSMContext):
     data = StartMessageBuilder().build()
-    await callback_query.message.edit_text(**data)
+    await callback_query.message.edit_media(**data)
     await state.clear()
     await callback_query.answer()
 
 
 @router.callback_query(F.data==HelpButton.callback_data)
 async def help(callback_query: CallbackQuery):
-    await callback_query.message.edit_text(**HelpMessage().build())
+    await callback_query.message.edit_media(**HelpMessage().build())
+
+
+@router.callback_query(F.data==AboutButton.callback_data)
+async def about(callback_query: CallbackQuery):
+    await callback_query.message.edit_media(**AboutMessage().build())

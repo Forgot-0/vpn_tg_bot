@@ -22,7 +22,7 @@ router = Router()
 
 @router.callback_query(F.data==VPNButton.callback_data)
 async def subscribe_command(callback_query: types.CallbackQuery, state: FSMContext):
-    await callback_query.message.edit_text(**DaysMessage().build())
+    await callback_query.message.edit_media(**DaysMessage().build()) # type: ignore
     await state.set_state(SubscriptionStates.waiting_for_days)
 
 @router.callback_query(DaysCallbackData.filter(), SubscriptionStates.waiting_for_days)
@@ -32,7 +32,7 @@ async def process_days(
         state: FSMContext
     ):
     await state.update_data(days=callback_data.days)
-    await callback_query.message.edit_text(**DeviceMessage().build())
+    await callback_query.message.edit_media(**DeviceMessage().build())
     await state.set_state(SubscriptionStates.waiting_for_devices)
 
 @router.callback_query(DeviceCallbackData.filter(), SubscriptionStates.waiting_for_devices)
@@ -42,7 +42,7 @@ async def process_devices(
         state: FSMContext
     ):
     await state.update_data(devices=callback_data.device)
-    await callback_query.message.edit_text(**ProtocolTypeMessage().build())
+    await callback_query.message.edit_media(**ProtocolTypeMessage().build())
     await state.set_state(SubscriptionStates.waiting_for_protocol)
 
 @router.callback_query(ProtocolTypeCallbackData.filter(), SubscriptionStates.waiting_for_protocol)
@@ -65,7 +65,7 @@ async def process_protocol(
     )
 
     payment_response, *_ = await mediator.handle_command(command)
-    await callback_query.message.edit_text(**SubscriptionMessage().build(payment_response))
+    await callback_query.message.edit_media(**SubscriptionMessage().build(payment_response))
 
     await state.clear()
     await callback_query.answer()

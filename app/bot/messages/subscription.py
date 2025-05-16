@@ -3,7 +3,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 
 from application.dtos.payments.url import PaymentDTO
-from bot.messages.base import BaseMessageBuilder
+from bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
 from bot.messages.menu import BackButton
 from domain.values.servers import ProtocolType
 
@@ -23,10 +23,8 @@ class ProtocolTypeCallbackData(CallbackData, prefix="protocol"):
     protocol_type: str
 
 
-class DaysMessage(BaseMessageBuilder):
-    _text = (
-        "Выберите длительность подписки: "
-    )
+class DaysMessage(BaseMediaBuilder):
+    _photo = "AgACAgIAAxkBAAILvWgnq8qt76O702nMG3dcVBPQadjOAALp-zEb7xNBSZSYhD2OYhYXAQADAgADcwADNgQ"
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -41,10 +39,8 @@ class DaysMessage(BaseMessageBuilder):
         ]
     )
 
-class DeviceMessage(BaseMessageBuilder):
-    _text = (
-        "Выберите кол-во устройств: "
-    )
+class DeviceMessage(BaseMediaBuilder):
+    _photo = "AgACAgIAAxkBAAILvmgnq-UPxzIOOC-tTrofE0uTI-VHAALr-zEb7xNBScYqEjkLO7CNAQADAgADcwADNgQ"
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -60,10 +56,9 @@ class DeviceMessage(BaseMessageBuilder):
     )
 
 
-class ProtocolTypeMessage(BaseMessageBuilder):
-    _text = (
-        "Выберите протокол: "
-    )
+class ProtocolTypeMessage(BaseMediaBuilder):
+    _photo = "AgACAgIAAxkBAAILt2gnncEdg0JyRFVrCMOCat3Om1bDAAJM_jEb-kBASXPVU5fJG_HSAQADAgADcwADNgQ"
+    _caption = "Выберите протокол VPN"
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(
@@ -74,22 +69,16 @@ class ProtocolTypeMessage(BaseMessageBuilder):
         ][:-1] + [[InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]]
     )
 
-    _parse_mode = "MarkdownV2"
 
-
-class SubscriptionMessage(BaseMessageBuilder):
-    _text = (
-        ""
-    )
+class SubscriptionMessage(BaseMediaBuilder):
+    _photo = "AgACAgIAAxkBAAILtmgnnU-QDz8MRUWY4gwBTOeO5G6sAAJK_jEb-kBAST_2GxHYWDLYAQADAgADcwADNgQ"
+    _caption = ""
     _reply_markup = None
 
 
     def build(self, payment_data: PaymentDTO) -> dict[str, Any]:
-        content = {}
-        content["text"] = (
-            "Оплатите подписку: "
-        )
-
+        content = super().build()
+        content['media'].caption = f"Стоимость подписки {payment_data.price}"
         content["reply_markup"] = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="Оплатить", url=payment_data.url)],
