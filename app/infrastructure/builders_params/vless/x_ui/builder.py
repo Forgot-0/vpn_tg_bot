@@ -18,9 +18,9 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
             "settings": json.dumps({
                 "clients": [
                     {
-                        "id": str(user.id),
+                        "id": str(subscription.id.value.hex),
                         "flow": server.protocol_configs[self.protocol_type].config["flow"],
-                        "email": str(user.id),
+                        "email": str(user.id.value.hex),
                         "expiryTime": int(subscription.end_date.timestamp()*1000),
                         "limitIp": subscription.device_count,
                         "totalGB": 0,
@@ -35,12 +35,12 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
             protocol_type=self.protocol_type,
             config=(
                 "vless://{id}@{ip}:{port}?security=reality&sni=google.com&fp=chrome&pbk={pbk}&"
-                "sid={short_id}&spx=%2F&type=tcp&flow=xtls-rprx-vision#{name}-{str(id)}"
+                "sid={short_id}&spx={spx}&type=tcp&flow={flow}#{name}-{id}"
             ).format(
                 **server.protocol_configs[self.protocol_type].config,
                 ip=server.ip,
                 port=server.port,
-                id=subscription.id
+                id=subscription.id.value.hex
                 )
         )
 

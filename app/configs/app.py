@@ -35,6 +35,14 @@ class AppConfig(BaseConfig):
     def mongo_url(self) -> str:
         return f"mongodb://{self.DATABASE_USERNAME}:{self.DATABASE_PASSWORD}@mongo:{self.DATABASE_PORT}/"
 
+    REDIS_HOST: str = 'redis'
+    REDIS_PORT: int = 6379
+
+    @computed_field
+    @property
+    def fsm_redis_url(self) -> str:
+        return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1'
+
     BROKER_URL: str = ""
 
     VPN_USERNAME: str = ""

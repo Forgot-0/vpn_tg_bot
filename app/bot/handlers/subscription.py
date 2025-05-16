@@ -1,6 +1,8 @@
+from uuid import UUID
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
+from application.commands.order.paid import PaidOrderCommand
 from application.commands.subscriptions.create import CreateSubscriptionCommand
 from application.mediator.mediator import Mediator
 from bot.messages.menu import VPNButton
@@ -65,5 +67,7 @@ async def process_protocol(
     payment_response, *_ = await mediator.handle_command(command)
     await callback_query.message.edit_text(**SubscriptionMessage().build(payment_response))
 
+    payment_id = payment_response.url.split("=")[-1]
+    await mediator.handle_command(PaidOrderCommand(payment_id=UUID(hex=payment_id)))
     await state.clear()
     await callback_query.answer()

@@ -1,7 +1,8 @@
 from aiogram import Bot, Dispatcher
 from aiogram.filters.exception import ExceptionTypeFilter
 from aiogram.types import ErrorEvent
-from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage
+from redis.asyncio.client import Redis
 
 from bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
 from bot.middlewares.mediator import MediatorMiddleware
@@ -31,7 +32,7 @@ async def handle_exception(event: ErrorEvent):
 
 
 def init_dispatch() -> Dispatcher:
-    dp = Dispatcher(storage=MemoryStorage())
+    dp = Dispatcher(storage=RedisStorage(Redis.from_url(settings.fsm_redis_url)))
     dp.startup.register(startup_bot)
     add_middlewares(dp=dp)
 
