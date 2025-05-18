@@ -20,6 +20,6 @@ class GetByTgIdQueryHandler(BaseQueryHandler[GetByTgIdQuery, list[SubscriptionDT
     async def handle(self, query: GetByTgIdQuery) -> list[SubscriptionDTO]:
         user = await self.user_repository.get_by_telegram_id(telegram_id=query.telegram_id)
         if not user: raise
-        subscription = await self.subscription_repository.get_by_user(user_id=user.id)
+        subscriptions = await self.subscription_repository.get_by_user(user_id=user.id)
 
-        return [SubscriptionDTO.from_entity(subscription) for subscription in subscription]
+        return [SubscriptionDTO.from_entity(subscription) for subscription in subscriptions]

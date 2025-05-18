@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
-from application.mediator.event_mediator import EventMediator
+from infrastructure.mediator.event_mediator import EventMediator
 
 
 @dataclass(frozen=True)

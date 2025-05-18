@@ -1,7 +1,7 @@
 from functools import lru_cache
 from punq import Container
-from application.mediator.mediator import Mediator
 from infrastructure.depends.container import _init_container
+from infrastructure.mediator.mediator import Mediator
 
 
 

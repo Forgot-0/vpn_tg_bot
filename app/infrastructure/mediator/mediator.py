@@ -6,8 +6,8 @@ from domain.events.base import BaseEvent
 from application.commands.base import CR, CT, BaseCommand, BaseCommandHandler
 from application.events.base import ER, ET, BaseEventHandler
 from application.exception import HandlersNotRegisteredExeption
-from application.mediator.event_mediator import EventMediator
 from application.queries.base import QR, QT, BaseQuery, BaseQueryHandler
+from infrastructure.mediator.event_mediator import EventMediator
 
 
 

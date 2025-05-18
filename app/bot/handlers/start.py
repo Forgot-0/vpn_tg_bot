@@ -4,8 +4,8 @@ from aiogram.filters.command import Command
 from aiogram.types import Message, CallbackQuery
 
 from application.commands.users.create import CreateUserCommand
-from application.mediator.mediator import Mediator
 from bot.messages.menu import AboutButton, AboutMessage, BackButton, HelpButton, HelpMessage, StartMessageBuilder
+from infrastructure.mediator.mediator import Mediator
 
 
 router = Router()
@@ -16,6 +16,10 @@ router = Router()
 
 @router.message(Command("start"))
 async def start(message: Message, mediator: Mediator):
+    data = StartMessageBuilder().build()
+    data['photo'] = data.pop("media").media
+    await message.answer_photo(**data)
+
 
     referred_by = message.text.split() # type: ignore
     if len(referred_by) == 2:
@@ -34,9 +38,6 @@ async def start(message: Message, mediator: Mediator):
         referred_by=referred_by
     ))
 
-    data = StartMessageBuilder().build()
-    await message.answer_photo(**data) # type: ignore
-
 @router.callback_query(F.data==BackButton.callback_data)
 async def menu(callback_query: CallbackQuery, state: FSMContext):
     data = StartMessageBuilder().build()
@@ -47,9 +48,11 @@ async def menu(callback_query: CallbackQuery, state: FSMContext):
 
 @router.callback_query(F.data==HelpButton.callback_data)
 async def help(callback_query: CallbackQuery):
+    await callback_query.answer()
     await callback_query.message.edit_media(**HelpMessage().build())
 
 
 @router.callback_query(F.data==AboutButton.callback_data)
 async def about(callback_query: CallbackQuery):
+    await callback_query.answer()
     await callback_query.message.edit_media(**AboutMessage().build())

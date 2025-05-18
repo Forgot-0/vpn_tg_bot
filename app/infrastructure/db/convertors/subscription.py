@@ -20,7 +20,6 @@ def convert_subscription_entity_to_document(subscription: Subscription) -> dict[
             },
             "user_id":subscription.user_id.value,
             "protocol_types": [pt.value for pt in subscription.protocol_types],
-            "active": subscription.is_active(),
         }
 
 def convert_subscription_document_to_entity(data: dict[str, Any]) -> Subscription:

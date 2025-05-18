@@ -8,6 +8,7 @@ from dataclasses import (
     dataclass,
     field,
 )
+from typing import Generic
 
 from domain.events.base import BaseEvent
 

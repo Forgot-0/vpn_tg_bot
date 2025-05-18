@@ -18,7 +18,7 @@ class Subscription(AggregateRoot):
 
     server_id: UUID
     region: Region
-    
+
     user_id: UserId
 
     protocol_types: list[ProtocolType]

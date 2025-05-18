@@ -39,7 +39,7 @@ class A3xUiApiClient(BaseApiClient):
             )
             for protocol_type in server.protocol_configs:
                 if protocol_type in subscription.protocol_types:
-                    builder = self.builder_factory.get(server.api_type, server.protocol_configs[protocol_type])
+                    builder = self.builder_factory.get(server.api_type, protocol_type)
                     resp = await session.post(
                         url=self.create_url(server=server),
                         json=builder.build_params(user=user, subscription=subscription, server=server),

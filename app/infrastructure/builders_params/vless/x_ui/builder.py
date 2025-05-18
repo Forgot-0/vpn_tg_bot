@@ -39,7 +39,6 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
             ).format(
                 **server.protocol_configs[self.protocol_type].config,
                 ip=server.ip,
-                port=server.port,
                 id=subscription.id.value.hex
                 )
         )

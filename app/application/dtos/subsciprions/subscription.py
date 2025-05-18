@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
+from uuid import UUID
 
 from application.dtos.base import BaseDTO
 from domain.entities.subscription import Subscription
@@ -10,7 +11,7 @@ from domain.values.subscriptions import SubscriptionId
 
 @dataclass
 class SubscriptionDTO(BaseDTO):
-    id: SubscriptionId
+    id: UUID
     duration: int
     start_date: datetime
     device_count: int
@@ -22,7 +23,7 @@ class SubscriptionDTO(BaseDTO):
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> 'SubscriptionDTO':
         return SubscriptionDTO(
-            id=SubscriptionId(data['id']),
+            id=UUID(data['id']) if isinstance(data['id'], str) else data['id'],
             duration=data['duration'],
             start_date=data['start_date'],
             device_count=data['device_count'],
@@ -35,7 +36,7 @@ class SubscriptionDTO(BaseDTO):
     @classmethod
     def from_entity(cls, entity: Subscription) -> 'SubscriptionDTO':
         return SubscriptionDTO(
-            id=entity.id,
+            id=entity.id.value,
             duration=entity.duration,
             start_date=entity.start_date,
             device_count=entity.device_count,

@@ -21,7 +21,7 @@ class ServerRepository(BaseMongoDBRepository, BaseServerRepository):
     async def update_decrement_free(self, server_id: UUID, decr: int = -1) -> None:
         await self._collection.update_one(
             {"_id": server_id},
-            {"$inc": {"free": decr}}
+            {"$inc": {"free": decr*-1}}
         )
 
     async def get_all(self) -> list[Server]:

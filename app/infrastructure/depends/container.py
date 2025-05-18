@@ -5,7 +5,6 @@ from punq import Container, Scope
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from application.mediator.mediator import Mediator
 from domain.repositories.discounts import BaseDiscountRepository, BaseDiscountUserRepository
 from domain.repositories.orders import BaseOrderRepository
 from domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
@@ -30,6 +29,7 @@ from infrastructure.depends.init_repositories import (
     init_mongo_user_repository
 )
 # from infrastructure.message_broker.base import BaseMessageBroker
+from infrastructure.mediator.mediator import Mediator
 from infrastructure.payments.base import BasePaymentService
 from infrastructure.tgbot.aiobot import AiohramTelegramBot
 from infrastructure.tgbot.base import BaseTelegramBot
