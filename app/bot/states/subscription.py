@@ -9,4 +9,3 @@ class CreateSubscriptionStates(StatesGroup):
 
 class SubscriptionStates(StatesGroup):
     subscription_id = State()
-    action = State()

@@ -9,7 +9,9 @@ class AppConfig(BaseConfig):
     BOT_TOKEN: str = ""
     BOT_OWNER_ID: int = 0
     BOT_USERNAME: str = ""
-    
+
+    CHAT_TELEGRAM: int = 0
+
     TELEGRAM_WEBHOOK_DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
 

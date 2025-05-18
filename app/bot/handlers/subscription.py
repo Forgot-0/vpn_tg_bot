@@ -103,18 +103,18 @@ async def subscription(
     data = SubscriptionMessage().build(subscription)
     await callback_query.message.edit_media(**data)
 
-    await state.set_state(SubscriptionStates.action)
 
-@router.callback_query(F.data==GetConfigSubscriptionButton.callback_data)
+@router.callback_query(F.data==GetConfigSubscriptionButton.callback_data, SubscriptionStates.subscription_id)
 async def get_config(
         callback_query: types.CallbackQuery,
         state: FSMContext,
         mediator: Mediator):
     data = await state.get_data()
-    
+
     configs = await mediator.handle_query(GetConfigQuery(UUID(data['subscription_id'])))
 
     await callback_query.message.edit_media(**ConfigMessage().build(configs))
 
     await state.clear()
     await callback_query.answer()
+

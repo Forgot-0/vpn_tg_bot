@@ -10,10 +10,21 @@ from domain.values.servers import ProtocolType, VPNConfig
 
 def vless_reply_markup_config_builder() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
-        inline_keyboard=[
-            []
-        ]
-    )
+            inline_keyboard=[
+                [InlineKeyboardButton(
+                    text="🍏 Mac OS/IOS",
+                    url="https://telegra.ph/Instrukciya-po-podklyucheniyu-VPN-Vless-i-ShadowSocks-dlya-IPhone-08-25"
+                )],
+                [InlineKeyboardButton(
+                    text="🤖 Android",
+                    url="https://telegra.ph/Instrukciya-po-podklyucheniyu-VPN-Vless-dlya-Android-11-18"
+                )],
+                [InlineKeyboardButton(
+                    text="🖥 Windows",
+                    url="https://telegra.ph/Instrukciya-po-podklyucheniyu-VPN-Vless-i-ShadowSocks-dlya-PK-08-25"
+                )],
+            ]
+        )
 
 
 def get_reply_markup_config_builder(protocol_type: ProtocolType) -> InlineKeyboardMarkup:

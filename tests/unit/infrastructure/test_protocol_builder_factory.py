@@ -14,7 +14,7 @@ def test_protocol_builder_factory(
         config={"dummy": "value"}
     )
     dummy_api_type = ApiType.mock
-    builder = protocol_builder_factory.get(dummy_api_type, dummy_config)
+    builder = protocol_builder_factory.get(dummy_api_type, dummy_config.protocol_type)
     params = builder.build_params(dummy_user, dummy_subscription, dummy_server)
     config_vpn = builder.builde_config_vpn(dummy_user, dummy_subscription, dummy_server)
     assert isinstance(params, dict)

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Any
 from uuid import UUID
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -28,7 +29,11 @@ class ListSubscriptionMessage(BaseMediaBuilder):
         content["reply_markup"] = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(
-                    text=f"Длительность: {subscription.duration}, регион: {subscription.flag}",
+                    text=(
+                    f"Осталось: "
+                    f"{max(((subscription.start_date + timedelta(days=subscription.duration))-datetime.now()).days, 0)}, "
+                    f"регион: {subscription.flag}"
+                    ),
                     callback_data=SubscriptionCallbackData(subscription_id=subscription.id).pack()
                 )]
                 for subscription in subscriptions
@@ -144,7 +149,13 @@ class SubscriptionMessage(BaseMediaBuilder):
 
     def build(self, subscription: SubscriptionDTO) -> dict[str, Any]:
         content =  super().build()
-        content['media'].caption = f"Ваша подписка"
+        left = (subscription.start_date + timedelta(days=subscription.duration))-datetime.now()
+        if left.days < 0: left = 0
+        content['media'].caption = (
+            f"Ваша подписка\n"
+            f"Осталось: {left}\n"
+            f"Регион: {subscription.flag}"
+        )
         content['reply_markup'] = InlineKeyboardMarkup(
             inline_keyboard=[
                 [

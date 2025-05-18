@@ -89,5 +89,13 @@
 #             }
 #         )
 
-# s = s.calculate(Subscription(360, 1, uuid4(), Region("🇳🇱", "Нидерланды", "NL"), uuid4(), [ProtocolType("VLESS")]))
+# s = s.calculate(Subscription(360, 10, uuid4(), Region("🇳🇱", "Нидерланды", "NL"), uuid4(), [ProtocolType("VLESS")]))
 # print(s, 99*12)
+
+# s = {Region("🇳🇱", "Нидерланды", "NL"), Region("🇳🇱", "Нидерланды", "NL")}
+# print(s)
+
+from datetime import datetime, timedelta
+
+
+print((datetime.now() - (datetime.now()-timedelta(days=90) + timedelta(days=30))))

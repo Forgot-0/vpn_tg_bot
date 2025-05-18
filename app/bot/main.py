@@ -22,7 +22,8 @@ async def startup_bot(bot: Bot):
 
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
-    dp.update.middleware(CheckSubsChannelMiddleware())
+    if settings.CHAT_TELEGRAM:
+        dp.update.middleware(CheckSubsChannelMiddleware())
 
 async def handle_exception(event: ErrorEvent):
     if event.update.message:
@@ -30,12 +31,11 @@ async def handle_exception(event: ErrorEvent):
     else:
         await event.update.callback_query.message.answer(event.exception.message) # type: ignore
 
-
 def init_dispatch() -> Dispatcher:
     dp = Dispatcher(storage=RedisStorage(Redis.from_url(settings.fsm_redis_url)))
     dp.startup.register(startup_bot)
     add_middlewares(dp=dp)
-
+    dp.feed_update
     dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
 
     dp.include_router(start_router)
