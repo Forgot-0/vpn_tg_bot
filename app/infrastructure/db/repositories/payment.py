@@ -1,15 +1,15 @@
 from datetime import datetime
 from uuid import UUID
-from domain.entities.order import Order, PaymentStatus
-from domain.repositories.orders import BaseOrderRepository
-from infrastructure.db.convertors.order import (
+from domain.entities.payment import Payment, PaymentStatus
+from domain.repositories.payment import BaseOrderRepository
+from infrastructure.db.convertors.payment import (
     convert_order_document_to_entity, convert_order_entity_to_document
 )
 from infrastructure.db.repositories.base import BaseMongoDBRepository
 
 
 class OrderRepository(BaseMongoDBRepository, BaseOrderRepository):
-    async def create(self, order: Order) -> None:
+    async def create(self, order: Payment) -> None:
         doc = convert_order_entity_to_document(order)
         await self._collection.insert_one(doc)
 
@@ -19,19 +19,19 @@ class OrderRepository(BaseMongoDBRepository, BaseOrderRepository):
             {"$set": {"status": PaymentStatus.succese.value, "payment_date": datetime.now()}}
         )
 
-    async def get_by_id(self, id: UUID) -> Order | None:
+    async def get_by_id(self, id: UUID) -> Payment | None:
         doc = await self._collection.find_one({"_id": id})
         return convert_order_document_to_entity(doc) if doc else None
 
-    async def get_by_user_id(self, user_id: int) -> list[Order]:
+    async def get_by_user_id(self, user_id: int) -> list[Payment]:
         cursor = self._collection.find({"user_id": user_id})
         docs = await cursor.to_list(length=None)
         return [convert_order_document_to_entity(d) for d in docs]
 
-    async def update(self, order: Order) -> None:
+    async def update(self, order: Payment) -> None:
         doc = convert_order_entity_to_document(order)
         await self._collection.replace_one({"_id": order.id}, doc)
     
-    async def get_by_payment_id(self, payment_id: UUID) -> Order | None:
+    async def get_by_payment_id(self, payment_id: UUID) -> Payment | None:
         document = await self._collection.find_one({"payment_id": payment_id})
         return convert_order_document_to_entity(document) if document else None

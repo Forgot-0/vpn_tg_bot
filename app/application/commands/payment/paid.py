@@ -3,7 +3,7 @@ import logging
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
-from domain.repositories.orders import BaseOrderRepository
+from domain.repositories.payment import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.users import BaseUserRepository
 from domain.values.servers import VPNConfig

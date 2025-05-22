@@ -1,7 +1,7 @@
 from uuid import UUID
 from aiohttp import web
 
-from application.commands.order.paid import PaidOrderCommand
+from application.commands.payment.paid import PaidOrderCommand
 from infrastructure.depends.init import get_mediator
 from infrastructure.mediator.mediator import Mediator
 

@@ -3,7 +3,7 @@ from uuid import UUID
 import aiohttp
 
 
-from domain.entities.order import Order
+from domain.entities.payment import Payment
 from infrastructure.payments.base import BasePaymentService
 
 
@@ -11,7 +11,7 @@ from infrastructure.payments.base import BasePaymentService
 class YooKassaPaymentService(BasePaymentService):
     auth_base64: str
 
-    async def create(self, order: Order) -> tuple[str, str]:
+    async def create(self, order: Payment) -> tuple[str, str]:
         url = 'https://api.yookassa.ru/v3/payments'
 
         headers = {

@@ -1,13 +1,13 @@
 from typing import Any
 
-from domain.entities.order import Order, PaymentStatus
+from domain.entities.payment import Payment, PaymentStatus
 from domain.values.users import UserId
 from infrastructure.db.convertors.subscription import (
     convert_subscription_document_to_entity,
     convert_subscription_entity_to_document
 )
 
-def convert_order_entity_to_document(order: Order) -> dict[str, Any]:
+def convert_order_entity_to_document(order: Payment) -> dict[str, Any]:
     return {
         "_id": order.id,
         "subscription": convert_subscription_entity_to_document(order.subscription),
@@ -20,8 +20,8 @@ def convert_order_entity_to_document(order: Order) -> dict[str, Any]:
         "discount": None
     }
 
-def convert_order_document_to_entity(data: dict[str, Any]) -> Order:
-    return Order(
+def convert_order_document_to_entity(data: dict[str, Any]) -> Payment:
+    return Payment(
         id=data["_id"],
         subscription=convert_subscription_document_to_entity(data["subscription"]),
         user_id=UserId(data["user_id"]),

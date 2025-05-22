@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from application.events.base import BaseEventHandler
-from domain.events.orders.paid import PaidOrderEvent
-from domain.repositories.orders import BaseOrderRepository
+from domain.events.paymens.paid import PaidOrderEvent
+from domain.repositories.payment import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
 
 

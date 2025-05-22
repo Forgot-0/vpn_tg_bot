@@ -1,8 +1,8 @@
 from uuid import uuid4
 import pytest
 
-from application.commands.order.paid import PaidOrderCommand, PaidOrderCommandHandler
-from domain.entities.order import Order, PaymentStatus
+from application.commands.payment.paid import PaidOrderCommand, PaidOrderCommandHandler
+from domain.entities.payment import Payment, PaymentStatus
 
 
 @pytest.mark.asyncio
@@ -20,7 +20,7 @@ async def test_paid_order_command_handler(
 ):
     mock_bot = mock_telegram_bot
 
-    order = Order.create(
+    order = Payment.create(
         subscription=dummy_subscription,
         user_id=dummy_user.id,
         discount=None,

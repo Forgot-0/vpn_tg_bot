@@ -2,7 +2,7 @@ from uuid import UUID
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from application.commands.order.paid import PaidOrderCommand
+from application.commands.payment.paid import PaidOrderCommand
 from application.commands.subscriptions.create import CreateSubscriptionCommand
 from application.dtos.subsciprions.subscription import SubscriptionDTO
 from application.queries.subscription.get_by_id import GetByIdQuery

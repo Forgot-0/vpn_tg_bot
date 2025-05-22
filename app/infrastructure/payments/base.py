@@ -3,14 +3,14 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from domain.entities.order import Order
+from domain.entities.payment import Payment
 
 
 @dataclass
 class BasePaymentService(ABC):
 
     @abstractmethod
-    async def create(self, order: Order) -> tuple[str, str]: ...
+    async def create(self, order: Payment) -> tuple[str, str]: ...
 
     @abstractmethod
     async def check(self, payment_id: UUID) -> dict[str, Any]: ...

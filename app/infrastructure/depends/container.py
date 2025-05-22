@@ -6,7 +6,7 @@ from punq import Container, Scope
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from domain.repositories.discounts import BaseDiscountRepository, BaseDiscountUserRepository
-from domain.repositories.orders import BaseOrderRepository
+from domain.repositories.payment import BaseOrderRepository
 from domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository

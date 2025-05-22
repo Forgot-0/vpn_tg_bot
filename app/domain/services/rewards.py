@@ -2,7 +2,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.entities.order import Order
+from domain.entities.payment import Payment
 from domain.entities.reward import Reward, RewardUser
 from domain.exception.base import AlredyReceiveRewardException
 from domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
@@ -24,7 +24,7 @@ class RewardService:
         )
         await self.reward_user_repository.create(reward_user=reward_user)
 
-    async def set_rewards_for_buy_referral(self, user_id: UserId, order: Order) -> None:
+    async def set_rewards_for_buy_referral(self, user_id: UserId, order: Payment) -> None:
         reward = await self.reward_repository.get_by_conditions(
             {
                 "conditions.buy_subscription": order.subscription.id

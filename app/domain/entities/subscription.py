@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from enum import Enum
 from uuid import UUID, uuid4
 
 from domain.entities.base import AggregateRoot
@@ -7,6 +8,11 @@ from domain.values.servers import ProtocolType, Region
 from domain.values.subscriptions import SubscriptionId
 from domain.values.users import UserId
 
+
+class SubscriptionStatus(Enum):
+    PENDING = "pending"
+    ACTIVE = "active"
+    EXPIRED = "expired"
 
 @dataclass
 class Subscription(AggregateRoot):
@@ -21,6 +27,7 @@ class Subscription(AggregateRoot):
 
     user_id: UserId
 
+    # status: SubscriptionStatus = field(default=SubscriptionStatus.PENDING, kw_only=True)
     protocol_types: list[ProtocolType]
 
     @property

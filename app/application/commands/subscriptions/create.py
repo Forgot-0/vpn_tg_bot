@@ -4,9 +4,9 @@ from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
 from application.dtos.payments.url import PaymentDTO
-from domain.entities.order import Order
+from domain.entities.payment import Payment
 from domain.entities.subscription import Subscription
-from domain.repositories.orders import BaseOrderRepository
+from domain.repositories.payment import BaseOrderRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
@@ -60,7 +60,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         await self.subscription_repository.create(subscription=subscription)
 
-        order = Order.create(
+        order = Payment.create(
             subscription=subscription,
             user_id=user.id,
             price=self.subs_price_service.calculate(subscription)
