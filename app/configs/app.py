@@ -52,9 +52,9 @@ class AppConfig(BaseConfig):
     VPN_SECRET: str = ""
 
 
-    LOG_LEVEL: str = 'ERROR'
-    JSON_LOG: bool = False
-    PATH_LOG: str | None = None
+    LOG_LEVEL: str = 'DEBUG'
+    JSON_LOG: bool = True
+    PATH_LOG: str | None = ".logs/logs.log"
     LOG_HANDLERS: Annotated[list[Literal['stream', 'file']] | str, BeforeValidator(BaseConfig.parse_list)] = ['stream']
 
 app_settings = AppConfig()

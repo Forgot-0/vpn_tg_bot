@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
@@ -8,6 +9,9 @@ from domain.repositories.users import BaseUserRepository
 from domain.values.servers import VPNConfig
 from infrastructure.api_client.factory import ApiClientFactory
 from infrastructure.tgbot.base import BaseTelegramBot
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -47,3 +51,5 @@ class PaidOrderCommandHandler(BaseCommandHandler[PaidOrderCommand, str]):
             await self.bot.send_vpn_configs(user.telegram_id, vpn_configs=vpn_configs)
 
         await self.mediator.publish(order.pull_events())
+
+        logger.info("Paid order", extra={"order": order})

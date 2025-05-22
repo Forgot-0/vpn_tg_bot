@@ -1,10 +1,12 @@
 from dataclasses import dataclass
+import logging
 
 from application.dtos.subsciprions.subscription import SubscriptionDTO
 from application.queries.base import BaseQuery, BaseQueryHandler
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
 
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -22,4 +24,10 @@ class GetByTgIdQueryHandler(BaseQueryHandler[GetByTgIdQuery, list[SubscriptionDT
         if not user: raise
         subscriptions = await self.subscription_repository.get_by_user(user_id=user.id)
 
-        return [SubscriptionDTO.from_entity(subscription) for subscription in subscriptions]
+        subscriptions_dto = [SubscriptionDTO.from_entity(subscription) for subscription in subscriptions]
+
+        logger.debug(
+            "Get subscription by tg id",
+            extra={"tg_id": query.telegram_id, "subscriptions": subscriptions_dto}
+        )
+        return subscriptions_dto

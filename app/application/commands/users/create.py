@@ -1,10 +1,14 @@
 from dataclasses import dataclass
+import logging
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
 from domain.entities.user import User
 from domain.repositories.users import BaseUserRepository
 from domain.values.users import UserId
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -22,6 +26,8 @@ class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
     user_repository: BaseUserRepository
 
     async def handle(self, command: CreateUserCommand) -> None:
+        user = await self.user_repository.get_by_telegram_id(telegram_id=command.tg_id)
+        if user: return 
 
         user = User.create(
             telegram_id=command.tg_id,
@@ -34,3 +40,4 @@ class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
 
         await self.user_repository.create(user=user)
         await self.mediator.publish(user.pull_events())
+        logger.info("Create user", extra={"user": user})

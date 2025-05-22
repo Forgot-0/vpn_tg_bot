@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
@@ -13,6 +14,8 @@ from domain.services.subscription import SubscriptionPricingService
 from domain.values.servers import ProtocolType, Region
 from infrastructure.payments.base import BasePaymentService
 
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -71,5 +74,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
         await self.mediator.publish(
             user.pull_events()+order.pull_events()+subscription.pull_events()+server.pull_events()
         )
+
+        logger.info("Create subscription", extra={"subscription": subscription})
 
         return PaymentDTO(url, order.total_price)

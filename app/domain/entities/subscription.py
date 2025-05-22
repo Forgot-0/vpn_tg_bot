@@ -35,3 +35,10 @@ class Subscription(AggregateRoot):
 
     def change_region(self, new_region: Region):
         self.region = new_region
+
+    def renew(self, duration: int):
+        if self.end_date < datetime.now():
+            self.start_date = datetime.now()
+            self.duration = duration
+        else:
+            self.duration += duration

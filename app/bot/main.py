@@ -1,3 +1,4 @@
+import logging
 from aiohttp import web
 from aiogram import Bot, Dispatcher
 from aiogram.filters.exception import ExceptionTypeFilter
@@ -15,6 +16,9 @@ from bot.handlers.start import router as start_router
 from bot.handlers.subscription import router as subscription_router
 
 
+logger = logging.getLogger(__name__)
+
+
 async def startup_bot(bot: Bot):
     await bot.set_webhook(
         url=app_settings.webhook_url,
@@ -28,6 +32,7 @@ def add_middlewares(dp: Dispatcher):
         dp.update.middleware(CheckSubsChannelMiddleware())
 
 async def handle_exception(event: ErrorEvent):
+    logger.error("Handle error", exc_info=event.exception, extra={"error": event.exception})
     if event.update.message:
         await event.update.message.answer(text=event.exception.message) # type: ignore
     else:
@@ -37,7 +42,6 @@ def init_dispatch() -> Dispatcher:
     dp = Dispatcher(storage=RedisStorage(Redis.from_url(app_settings.fsm_redis_url)))
     dp.startup.register(startup_bot)
     add_middlewares(dp=dp)
-    dp.feed_update
     dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
 
     dp.include_router(start_router)
