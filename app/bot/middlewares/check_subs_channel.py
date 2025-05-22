@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import Update
 from aiogram.enums import ChatMemberStatus
 
-from configs.app import settings
+from configs.app import app_settings
 
 
 class CheckSubsChannelMiddleware(BaseMiddleware):

@@ -53,6 +53,8 @@ class AppConfig(BaseConfig):
 
 
     LOG_LEVEL: str = 'ERROR'
+    JSON_LOG: bool = False
+    PATH_LOG: str | None = None
     LOG_HANDLERS: Annotated[list[Literal['stream', 'file']] | str, BeforeValidator(BaseConfig.parse_list)] = ['stream']
 
-settings = AppConfig()
+app_settings = AppConfig()

@@ -33,7 +33,7 @@ from infrastructure.mediator.mediator import Mediator
 from infrastructure.payments.base import BasePaymentService
 from infrastructure.tgbot.aiobot import AiohramTelegramBot
 from infrastructure.tgbot.base import BaseTelegramBot
-from configs.app import settings
+from configs.app import app_settings
 
 
 
@@ -52,7 +52,7 @@ def _init_container() -> Container:
     # MongoDB
 
     client: AsyncIOMotorClient = AsyncIOMotorClient(
-            settings.mongo_url,
+            app_settings.mongo_url,
             serverSelectionTimeoutMS=3000,
             uuidRepresentation='standard'
         )
@@ -140,7 +140,7 @@ def _init_container() -> Container:
     container.register(
         BaseTelegramBot,
         factory=lambda: AiohramTelegramBot(Bot(
-            token=settings.BOT_TOKEN,
+            token=app_settings.BOT_TOKEN,
             default=DefaultBotProperties(parse_mode='HTML')
             ),
         ),

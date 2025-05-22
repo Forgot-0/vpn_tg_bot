@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from aiohttp import ClientSession
 
-from configs.app import settings
+from configs.app import app_settings
 from domain.entities.server import Server
 from domain.entities.subscription import Subscription
 from domain.entities.user import User
@@ -32,9 +32,9 @@ class A3xUiApiClient(BaseApiClient):
             resp_login = await session.post(
                 self.login_url(server=server),
                 data={
-                    "username": settings.VPN_USERNAME,
-                    "password": settings.VPN_PASSWORD,
-                    "loginSecret": settings.VPN_SECRET
+                    "username": app_settings.VPN_USERNAME,
+                    "password": app_settings.VPN_PASSWORD,
+                    "loginSecret": app_settings.VPN_SECRET
                 }
             )
             for protocol_type in server.protocol_configs:

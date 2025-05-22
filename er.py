@@ -94,6 +94,9 @@
 
 # s = {Region("🇳🇱", "Нидерланды", "NL"), Region("🇳🇱", "Нидерланды", "NL")}
 # print(s)
+# ngrok http --url=probably-stable-tortoise.ngrok-free.app 8080
+
+
 
 from datetime import datetime, timedelta
 
