@@ -27,7 +27,7 @@ class Subscription(AggregateRoot):
 
     user_id: UserId
 
-    # status: SubscriptionStatus = field(default=SubscriptionStatus.PENDING, kw_only=True)
+    status: SubscriptionStatus = field(default=SubscriptionStatus.PENDING, kw_only=True)
     protocol_types: list[ProtocolType]
 
     @property
@@ -37,13 +37,25 @@ class Subscription(AggregateRoot):
     def is_active(self) -> bool:
         return datetime.now() < self.start_date + timedelta(days=self.duration)
 
+    def activate(self) -> None:
+        self.status = SubscriptionStatus.ACTIVE
+
     def upgrade_devices(self, new_device_count: int):
+        if self.status in (SubscriptionStatus.EXPIRED, SubscriptionStatus.PENDING):
+            raise
+
         self.device_count = new_device_count
 
     def change_region(self, new_region: Region):
+        if self.status in (SubscriptionStatus.EXPIRED, SubscriptionStatus.PENDING):
+            raise
+
         self.region = new_region
 
     def renew(self, duration: int):
+        if self.status  == SubscriptionStatus.PENDING:
+            raise
+
         if self.end_date < datetime.now():
             self.start_date = datetime.now()
             self.duration = duration

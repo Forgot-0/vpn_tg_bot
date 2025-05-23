@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 from domain.entities.base import AggregateRoot
 from domain.entities.discount import Discount
 from domain.entities.subscription import Subscription
-from domain.events.paymens.paid import PaidOrderEvent
+from domain.events.paymens.paid import PaidPaymentEvent
 from domain.values.users import UserId
 
 
@@ -64,9 +64,9 @@ class Payment(AggregateRoot):
         self.status = PaymentStatus("SUCCESE")
 
         self.register_event(
-            PaidOrderEvent(
+            PaidPaymentEvent(
                 order_id=self.id,
-                user_id=self.user_id,
+                user_id=self.user_id.value,
                 end_time=self.payment_date + timedelta(days=self.subscription.duration)
             )
         )

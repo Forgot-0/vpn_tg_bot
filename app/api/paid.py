@@ -1,7 +1,7 @@
 from uuid import UUID
 from aiohttp import web
 
-from application.commands.payment.paid import PaidOrderCommand
+from application.commands.payment.paid import PaidPaymentCommand
 from infrastructure.depends.init import get_mediator
 from infrastructure.mediator.mediator import Mediator
 
@@ -15,7 +15,7 @@ async def paid(requests: web.Request):
     mediator: Mediator = get_mediator()
 
     await mediator.handle_command(
-        PaidOrderCommand(
+        PaidPaymentCommand(
             payment_id=UUID(hex=data['object']['id']),
         )
     )

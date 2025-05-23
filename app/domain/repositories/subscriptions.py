@@ -26,3 +26,6 @@ class BaseSubscriptionRepository(ABC):
 
     @abstractmethod
     async def get_by_user(self, user_id: UserId) -> list[Subscription]: ...
+
+    @abstractmethod
+    async def update(self, subscription: Subscription) -> None: ...

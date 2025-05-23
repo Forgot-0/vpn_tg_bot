@@ -6,7 +6,7 @@ from punq import Container, Scope
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from domain.repositories.discounts import BaseDiscountRepository, BaseDiscountUserRepository
-from domain.repositories.payment import BaseOrderRepository
+from domain.repositories.payment import BasePaymentRepository
 from domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
@@ -23,7 +23,7 @@ from infrastructure.builders_params.vless.x_ui.builder import Vless3XUIProtocolB
 from infrastructure.depends.init_mediator import init_mediator
 from infrastructure.depends.init_payment import inti_yookass
 from infrastructure.depends.init_repositories import (
-    init_mongo_order_repository,
+    init_mongo_payment_repository,
     init_mongo_server_repository,
     init_mongo_subscription_repository,
     init_mongo_user_repository
@@ -71,8 +71,8 @@ def _init_container() -> Container:
     )
 
     container.register(
-        BaseOrderRepository, 
-        factory=lambda: init_mongo_order_repository(client),
+        BasePaymentRepository, 
+        factory=lambda: init_mongo_payment_repository(client),
         scope=Scope.singleton
     )
 

@@ -42,7 +42,7 @@ class Mediator(EventMediator):
         result = []
 
         for event in events:
-            handlers = self.events_map.get(event.__class__)
+            handlers = self.events_map.get(event.__class__, []) + self.events_map.get(BaseEvent, [])
             if not handlers:
                 raise HandlersNotRegisteredExeption(event.__class__)
             result.extend([await handler.handle(event) for handler in handlers])

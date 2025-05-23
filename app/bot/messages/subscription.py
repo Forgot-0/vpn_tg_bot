@@ -72,11 +72,11 @@ class DaysMessage(BaseMediaBuilder):
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="🎟 1 месяц 🎟", callback_data=DaysCallbackData(days=30).pack()),
-                InlineKeyboardButton(text="🎫 3 месяца 🎫", callback_data=DaysCallbackData(days=60).pack()),
+                InlineKeyboardButton(text="🎫 3 месяца 🎫", callback_data=DaysCallbackData(days=90).pack()),
             ],
             [
-                InlineKeyboardButton(text="🏆 6 месяцев 🏆", callback_data=DaysCallbackData(days=90).pack()),
-                InlineKeyboardButton(text="💎 1 год 💎", callback_data=DaysCallbackData(days=180).pack()),
+                InlineKeyboardButton(text="🏆 6 месяцев 🏆", callback_data=DaysCallbackData(days=180).pack()),
+                InlineKeyboardButton(text="💎 1 год 💎", callback_data=DaysCallbackData(days=360).pack()),
             ],
             [InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]
         ]
@@ -130,9 +130,9 @@ class BuySubscriptionMessage(BaseMediaBuilder):
 
         return content
 
-class ExtendSubscriptionButton:
+class RenewSubscriptionButton:
     text = "Продлить ⏱️"
-    callback_data = "extend"
+    callback_data = "renew"
 
 class GetConfigSubscriptionButton:
     text = "Получить 🔐"
@@ -160,8 +160,8 @@ class SubscriptionMessage(BaseMediaBuilder):
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text=ExtendSubscriptionButton.text,
-                        callback_data=ExtendSubscriptionButton.callback_data
+                        text=RenewSubscriptionButton.text,
+                        callback_data=RenewSubscriptionButton.callback_data
                     ),
                     InlineKeyboardButton(
                         text=GetConfigSubscriptionButton.text,

@@ -1,7 +1,7 @@
 from uuid import uuid4
 import pytest
 
-from application.commands.payment.paid import PaidOrderCommand, PaidOrderCommandHandler
+from application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
 from domain.entities.payment import Payment, PaymentStatus
 
 
@@ -33,11 +33,11 @@ async def test_paid_order_command_handler(
     mock_user_repository._data[dummy_user.id] = dummy_user
     mock_server_repository._data[dummy_server.id] = dummy_server
 
-    command = PaidOrderCommand(payment_id=order.payment_id)
+    command = PaidPaymentCommand(payment_id=order.payment_id)
 
-    handler = PaidOrderCommandHandler(
+    handler = PaidPaymentCommandHandler(
         user_repository=mock_user_repository,
-        order_repository=mock_order_repository,
+        payment_repository=mock_order_repository,
         server_repository=mock_server_repository,
         api_panel_factory=api_client_factory,
         bot=mock_bot,

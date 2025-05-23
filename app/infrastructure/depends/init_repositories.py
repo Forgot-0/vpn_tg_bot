@@ -1,7 +1,7 @@
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from infrastructure.db.repositories.payment import OrderRepository
+from infrastructure.db.repositories.payment import PaymentRepository
 from infrastructure.db.repositories.server import ServerRepository
 from infrastructure.db.repositories.subscription import SubscriptionRepository
 from infrastructure.db.repositories.user import UserRepository
@@ -22,11 +22,11 @@ def init_mongo_subscription_repository(client: AsyncIOMotorClient):
         mongo_db_collection_name='subscriptions',
     )
 
-def init_mongo_order_repository(client: AsyncIOMotorClient):
-    return OrderRepository(
+def init_mongo_payment_repository(client: AsyncIOMotorClient):
+    return PaymentRepository(
         mongo_db_client=client,
         mongo_db_db_name='test',
-        mongo_db_collection_name='orders',
+        mongo_db_collection_name='payments',
     )
 
 

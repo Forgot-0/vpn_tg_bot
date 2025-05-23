@@ -2,8 +2,9 @@ from uuid import UUID
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from application.commands.payment.paid import PaidOrderCommand
+from application.commands.payment.paid import PaidPaymentCommand
 from application.commands.subscriptions.create import CreateSubscriptionCommand
+from application.commands.subscriptions.renew import RenewSubscriptionCommand
 from application.dtos.subsciprions.subscription import SubscriptionDTO
 from application.queries.subscription.get_by_id import GetByIdQuery
 from application.queries.subscription.get_by_tgid import GetByTgIdQuery
@@ -21,6 +22,7 @@ from bot.messages.subscription import (
     ProtocolTypeCallbackData,
     ProtocolTypeMessage,
     BuySubscriptionMessage,
+    RenewSubscriptionButton,
     SubscriptionCallbackData,
     SubscriptionMessage
 )
@@ -86,7 +88,6 @@ async def process_protocol(
 
     payment_response, *_ = await mediator.handle_command(command)
     await callback_query.message.edit_media(**BuySubscriptionMessage().build(payment_response))
-
     await callback_query.answer()
     await state.clear()
 
@@ -103,7 +104,6 @@ async def subscription(
     data = SubscriptionMessage().build(subscription)
     await callback_query.message.edit_media(**data)
 
-
 @router.callback_query(F.data==GetConfigSubscriptionButton.callback_data, SubscriptionStates.subscription_id)
 async def get_config(
         callback_query: types.CallbackQuery,
@@ -117,4 +117,33 @@ async def get_config(
 
     await state.clear()
     await callback_query.answer()
+
+
+@router.callback_query(F.data==RenewSubscriptionButton.callback_data, SubscriptionStates.subscription_id)
+async def renew_duration(
+        callback_query: types.CallbackQuery,
+        state: FSMContext):
+    await callback_query.message.edit_media(**DaysMessage().build())
+    await state.set_state(SubscriptionStates.renew)
+    await callback_query.answer()
+
+
+@router.callback_query(DaysCallbackData.filter(), SubscriptionStates.renew)
+async def renew(
+        callback_query: types.CallbackQuery,
+        callback_data: DaysCallbackData,
+        state: FSMContext,
+        mediator: Mediator):
+    data = await state.get_data()
+    payment_response, *_ = await mediator.handle_command(
+        RenewSubscriptionCommand(
+            subscription_id=UUID(data['subscription_id']),
+            duration=callback_data.days
+        )
+    )
+    await callback_query.message.edit_media(**BuySubscriptionMessage().build(payment_response))
+
+    await state.clear()
+    await callback_query.answer()
+
 

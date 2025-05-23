@@ -1,6 +1,6 @@
 from typing import Any
 from uuid import UUID
-from domain.entities.subscription import Subscription
+from domain.entities.subscription import Subscription, SubscriptionStatus
 from domain.values.servers import ProtocolType, Region
 from domain.values.subscriptions import SubscriptionId
 from domain.values.users import UserId
@@ -19,6 +19,7 @@ def convert_subscription_entity_to_document(subscription: Subscription) -> dict[
                 "code": subscription.region.code
             },
             "user_id":subscription.user_id.value,
+            "status": subscription.status.value,
             "protocol_types": [pt.value for pt in subscription.protocol_types],
         }
 
@@ -31,5 +32,6 @@ def convert_subscription_document_to_entity(data: dict[str, Any]) -> Subscriptio
             server_id=UUID(data["server_id"]),
             region=Region(**data["region"]),
             user_id=UserId(data['user_id']),
+            status=SubscriptionStatus(data['status']),
             protocol_types=[ProtocolType(pt) for pt in data["protocol_types"]]
         )

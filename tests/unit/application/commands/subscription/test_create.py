@@ -31,7 +31,7 @@ async def test_create_subscription_command_handler(
     handler = CreateSubscriptionCommandHandler(
         user_repository=mock_user_repository,
         subscription_repository=mock_subscription_repository,
-        order_repository=mock_order_repository,
+        payment_repository=mock_order_repository,
         server_repository=mock_server_repository,
         payment_service=mock_payment_service,
         subs_price_service=subs_price_service,

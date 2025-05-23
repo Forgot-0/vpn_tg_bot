@@ -6,6 +6,8 @@ from uuid import UUID
 import orjson
 import structlog
 
+from domain.values.base import BaseValueObject
+
 logger = logging.getLogger(__name__)
 
 ProcessorType = Callable[
@@ -21,6 +23,8 @@ ProcessorType = Callable[
 def additionally_serialize(obj: object) -> Any:
     if isinstance(obj, UUID):
         return str(obj)
+    if isinstance(obj, BaseValueObject):
+        return obj.as_generic_type()
 
     logger.warning("Not serializable: %s", type(obj), extra={"obj": repr(obj)})
     return repr(obj)

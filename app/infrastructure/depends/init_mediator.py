@@ -1,13 +1,16 @@
 from punq import Container
 
+from application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
 from application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
-from application.commands.payment.paid import PaidOrderCommand, PaidOrderCommandHandler
+from application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
 from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
 from application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
 from application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
 from application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
-from domain.events.paymens.paid import PaidOrderEvent
+from domain.events.base import BaseEvent
+from domain.events.paymens.paid import PaidPaymentEvent
 from application.events.server.deecrement_free import DecrementFreeServerEventHandler
+from infrastructure.log.event_handler import LogHandlerEvent
 from infrastructure.mediator.event_mediator import EventMediator
 from infrastructure.mediator.mediator import Mediator
 
@@ -17,22 +20,31 @@ def init_mediator(container: Container) -> Mediator:
 
     container.register(EventMediator, instance=mediator)
 
+    container.register(LogHandlerEvent)
+    mediator.register_event(BaseEvent, [container.resolve(LogHandlerEvent)])
+
     container.register(CreateUserCommandHandler)
     mediator.register_command(
         CreateUserCommand,
         [container.resolve(CreateUserCommandHandler)]
     )
 
-    container.register(PaidOrderCommandHandler)
+    container.register(PaidPaymentCommandHandler)
     mediator.register_command(
-        PaidOrderCommand,
-        [container.resolve(PaidOrderCommandHandler)]
+        PaidPaymentCommand,
+        [container.resolve(PaidPaymentCommandHandler)]
     )
 
     container.register(CreateSubscriptionCommandHandler)
     mediator.register_command(
         CreateSubscriptionCommand,
         [container.resolve(CreateSubscriptionCommandHandler)]
+    )
+
+    container.register(RenewSubscriptionCommandHandler)
+    mediator.register_command(
+        RenewSubscriptionCommand,
+        [container.resolve(RenewSubscriptionCommandHandler)]
     )
 
     container.register(GetByTgIdQueryHandler)
@@ -55,7 +67,7 @@ def init_mediator(container: Container) -> Mediator:
 
     container.register(DecrementFreeServerEventHandler)
     mediator.register_event(
-        PaidOrderEvent,
+        PaidPaymentEvent,
         [container.resolve(DecrementFreeServerEventHandler)]
     )
 

@@ -20,7 +20,7 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
                     {
                         "id": str(subscription.id.value.hex),
                         "flow": server.protocol_configs[self.protocol_type].config["flow"],
-                        "email": str(user.id.value.hex),
+                        "email": str(subscription.id.value.hex),
                         "expiryTime": int(subscription.end_date.timestamp()*1000),
                         "limitIp": subscription.device_count,
                         "totalGB": 0,

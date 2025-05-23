@@ -1,10 +1,10 @@
 from typing import List, Optional
 from uuid import UUID
 from domain.entities.payment import Payment, PaymentStatus
-from domain.repositories.payment import BaseOrderRepository
+from domain.repositories.payment import BasePaymentRepository
 
 
-class MockOrderRepository(BaseOrderRepository):
+class MockOrderRepository(BasePaymentRepository):
     def __init__(self):
         self._data: dict[UUID, Payment] = {}
 

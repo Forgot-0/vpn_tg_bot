@@ -9,3 +9,4 @@ class CreateSubscriptionStates(StatesGroup):
 
 class SubscriptionStates(StatesGroup):
     subscription_id = State()
+    renew = State()

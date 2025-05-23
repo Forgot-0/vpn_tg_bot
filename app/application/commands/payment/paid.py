@@ -3,8 +3,9 @@ import logging
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
-from domain.repositories.payment import BaseOrderRepository
+from domain.repositories.payment import BasePaymentRepository
 from domain.repositories.servers import BaseServerRepository
+from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
 from domain.values.servers import VPNConfig
 from infrastructure.api_client.factory import ApiClientFactory
@@ -15,41 +16,43 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class PaidOrderCommand(BaseCommand):
+class PaidPaymentCommand(BaseCommand):
     payment_id: UUID
 
 
 @dataclass(frozen=True)
-class PaidOrderCommandHandler(BaseCommandHandler[PaidOrderCommand, str]):
+class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
     user_repository: BaseUserRepository
-    order_repository: BaseOrderRepository
+    payment_repository: BasePaymentRepository
+    subscription_repository: BaseSubscriptionRepository
     server_repository: BaseServerRepository
     api_panel_factory: ApiClientFactory
     bot: BaseTelegramBot
 
-    async def handle(self, command: PaidOrderCommand) -> None:
-        order = await self.order_repository.get_by_payment_id(payment_id=command.payment_id)
-        if not order:
+    async def handle(self, command: PaidPaymentCommand) -> None:
+        payment = await self.payment_repository.get_by_payment_id(payment_id=command.payment_id)
+        if not payment:
             raise
 
-        user = await self.user_repository.get_by_id(id=order.user_id)
+        user = await self.user_repository.get_by_id(id=payment.user_id)
 
         if not user: raise
 
-        order.paid()
-        server = await self.server_repository.get_by_id(server_id=order.subscription.server_id)
+        payment.paid()
+        payment.subscription.activate()
+        await self.subscription_repository.update(subscription=payment.subscription)
 
+        server = await self.server_repository.get_by_id(server_id=payment.subscription.server_id)
         if not server: raise
 
-        await self.order_repository.update(order=order)
+        await self.payment_repository.update(payment=payment)
 
         api_client = self.api_panel_factory.get(server.api_type)
-        vpn_configs = await api_client.create_subscription(user=user, subscription=order.subscription, server=server)
-
+        vpn_configs = await api_client.create_subscription(user=user, subscription=payment.subscription, server=server)
 
         if user.telegram_id:
             await self.bot.send_vpn_configs(user.telegram_id, vpn_configs=vpn_configs)
 
-        await self.mediator.publish(order.pull_events())
+        await self.mediator.publish(payment.pull_events())
 
-        logger.info("Paid order", extra={"order": order})
+        logger.info("Paid order", extra={"order": payment})

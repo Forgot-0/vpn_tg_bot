@@ -37,3 +37,7 @@ class SubscriptionRepository(BaseMongoDBRepository, BaseSubscriptionRepository):
     async def get_by_user(self, user_id: UserId) -> list[Subscription]:
         docs = await self._collection.find({"user_id": user_id.value}).to_list(length=None)
         return [convert_subscription_document_to_entity(d) for d in docs]
+
+    async def update(self, subscription: Subscription) -> None:
+        doc = convert_subscription_entity_to_document(subscription)
+        await self._collection.replace_one({"_id": subscription.id.value}, doc)

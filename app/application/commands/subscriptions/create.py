@@ -6,7 +6,7 @@ from application.commands.base import BaseCommand, BaseCommandHandler
 from application.dtos.payments.url import PaymentDTO
 from domain.entities.payment import Payment
 from domain.entities.subscription import Subscription
-from domain.repositories.payment import BaseOrderRepository
+from domain.repositories.payment import BasePaymentRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
@@ -29,7 +29,7 @@ class CreateSubscriptionCommand(BaseCommand):
 @dataclass(frozen=True)
 class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, PaymentDTO]):
     user_repository: BaseUserRepository
-    order_repository: BaseOrderRepository
+    payment_repository: BasePaymentRepository
     server_repository: BaseServerRepository
     subscription_repository: BaseSubscriptionRepository
     subs_price_service: SubscriptionPricingService
@@ -60,21 +60,21 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         await self.subscription_repository.create(subscription=subscription)
 
-        order = Payment.create(
+        payment = Payment.create(
             subscription=subscription,
             user_id=user.id,
             price=self.subs_price_service.calculate(subscription)
         )
 
-        url, payment_id = await self.payment_service.create(order=order)
-        order.payment_id = UUID(payment_id)
+        url, payment_id = await self.payment_service.create(order=payment)
+        payment.payment_id = UUID(payment_id)
 
-        await self.order_repository.create(order=order)
+        await self.payment_repository.create(payment=payment)
 
         await self.mediator.publish(
-            user.pull_events()+order.pull_events()+subscription.pull_events()+server.pull_events()
+            user.pull_events()+payment.pull_events()+subscription.pull_events()+server.pull_events()
         )
 
         logger.info("Create subscription", extra={"subscription": subscription})
 
-        return PaymentDTO(url, order.total_price)
+        return PaymentDTO(url, payment.total_price)

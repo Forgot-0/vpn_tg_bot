@@ -48,20 +48,20 @@ class User(AggregateRoot):
             referred_by=referred_by
         )
 
-        # if referred_by:
-        #     user.register_event(
-        #         ReferredUserEvent(
-        #             referral_id=user.id,
-        #             referred_by=referred_by
-        #         )
-        #     )
+        if referred_by:
+            user.register_event(
+                ReferredUserEvent(
+                    referral_id=user.id.value,
+                    referred_by=referred_by.value
+                )
+            )
 
-        # user.register_event(
-        #     NewUserEvent(
-        #         user_id=user.id,
-        #         username=user.username
-        #     )
-        # )
+        user.register_event(
+            NewUserEvent(
+                user_id=user.id.value,
+                username=user.username
+            )
+        )
 
         return user
 
@@ -73,7 +73,7 @@ class User(AggregateRoot):
 
         self.register_event(
             ReferralAssignedEvent(
-                user_id=self.id,
-                referral_id=referral_id
+                user_id=self.id.value,
+                referral_id=referral_id.value
             )
         )
