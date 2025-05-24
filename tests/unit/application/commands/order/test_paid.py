@@ -8,8 +8,9 @@ from domain.entities.payment import Payment, PaymentStatus
 @pytest.mark.asyncio
 async def test_paid_order_command_handler(
     mock_user_repository,
-    mock_order_repository,
+    mock_payment_repository,
     mock_server_repository,
+    mock_subscription_repository,
     api_client_factory,
     dummy_user,
     dummy_subscription,
@@ -29,7 +30,7 @@ async def test_paid_order_command_handler(
     order.payment_id = uuid4()
     order.status = PaymentStatus.pending
 
-    mock_order_repository._data[order.payment_id] = order
+    mock_payment_repository._data[order.payment_id] = order
     mock_user_repository._data[dummy_user.id] = dummy_user
     mock_server_repository._data[dummy_server.id] = dummy_server
 
@@ -37,15 +38,16 @@ async def test_paid_order_command_handler(
 
     handler = PaidPaymentCommandHandler(
         user_repository=mock_user_repository,
-        payment_repository=mock_order_repository,
+        payment_repository=mock_payment_repository,
         server_repository=mock_server_repository,
+        subscription_repository=mock_subscription_repository,
         api_panel_factory=api_client_factory,
         bot=mock_bot,
         mediator=mock_event_mediator
     )
 
     ret = await handler.handle(command)
-    updated_order = await mock_order_repository.get_by_payment_id(order.payment_id)
+    updated_order = await mock_payment_repository.get_by_payment_id(order.payment_id)
     assert updated_order.status == PaymentStatus.succese
 
     assert len(mock_bot.data) > 0

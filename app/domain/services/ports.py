@@ -11,13 +11,13 @@ from domain.values.servers import ProtocolType, VPNConfig
 
 class BaseApiClient(ABC):
     @abstractmethod
-    async def create_subscription(self,user: User, subscription: Subscription, server: Server) -> list[VPNConfig]: ...
+    async def create_or_upgrade_subscription(
+        self,user: User,
+        subscription: Subscription,
+        server: Server) -> list[VPNConfig]: ...
 
     @abstractmethod
     async def delete_inactive_clients(self, user: User, subscription: Subscription, server: Server) -> None: ...
-
-    @abstractmethod
-    async def upgrade_client(self, user: User, subscription: Subscription, server: Server) -> None:...
 
 
 @dataclass

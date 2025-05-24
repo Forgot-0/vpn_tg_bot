@@ -24,10 +24,18 @@ class A3xUiApiClient(BaseApiClient):
 
     def create_url(self, server: Server) -> str:
         return f"{self._base_url(server)}/panel/api/inbounds/addClient"
+    
+    def upgrade_url(self, server: Server, id: str) -> str:
+        return f"{self._base_url(server)}/panel/api/inbounds/updateClient/{id}"
 
-    async def create_subscription(self, user: User, subscription: Subscription, server: Server) -> list[VPNConfig]:
-        vpn_config = []
-        
+    async def create_or_upgrade_subscription(
+            self,
+            user: User,
+            subscription: Subscription,
+            server: Server
+        ) -> list[VPNConfig]:
+        vpn_configs = []
+
         async with ClientSession() as session:
             resp_login = await session.post(
                 self.login_url(server=server),
@@ -38,22 +46,27 @@ class A3xUiApiClient(BaseApiClient):
                 }
             )
             for protocol_type in server.protocol_configs:
+                builder = self.builder_factory.get(server.api_type, protocol_type)
+                json = builder.build_params(user=user, subscription=subscription, server=server)
                 if protocol_type in subscription.protocol_types:
-                    builder = self.builder_factory.get(server.api_type, protocol_type)
+                    
                     resp = await session.post(
                         url=self.create_url(server=server),
-                        json=builder.build_params(user=user, subscription=subscription, server=server),
+                        json=json,
                         cookies=resp_login.cookies
                     )
-                    vpn_config.append(builder.builde_config_vpn(user=user, subscription=subscription, server=server))
+
                     resp = await resp.json()
 
-                    if not resp['success']:
-                        pass 
+                    if "Duplicate email:" in resp.get("msg", ""):
+                        resp = await session.post(
+                            url=self.upgrade_url(server=server, id=str(subscription.id.value.hex)),
+                            json=json,
+                            cookies=resp_login.cookies
+                        )
 
-        return vpn_config
+                vpn_configs.append(builder.builde_config_vpn(user, subscription, server))
 
-    async def upgrade_client(self, user: User, subscription: Subscription, server: Server) -> None:
-        ...
+        return vpn_configs
 
     async def delete_inactive_clients(self) -> None: ...

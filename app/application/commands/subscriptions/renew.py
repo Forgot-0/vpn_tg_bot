@@ -40,7 +40,6 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
 
         subscription.renew(command.duration)
         new_price = abs(current_price - self.subs_price_service.calculate(subscription))
-        print(new_price, current_price, subscription, self.subs_price_service.calculate(subscription))
         payment = Payment.create(
             subscription=subscription,
             user_id=subscription.user_id,

@@ -12,5 +12,5 @@ async def test_api_client_factory(
 ):
     dummy_api_type = ApiType.mock
     client = api_client_factory.get(dummy_api_type)
-    result = await client.create_subscription(dummy_user, dummy_subscription, dummy_server)
+    result = await client.create_or_upgrade_subscription(dummy_user, dummy_subscription, dummy_server)
     assert isinstance(result, list)

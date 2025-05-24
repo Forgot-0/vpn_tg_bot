@@ -8,7 +8,10 @@ class MockApiClient(BaseApiClient):
     def __init__(self) -> None:
         self.data = {}
 
-    async def create_subscription(self, user: User, subscription: Subscription, server: Server) -> list[VPNConfig]:
+    async def create_or_upgrade_subscription(
+            self, user: User, subscription: Subscription,
+            server: Server
+        ) -> list[VPNConfig]:
         dummy_config = VPNConfig(
             protocol_type=ProtocolType.mock,
             config="dummy_config"
@@ -20,6 +23,3 @@ class MockApiClient(BaseApiClient):
     async def delete_inactive_clients(self, user: User, subscription: Subscription, server: Server) -> None:
         key = (user.id, subscription.id, server.id)
         self.data.pop(key)
-
-    async def upgrade_client(self, user: User, subscription: Subscription, server: Server) -> None:
-        return

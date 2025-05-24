@@ -154,18 +154,19 @@ class SubscriptionMessage(BaseMediaBuilder):
         content['media'].caption = (
             f"Ваша подписка\n"
             f"Осталось: {left}\n"
-            f"Регион: {subscription.flag}"
+            f"Регион: {subscription.flag}\n"
+            f"Кол-во устройств: {subscription.device_count}"
         )
         content['reply_markup'] = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text=RenewSubscriptionButton.text,
-                        callback_data=RenewSubscriptionButton.callback_data
-                    ),
-                    InlineKeyboardButton(
                         text=GetConfigSubscriptionButton.text,
                         callback_data=GetConfigSubscriptionButton.callback_data
+                    ),
+                    InlineKeyboardButton(
+                        text=RenewSubscriptionButton.text,
+                        callback_data=RenewSubscriptionButton.callback_data
                     ),
                     InlineKeyboardButton(
                         text=f"{ChangeRegionSubscriptionButton.text} {subscription.flag}",

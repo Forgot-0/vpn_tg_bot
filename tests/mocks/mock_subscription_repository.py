@@ -35,3 +35,6 @@ class MockSubscriptionRepository(BaseSubscriptionRepository):
             if subs.user_id == user_id:
                 res.append(res)
         return res
+    
+    async def update(self, subscription: Subscription) -> None:
+        self._data[subscription.id] = subscription

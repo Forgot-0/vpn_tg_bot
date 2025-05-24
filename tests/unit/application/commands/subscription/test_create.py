@@ -9,7 +9,7 @@ from domain.values.servers import ProtocolType
 async def test_create_subscription_command_handler(
     mock_subscription_repository,
     mock_user_repository,
-    mock_order_repository,
+    mock_payment_repository,
     mock_server_repository,
     mock_payment_service,
     subs_price_service,
@@ -31,7 +31,7 @@ async def test_create_subscription_command_handler(
     handler = CreateSubscriptionCommandHandler(
         user_repository=mock_user_repository,
         subscription_repository=mock_subscription_repository,
-        payment_repository=mock_order_repository,
+        payment_repository=mock_payment_repository,
         server_repository=mock_server_repository,
         payment_service=mock_payment_service,
         subs_price_service=subs_price_service,

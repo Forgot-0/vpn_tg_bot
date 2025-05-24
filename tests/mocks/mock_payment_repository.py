@@ -4,30 +4,30 @@ from domain.entities.payment import Payment, PaymentStatus
 from domain.repositories.payment import BasePaymentRepository
 
 
-class MockOrderRepository(BasePaymentRepository):
+class MockPaymentRepository(BasePaymentRepository):
     def __init__(self):
         self._data: dict[UUID, Payment] = {}
 
-    async def create(self, order: Payment) -> None:
-        self._data[order.id] = order
+    async def create(self, payment: Payment) -> None:
+        self._data[payment.id] = payment
 
     async def pay(self, id: UUID) -> None:
         if id in self._data:
-            order = self._data[id]
-            order.status = PaymentStatus("SUCCESE")
-            self._data[id] = order
+            payment = self._data[id]
+            payment.status = PaymentStatus("SUCCESE")
+            self._data[id] = payment
 
     async def get_by_id(self, id: UUID) -> Optional[Payment]:
         return self._data.get(id)
 
     async def get_by_payment_id(self, payment_id: UUID) -> Optional[Payment]:
-        for order in self._data.values():
-            if order.payment_id == payment_id:
-                return order
+        for payment in self._data.values():
+            if payment.payment_id == payment_id:
+                return payment
         return None
 
     async def get_by_user_id(self, user_id: int) -> List[Payment]:
-        return [order for order in self._data.values() if order.user_id == user_id]
+        return [payment for payment in self._data.values() if payment.user_id == user_id]
 
-    async def update(self, order: Payment) -> None:
-        self._data[order.id] = order
+    async def update(self, payment: Payment) -> None:
+        self._data[payment.id] = payment

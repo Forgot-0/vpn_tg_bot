@@ -13,7 +13,7 @@ from tests.mocks.mock_mediator import MockMediator
 from tests.mocks.mock_subscription_repository import MockSubscriptionRepository
 from tests.mocks.mock_tgbot import MockTelegramBot
 from tests.mocks.mock_user_repository import MockUserRepository
-from tests.mocks.mock_order_repository import MockOrderRepository
+from tests.mocks.mock_payment_repository import MockPaymentRepository
 from tests.mocks.mock_server_repository import MockServerRepository
 from tests.mocks.mock_reward_repository import MockRewardRepository
 from tests.mocks.mock_reward_user_repository import MockRewardUserRepository
@@ -35,8 +35,8 @@ def mock_user_repository():
 
 
 @pytest.fixture
-def mock_order_repository():
-    return MockOrderRepository()
+def mock_payment_repository():
+    return MockPaymentRepository()
 
 
 @pytest.fixture
