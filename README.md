@@ -50,3 +50,23 @@
 - Если требуется запустить только приложение, используйте `docker_compose/app.yaml`.
 - Для запуска Nginx и автоматического обновления сертификатов используйте `docker_compose/webserver.yaml`.
 
+
+## Мониторинг и логирование
+
+Проект поставляется также с настройками мониторинга и логирования, позволяющими отслеживать работу сервисов и собирать логи.
+
+В мониторинговую инфраструктуру входят:
+- **Grafana** – для визуализации метрик. Доступна на порту **3000**.
+- **Loki** – для агрегации и хранения логов. Доступен на порту **3100**.
+- **Vector** – для сбора и пересылки логов с контейнеров.
+
+Для развертывания мониторинга выполните:
+```bash
+docker-compose -f docker_compose/monitoring.yaml up -d
+```
+Это поднимет все необходимые сервисы из файла [docker_compose/monitoring.yaml](docker_compose/monitoring.yaml).
+
+Дополнительные конфигурационные файлы:
+- [Grafana Loki datasource](../monitoring/grafana/provisioning/datasources/loki.yml)
+- [Loki config](../monitoring/loki/config.yaml)
+- [Vector config](../monitoring/vector/vector.toml)

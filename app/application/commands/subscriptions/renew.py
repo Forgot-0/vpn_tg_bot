@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+import logging
 from uuid import UUID
 
 from application.commands.base import BaseCommand, BaseCommandHandler
@@ -12,6 +13,9 @@ from domain.repositories.users import BaseUserRepository
 from domain.services.subscription import SubscriptionPricingService
 from domain.values.subscriptions import SubscriptionId
 from infrastructure.payments.base import BasePaymentService
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -50,5 +54,7 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
         payment.payment_id = UUID(payment_id)
 
         await self.payment_repository.create(payment=payment)
+
+        logger.info("Renew subscription", extra={"subscription": subscription})
 
         return PaymentDTO(url=url, price=new_price)

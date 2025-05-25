@@ -102,3 +102,33 @@ from datetime import datetime, timedelta
 
 
 print((datetime.now() - (datetime.now()-timedelta(days=90) + timedelta(days=30))))
+
+t = {
+    "container_created_at": "2025-05-25T16:39:58.138412034Z",
+    "container_id":"0bb9e42aa1c2992275a61f2ca7df6d000ed2f74ac77504e08888a78b285d6662",
+    "container_name":"app",
+    "host":"e9fd98aa2fec",
+    "image":"docker_compose-app",
+    "label":{
+        "com.docker.compose.config-hash":"362858e5b202e8e7b14024b9b1dc5c49765e3cc9c34bd14860e9518a20541024",
+        "com.docker.compose.container-number":"1",
+        "com.docker.compose.depends_on":"",
+        "com.docker.compose.image":"sha256:4f2efdfb1e4a538fa0a4b04b6702a9a8697589a6910d28a90deb7ba9a13764bc",
+        "com.docker.compose.oneoff":"False",
+        "com.docker.compose.project":"docker_compose",
+        "com.docker.compose.project.config_files":"/home/forgot/vpn_tg_bot/docker_compose/app.yaml",
+        "com.docker.compose.project.environment_file":"/home/forgot/vpn_tg_bot/.env",
+        "com.docker.compose.project.working_dir":"/home/forgot/vpn_tg_bot/docker_compose",
+        "com.docker.compose.service":"app","com.docker.compose.version":"2.32.4"
+    },
+    "message":{
+        "event":"Update id=128778615 is not handled. Duration 0 ms by bot id=5208514073",
+        "func_name":"feed_update",
+        "level":"info",
+        "lineno":172,
+        "logger":"aiogram.event",
+        "timestamp":"2025-05-25 16:41:15.140323"
+    },
+    "source_type":"docker_logs",
+    "stream":"stderr"
+}

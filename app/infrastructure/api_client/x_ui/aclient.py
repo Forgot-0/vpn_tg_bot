@@ -24,7 +24,7 @@ class A3xUiApiClient(BaseApiClient):
 
     def create_url(self, server: Server) -> str:
         return f"{self._base_url(server)}/panel/api/inbounds/addClient"
-    
+
     def upgrade_url(self, server: Server, id: str) -> str:
         return f"{self._base_url(server)}/panel/api/inbounds/updateClient/{id}"
 

@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana.data:/var/lib/grafana:rw
+      - ../monitoring/grafana/provisioning:/etc/grafana/provisioning:rw
+    networks:
+      - monitoring-network
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - VIRTUAL_HOST=grafana
+      - NETWORK_ACCESS=internal
+      - VIRTUAL_PORT=3000
+
+  loki:
+    image: grafana/loki:2.8.2
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ../monitoring/loki/config.yaml:/etc/loki/config.yaml:ro
+      - loki.data:/tmp/:rw
+    command: -config.file=/etc/loki/config.yaml
+    networks:
+      - monitoring-network
+
+  vector:
+    image: timberio/vector:0.29.1-alpine
+    container_name: vector
+    restart: unless-stopped
+    expose:
+      - "8383"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ../monitoring/vector/vector.toml:/etc/vector/vector.toml:ro
+    networks:
+      - monitoring-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+
+networks:
+  monitoring-network:
+    driver: bridge
+
+volumes:
+  grafana.data:
+  loki.data:

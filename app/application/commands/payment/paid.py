@@ -55,4 +55,4 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
 
         await self.mediator.publish(payment.pull_events())
 
-        logger.info("Paid order", extra={"order": payment})
+        logger.info("Paid payment", extra={"payment": payment})
