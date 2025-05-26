@@ -12,6 +12,8 @@ class SubscriptionPricingService:
     protocol_multipliers: dict[ProtocolType, float]
 
     def calculate(self, subscription: Subscription) -> float:
+        if not subscription.is_active():
+            return 0
         base_cost = self.daily_rate * subscription.duration
 
         devices_cost = base_cost * subscription.device_count * self.device_rate_multiplier

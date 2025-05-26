@@ -75,9 +75,11 @@ def subs_price_service():
             device_rate_multiplier=0.5,
             region_multipliers={
                 Region("🇳🇱", "Нидерланды", "NL"): 1.0,
+                Region(flag="🇩🇪", name="Germany", code="DE"): 1.0,
             },
             protocol_multipliers={
-                ProtocolType.vless: 0.15
+                ProtocolType.vless: 0.15,
+                ProtocolType.mock: 0.15
             }
         )
 

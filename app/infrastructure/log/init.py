@@ -75,12 +75,9 @@ def configure_logging() -> None:
         wrapper_class=structlog.stdlib.BoundLogger,  # type: ignore
         cache_logger_on_first_use=True,
     )
+
     for logger_name in (
         "pymongo",
-        "pymongo.serverSelection",
-        "pymongo.connection",
-        "pymongo.command",
-        "pymongo.topology",
         "motor",
         "aiohttp",
     ):

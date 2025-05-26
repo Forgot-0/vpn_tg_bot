@@ -65,8 +65,3 @@
 docker-compose -f docker_compose/monitoring.yaml up -d
 ```
 Это поднимет все необходимые сервисы из файла [docker_compose/monitoring.yaml](docker_compose/monitoring.yaml).
-
-Дополнительные конфигурационные файлы:
-- [Grafana Loki datasource](../monitoring/grafana/provisioning/datasources/loki.yml)
-- [Loki config](../monitoring/loki/config.yaml)
-- [Vector config](../monitoring/vector/vector.toml)

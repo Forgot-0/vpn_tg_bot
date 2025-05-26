@@ -42,3 +42,39 @@ async def test_create_subscription_command_handler(
     assert isinstance(result, PaymentDTO)
     assert result.url.startswith("http://")
     assert len(await mock_subscription_repository.get_by_user(dummy_user.id)) == 1
+
+@pytest.mark.asyncio
+async def test_create_subscription_command_handler_no_server(
+    mock_subscription_repository,
+    mock_user_repository,
+    mock_payment_repository,
+    mock_server_repository,
+    mock_payment_service,
+    subs_price_service,
+    mock_event_mediator,
+    dummy_user,
+    dummy_subscription,
+):
+    mock_user_repository._data[dummy_user.id] = dummy_user
+
+    command = CreateSubscriptionCommand(
+        telegram_id=dummy_user.telegram_id,
+        duration=dummy_subscription.duration,
+        device_count=dummy_subscription.device_count,
+        protocol_types=[ProtocolType.mock.value],
+    )
+
+    handler = CreateSubscriptionCommandHandler(
+        user_repository=mock_user_repository,
+        subscription_repository=mock_subscription_repository,
+        payment_repository=mock_payment_repository,
+        server_repository=mock_server_repository,
+        payment_service=mock_payment_service,
+        subs_price_service=subs_price_service,
+        mediator=mock_event_mediator
+    )
+
+    with pytest.raises(Exception):
+        await handler.handle(command)
+
+

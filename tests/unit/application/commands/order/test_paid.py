@@ -51,3 +51,30 @@ async def test_paid_order_command_handler(
     assert updated_order.status == PaymentStatus.succese
 
     assert len(mock_bot.data) > 0
+
+@pytest.mark.asyncio
+async def test_paid_order_command_handler_payment_not_found(
+    mock_user_repository,
+    mock_payment_repository,
+    mock_server_repository,
+    mock_subscription_repository,
+    api_client_factory,
+    mock_event_mediator,
+    mock_telegram_bot,
+):
+    non_existent_payment_id = uuid4()
+    command = PaidPaymentCommand(payment_id=non_existent_payment_id)
+    handler = PaidPaymentCommandHandler(
+        user_repository=mock_user_repository,
+        payment_repository=mock_payment_repository,
+        server_repository=mock_server_repository,
+        subscription_repository=mock_subscription_repository,
+        api_panel_factory=api_client_factory,
+        bot=mock_telegram_bot,
+        mediator=mock_event_mediator
+    )
+    with pytest.raises(Exception):
+        await handler.handle(command)
+
+
+

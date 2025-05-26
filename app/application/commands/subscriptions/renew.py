@@ -39,9 +39,6 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
 
         current_price = self.subs_price_service.calculate(subscription)
 
-        if subscription.end_date < datetime.now():
-            current_price = 0
-
         subscription.renew(command.duration)
         new_price = abs(current_price - self.subs_price_service.calculate(subscription))
         payment = Payment.create(
@@ -54,7 +51,7 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
         payment.payment_id = UUID(payment_id)
 
         await self.payment_repository.create(payment=payment)
-
+        await self.mediator.publish(subscription.pull_events())
         logger.info("Renew subscription", extra={"subscription": subscription})
 
         return PaymentDTO(url=url, price=new_price)

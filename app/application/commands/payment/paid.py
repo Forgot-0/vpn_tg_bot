@@ -48,7 +48,11 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
         await self.payment_repository.update(payment=payment)
 
         api_client = self.api_panel_factory.get(server.api_type)
-        vpn_configs = await api_client.create_or_upgrade_subscription(user=user, subscription=payment.subscription, server=server)
+        vpn_configs = await api_client.create_or_upgrade_subscription(
+            user=user,
+            subscription=payment.subscription,
+            server=server
+        )
 
         if user.telegram_id:
             await self.bot.send_vpn_configs(user.telegram_id, vpn_configs=vpn_configs)
