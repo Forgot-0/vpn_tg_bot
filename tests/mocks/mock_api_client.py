@@ -20,6 +20,9 @@ class MockApiClient(BaseApiClient):
         self.data[key] = dummy_config
         return [dummy_config]
 
-    async def delete_inactive_clients(self, user: User, subscription: Subscription, server: Server) -> None:
+    async def delete_inactive_clients(self, server: Server) -> None:
+        ...
+
+    async def delete_client(self, user: User, subscription: Subscription, server: Server) -> None:
         key = (user.id, subscription.id, server.id)
         self.data.pop(key)

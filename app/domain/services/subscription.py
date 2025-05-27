@@ -28,3 +28,6 @@ class SubscriptionPricingService:
 
         total = base_cost + devices_cost + region_cost + protocols_cost
         return round(total, 2)
+
+    def change_region(self, subscription: Subscription) -> float:
+        return 100.0

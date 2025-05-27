@@ -28,6 +28,9 @@ class A3xUiApiClient(BaseApiClient):
     def upgrade_url(self, server: Server, id: str) -> str:
         return f"{self._base_url(server)}/panel/api/inbounds/updateClient/{id}"
 
+    def delete_client_url(self, server: Server, inbound_id: int, id: str) -> str:
+        ...
+
     async def create_or_upgrade_subscription(
             self,
             user: User,
@@ -49,7 +52,7 @@ class A3xUiApiClient(BaseApiClient):
                 builder = self.builder_factory.get(server.api_type, protocol_type)
                 json = builder.build_params(user=user, subscription=subscription, server=server)
                 if protocol_type in subscription.protocol_types:
-                    
+
                     resp = await session.post(
                         url=self.create_url(server=server),
                         json=json,
@@ -70,3 +73,36 @@ class A3xUiApiClient(BaseApiClient):
         return vpn_configs
 
     async def delete_inactive_clients(self) -> None: ...
+
+    async def delete_client(
+            self,
+            user: User,
+            subscription: Subscription,
+            server: Server
+        ) -> None:
+
+        async with ClientSession() as session:
+            resp_login = await session.post(
+                self.login_url(server=server),
+                data={
+                    "username": app_settings.VPN_USERNAME,
+                    "password": app_settings.VPN_PASSWORD,
+                    "loginSecret": app_settings.VPN_SECRET
+                }
+            )
+            for protocol_type in server.protocol_configs:
+                builder = self.builder_factory.get(server.api_type, protocol_type)
+                json = builder.build_params(user=user, subscription=subscription, server=server)
+                if protocol_type in subscription.protocol_types:
+
+                    resp = await session.post(
+                        url=self.delete_client_url(
+                            server=server,
+                            inbound_id=server.protocol_configs[protocol_type].config['inbound_id'],
+                            id=str(subscription.id.value.hex)
+                        ),
+                        json=json,
+                        cookies=resp_login.cookies
+                    )
+
+                    resp = await resp.json()
