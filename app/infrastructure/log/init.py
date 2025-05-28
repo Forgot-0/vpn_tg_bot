@@ -80,5 +80,6 @@ def configure_logging() -> None:
         "pymongo",
         "motor",
         "aiohttp",
+        "aiogram",
     ):
         logging.getLogger(logger_name).setLevel(logging.WARN)

@@ -36,6 +36,10 @@ certbot:
 	${DC} -f ${WEB_SERVER} -f ${BOT_APP} ${ENV} run --rm certbot certonly --webroot --webroot-path=/var/www/certbot -d my-backend-test.ru
 
 
+.PHONY: up_webhook
+up_webhook:
+	ngrok http --url=probably-stable-tortoise.ngrok-free.app 8080
+
 .PHONY: test
 test:
-	${EXEC} ${APP_CONTAINER} pytest
+	${EXEC} ${APP_CONTAINER} python -m pytest

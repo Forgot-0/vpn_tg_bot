@@ -12,13 +12,13 @@ class AppConfig(BaseConfig):
 
     CHAT_TELEGRAM: int = 0
 
-    TELEGRAM_WEBHOOK_DOMAIN: str = ""
+    DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
 
     @computed_field
     @property
     def webhook_url(self) -> str:
-        return f"https://{self.TELEGRAM_WEBHOOK_DOMAIN}{self.TELEGRAM_WEBHOOK_PATH}"
+        return f"https://{self.DOMAIN}{self.TELEGRAM_WEBHOOK_PATH}"
 
 
     PAYMENT_SECRET: str = ""

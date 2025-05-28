@@ -49,7 +49,7 @@ async def test_paid_order_command_handler(
     ret = await handler.handle(command)
     updated_order = await mock_payment_repository.get_by_payment_id(order.payment_id)
     assert updated_order.status == PaymentStatus.succese
-
+    assert await mock_subscription_repository.get_by_id(id=order.subscription.id)
     assert len(mock_bot.data) > 0
 
 @pytest.mark.asyncio
