@@ -1,10 +1,8 @@
 import logging
-from aiohttp import web
 from aiogram import Bot, Dispatcher
 from aiogram.filters.exception import ExceptionTypeFilter
 from aiogram.types import ErrorEvent
 from aiogram.fsm.storage.redis import RedisStorage
-from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from redis.asyncio.client import Redis
 
 from bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
@@ -20,11 +18,12 @@ logger = logging.getLogger(__name__)
 
 
 async def startup_bot(bot: Bot):
-    await bot.set_webhook(
-        url=app_settings.webhook_url,
-        drop_pending_updates=False,
-        allowed_updates=["message", "inline_query", "callback_query"]
-    )
+    if await bot.get_webhook_info() != app_settings.webhook_url:
+        await bot.set_webhook(
+            url=app_settings.webhook_url,
+            drop_pending_updates=False,
+            allowed_updates=["message", "inline_query", "callback_query"]
+        )
 
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
@@ -48,9 +47,9 @@ def init_dispatch() -> Dispatcher:
     dp.include_router(subscription_router)
     return dp
 
-def init_webhook(app: web.Application):
-    bot = Bot(app_settings.BOT_TOKEN)
-    dp = init_dispatch()
-    rq_handler = SimpleRequestHandler(dispatcher=dp, bot=bot)
-    rq_handler.register(app, path=app_settings.TELEGRAM_WEBHOOK_PATH)
-    setup_application(app, dp, bot=bot)
+def init_bot() -> Bot:
+    return Bot(app_settings.BOT_TOKEN)
+
+
+bot = init_bot()
+dp = init_dispatch()

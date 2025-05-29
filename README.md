@@ -9,7 +9,7 @@
 
 - **Bot Framework**: [Aiogram](https://aiogram.dev/)
 - **Database**: [MongoDB](https://www.mongodb.com/)
-- **Web App**: [aiohttp](https://docs.aiohttp.org/en/stable/)
+- **Web App**: [FastAPI](https://fastapi.tiangolo.com/)
 - **Web Server**: [Nginx](https://www.nginx.com/)
 - **Containerization**: [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 - **SSL Certificates**: [Certbot](https://certbot.eff.org/)

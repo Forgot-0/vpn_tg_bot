@@ -1,16 +1,16 @@
 from uuid import UUID
-from aiohttp import web
+from fastapi import APIRouter, Request, Response
 
 from application.commands.payment.paid import PaidPaymentCommand
 from infrastructure.depends.init import get_mediator
 from infrastructure.mediator.mediator import Mediator
 
 
-router = web.RouteTableDef()
+router = APIRouter()
 
 
 @router.post('/paid')
-async def paid(requests: web.Request):
+async def paid(requests: Request):
     data = (await requests.json())
     mediator: Mediator = get_mediator()
 
@@ -20,4 +20,4 @@ async def paid(requests: web.Request):
         )
     )
 
-    return web.Response()
+    return Response()
