@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 import uvicorn
 
+from bot.main import dp, bot
 from configs.app import app_settings
 from presentation.webhooks.telegram import router as telegram_router
 from presentation.webhooks.yookassa import router as yookassa_router
@@ -12,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await dp.emit_startup(bot=bot)
     yield
+    await dp.emit_shutdown(bot=bot)
 
 
 def init_api() -> FastAPI:

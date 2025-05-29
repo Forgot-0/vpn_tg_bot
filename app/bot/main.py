@@ -18,11 +18,12 @@ logger = logging.getLogger(__name__)
 
 
 async def startup_bot(bot: Bot):
-    if await bot.get_webhook_info() != app_settings.webhook_url:
+    if await bot.get_webhook_info() != app_settings.webhook_url or True:
         await bot.set_webhook(
             url=app_settings.webhook_url,
             drop_pending_updates=False,
-            allowed_updates=["message", "inline_query", "callback_query"]
+            allowed_updates=["message", "inline_query", "callback_query"],
+            secret_token=app_settings.WEBHOOK_SECRET
         )
 
 def add_middlewares(dp: Dispatcher):
