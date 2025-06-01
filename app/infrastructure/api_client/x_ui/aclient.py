@@ -29,7 +29,7 @@ class A3xUiApiClient(BaseApiClient):
         return f"{self._base_url(server)}/panel/api/inbounds/updateClient/{id}"
 
     def delete_client_url(self, server: Server, inbound_id: int, id: str) -> str:
-        ...
+        return f"{self._base_url(server)}/panel/api/inbounds/{inbound_id}/delClient/{id}"
 
     async def create_or_upgrade_subscription(
             self,
