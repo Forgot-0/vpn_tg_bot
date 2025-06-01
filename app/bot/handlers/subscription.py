@@ -2,7 +2,6 @@ from uuid import UUID
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 
-from application.commands.payment.paid import PaidPaymentCommand
 from application.commands.subscriptions.create import CreateSubscriptionCommand
 from application.commands.subscriptions.renew import RenewSubscriptionCommand
 from application.dtos.subsciprions.subscription import SubscriptionDTO
@@ -89,8 +88,6 @@ async def process_protocol(
     payment_response, *_ = await mediator.handle_command(command)
     await callback_query.message.edit_media(**BuySubscriptionMessage().build(payment_response))
 
-    payment_id = payment_response.url.split("=")[-1]
-    await mediator.handle_command(PaidPaymentCommand(payment_id=UUID(payment_id)))
     await callback_query.answer()
     await state.clear()
 
@@ -147,8 +144,6 @@ async def renew(
     await callback_query.message.edit_media(**BuySubscriptionMessage().build(payment_response))
 
     payment_id = payment_response.url.split("=")[-1]
-    await mediator.handle_command(PaidPaymentCommand(payment_id=UUID(payment_id)))
-
     await state.clear()
     await callback_query.answer()
 
