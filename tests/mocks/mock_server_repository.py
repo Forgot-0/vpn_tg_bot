@@ -2,17 +2,21 @@ from typing import List, Optional
 from uuid import UUID
 from domain.entities.server import Server
 from domain.repositories.servers import BaseServerRepository
+from domain.values.servers import ProtocolType
 
 
 class MockServerRepository(BaseServerRepository):
     def __init__(self):
         self._data: dict[UUID, Server] = {}
 
-    async def get_by_max_free(self) -> Optional[Server]:
-        print("11111111111111111111111111111111111111", self._data)
+    async def get_by_max_free(self, type_protocols: list[ProtocolType]) -> Optional[Server]:
         if not self._data:
             return None
-        return max(self._data.values(), key=lambda server: server.free)
+        servers = filter(lambda server: all(
+            [proto in server.protocol_configs.keys() for proto in type_protocols]
+        ), self._data.values()
+        )
+        return max(servers, key=lambda server: server.free)
 
     async def create(self, server: Server) -> None:
         self._data[server.id] = server

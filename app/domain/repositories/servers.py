@@ -4,13 +4,14 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from domain.entities.server import Server
+from domain.values.servers import ProtocolType
 
 
 @dataclass
 class BaseServerRepository(ABC):
 
     @abstractmethod
-    async def get_by_max_free(self) -> Server | None: ...
+    async def get_by_max_free(self, type_protocols: list[ProtocolType]) -> Server | None: ...
 
     @abstractmethod
     async def create(self, server: Server) -> None: ...
