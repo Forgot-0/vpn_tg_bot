@@ -1,55 +1,57 @@
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Any
 from uuid import UUID, uuid4
 
+
 from domain.entities.base import AggregateRoot
-from domain.values.servers import ApiType, ProtocolType, Region
-
-
-class CountryCode(Enum):
-    RUSSIA = 'RU'
-    VIETNAM = 'VN'
-    THAILAND = 'TH'
-    PHILIPPINES = 'PH'
-    MALAYSIA = 'MY'
-    SINGAPORE = 'SG'
-    JAPAN = 'JP'
-    SOUTH_KOREA = 'KR'
-    HONG_KONG = 'HK'
-    TAIWAN = 'TW'
-    INDIA = 'IN'
-    INDONESIA = 'ID'
-    AMERICA = 'USA'
-    GERMANY = 'DE'
-    FRANCE = "FR"
-    POLAND = "PL"
-    ITALY = "IT"
-    CANADA = "CA"
-    BRAZIL = "BR"
-    AUSTRALIA = "AU"
-    SWITZERLAND = "CH"
-
-
-@dataclass
-class ProtocolConfig(AggregateRoot):
-    config: dict[str, Any]
-    protocol_type: ProtocolType
+from domain.services.servers import encrypt
+from domain.values.servers import api_type_to_model, ApiType, ProtocolConfig, ProtocolType, Region
 
 
 @dataclass
 class Server(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
-    ip: str
-    port: int
-    domain: str | None
     limit: int
     region: Region
     free: int
 
     api_type: ApiType
-
     api_config: dict[str, Any]
+    auth_credits: dict[str, str]
 
     protocol_configs: dict[ProtocolType, ProtocolConfig] = field(default_factory=dict)
 
+    def __post_init__(self):
+        api_config_model = api_type_to_model[self.api_type]
+        api_config_model(**self.api_config)
+
+    @classmethod
+    def create(cls, limit: int, region: Region, api_type: ApiType, \
+            api_config: dict[str, str], auth_credits: dict[str, str], \
+            protocol_configs: dict[ProtocolType, ProtocolConfig]) -> "Server":
+
+        for key, val in auth_credits.items():
+            auth_credits[key] = encrypt(val)
+
+        server =  Server(
+            limit=limit,
+            region=region,
+            free=limit,
+            api_type=api_type,
+            api_config=api_config,
+            auth_credits=auth_credits,
+            protocol_configs=protocol_configs
+        )
+
+        return server
+
+    def get_config_by_protocol(self, protocol_type: ProtocolType) -> ProtocolConfig:
+        config = self.protocol_configs.get(protocol_type)
+        if config is None:
+            raise
+        return config
+
+    def add_protocol_config(self, config: ProtocolConfig) -> None:
+        if config.protocol_type in self.protocol_configs:
+            raise
+        self.protocol_configs[config.protocol_type] = config

@@ -6,6 +6,8 @@ from configs.base import BaseConfig
 class AppConfig(BaseConfig):
     ENVIRONMENT: Literal['local', 'production', 'testing'] = 'local'
 
+    SECRET: str = ""
+
     WEBHOOK_SECRET: str = ""
 
     BOT_TOKEN: str = ""
