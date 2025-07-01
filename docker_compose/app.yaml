@@ -7,7 +7,7 @@ services:
       context: ..
       dockerfile: Dockerfile
     container_name: "app"
-    restart: always
+    # restart: always
     ports:
       - "8080:8080"
     env_file:

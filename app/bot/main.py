@@ -7,7 +7,7 @@ from redis.asyncio.client import Redis
 
 from bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
 from bot.middlewares.mediator import MediatorMiddleware
-from bot.static.init import init_photo
+from bot.static.init import photo_manager
 from domain.exception.base import ApplicationException
 from configs.app import app_settings
 
@@ -26,7 +26,7 @@ async def startup_bot(bot: Bot):
             allowed_updates=["message", "inline_query", "callback_query"],
             secret_token=app_settings.WEBHOOK_SECRET
         )
-    await init_photo(bot)
+    await photo_manager.init_photo(bot)
 
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())

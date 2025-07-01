@@ -4,7 +4,6 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot.messages.base import BaseMediaBuilder
 from bot.messages.menu import BackButton
-from bot.static.init import get_image_id
 from domain.values.servers import ProtocolType, VPNConfig
 
 
@@ -36,7 +35,7 @@ def get_reply_markup_config_builder(protocol_type: ProtocolType) -> InlineKeyboa
 
 
 class ConfigMessage(BaseMediaBuilder):
-    _photo = get_image_id('menu')
+    _photo = ('menu')
     _caption = (
         "Вот ваш ключ для подключения \n"
     )

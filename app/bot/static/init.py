@@ -1,36 +1,49 @@
-from json import JSONDecodeError, dump, load
+from json import JSONDecodeError, dumps, loads
 from aiogram import Bot
 from aiogram.types import FSInputFile
 
 from configs.app import app_settings
 
-images_fileId = {}
+class ImageManager:
+    def __init__(self):
+        self.images_fileId = {}
+        self.images_paths = {
+            "about": "about.jpg",
+            "buy": "buy.jpg",
+            "device_count": "device_count.jpg",
+            "duration": "duration.jpg",
+            "help": "help.jpg",
+            "menu": "menu.jpg",
+            "type_vpn": "type_vpn.jpg",
+        }
 
-images_paths = {
-    "about": "about.jpg",
-    "buy": "buy.jpg",
-    "device_count": "device_count.jpg",
-    "duration": "duration.jpg",
-    "help": "help.jpg",
-    "menu": "menu.jpg",
-    "type_vpn": "type_vpn.jpg",
-}
+    async def load_image_ids(self) -> dict[str, str]:
+        try:
+            with open("./bot/static/images_fileid.json", "r") as f:
+                data = f.read()
+                return loads(data) if data else {}
+        except (JSONDecodeError, FileNotFoundError):
+            return {}
 
-async def init_photo(bot: Bot) -> None:
-    try:
-        with open("images_fileid.json", "rb") as f:
-            data: dict[str, str] = load(f)
-    except (JSONDecodeError, FileNotFoundError):
-        data = {}
+    async def save_image_ids(self) -> None:
+        with open('./bot/static/images_fileid.json', 'w') as f:
+            f.write(dumps(self.images_fileId))
 
-    if data and data.keys() == images_paths.keys(): return
+    async def init_photo(self, bot: Bot) -> None:
+        self.images_fileId = await self.load_image_ids()
 
-    for key, path in images_paths.items():
-        resp = await bot.send_photo(app_settings.BOT_OWNER_ID, FSInputFile(path))
-        images_fileId[key] = resp.photo[-1].file_id
+        if self.images_fileId and set(self.images_fileId.keys()) == set(self.images_paths.keys()):
+            return
 
-    with open('images_fileid.json', "w") as f:
-        dump(images_fileId, f)
+        for key, path in self.images_paths.items():
+            file_path = f"./bot/static/{path}"
 
-def get_image_id(key: str) -> str:
-    return images_fileId.get(key, "")
+            resp = await bot.send_photo(app_settings.BOT_OWNER_ID, FSInputFile(file_path))
+            self.images_fileId[key] = resp.photo[-1].file_id
+
+        await self.save_image_ids()
+
+    def get_image_id(self, key: str) -> str:
+        return self.images_fileId.get(key, "")
+
+photo_manager = ImageManager()

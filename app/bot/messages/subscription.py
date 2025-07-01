@@ -8,7 +8,6 @@ from application.dtos.payments.url import PaymentDTO
 from application.dtos.subsciprions.subscription import SubscriptionDTO
 from bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
 from bot.messages.menu import BackButton, VPNButton
-from bot.static.init import get_image_id
 from domain.values.servers import ProtocolType, VPNConfig
 
 
@@ -21,7 +20,7 @@ class AddSubscriptionButtton:
     callback_data = "add_subscription"
 
 class ListSubscriptionMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILuWgnngoR_nxX7vX1R5NVJCrPltJsAAJO_jEb-kBASZj30nWKgZFtAQADAgADcwADNgQ"
+    _photo = 'menu'
     _caption = "Это список ваших подписок"
     _reply_markup = None
 
@@ -68,7 +67,7 @@ class ProtocolTypeCallbackData(CallbackData, prefix="protocol"):
 
 
 class DaysMessage(BaseMediaBuilder):
-    _photo = get_image_id('durations')
+    _photo = ('durations')
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -84,7 +83,7 @@ class DaysMessage(BaseMediaBuilder):
     )
 
 class DeviceMessage(BaseMediaBuilder):
-    _photo = get_image_id('device_count')
+    _photo = ('device_count')
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -101,7 +100,7 @@ class DeviceMessage(BaseMediaBuilder):
 
 
 class ProtocolTypeMessage(BaseMediaBuilder):
-    _photo = get_image_id('type_vpn')
+    _photo = ('type_vpn')
     _caption = "Выберите протокол VPN"
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -115,7 +114,7 @@ class ProtocolTypeMessage(BaseMediaBuilder):
 
 
 class BuySubscriptionMessage(BaseMediaBuilder):
-    _photo = get_image_id('buy')
+    _photo = ('buy')
     _caption = ""
     _reply_markup = None
 
@@ -144,7 +143,7 @@ class ChangeRegionSubscriptionButton:
     callback_data = "change_region"
 
 class SubscriptionMessage(BaseMediaBuilder):
-    _photo = get_image_id('menu')
+    _photo = ('menu')
     _caption = ""
     _reply_markup = None
 

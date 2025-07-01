@@ -18,6 +18,7 @@ router = Router()
 async def start(message: Message, mediator: Mediator):
     data = StartMessageBuilder().build()
     data['photo'] = data.pop("media").media
+    print(data['photo'])
     await message.answer_photo(**data)
 
 
