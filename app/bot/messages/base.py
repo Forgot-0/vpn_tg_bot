@@ -2,6 +2,8 @@ from typing import Any
 
 from aiogram.types import InputMediaPhoto
 
+
+
 class BaseMessageBuilder:
     _text: str = ""
     _reply_markup: Any = None
@@ -46,7 +48,7 @@ class BaseMediaBuilder:
     @property
     def caption(self) -> str:
         return self._caption
-   
+
     def build(self) -> dict[str, Any]:
         content = {}
 

@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
+from bot.static.init import get_image_id
 
 
 class VPNButton:
@@ -38,12 +39,12 @@ def get_menu_keyboards() -> InlineKeyboardMarkup:
 
 
 class StartMessageBuilder(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILuWgnngoR_nxX7vX1R5NVJCrPltJsAAJO_jEb-kBASZj30nWKgZFtAQADAgADcwADNgQ"
+    _photo = get_image_id('menu')
     _reply_markup = get_menu_keyboards()
 
 
 class HelpMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILvGgnpvsEEMfCw1c8ZYXD5gi8bSj1AAJ4_jEb-kBASUq06bbZWde9AQADAgADcwADNgQ"
+    _photo = get_image_id('help')
     _caption = "Напишите свою проблему сюда 👇"
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -53,7 +54,7 @@ class HelpMessage(BaseMediaBuilder):
     )
 
 class AboutMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILuGgnneLXEXLtXUfQP8Z3_IEdcyUTAAJN_jEb-kBASYW-CgZHT8xtAQADAgADcwADNgQ"
+    _photo = get_image_id('about')
     _caption = (
         ""
     )
