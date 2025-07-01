@@ -35,7 +35,7 @@ def get_reply_markup_config_builder(protocol_type: ProtocolType) -> InlineKeyboa
 
 
 class ConfigMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILuWgnngoR_nxX7vX1R5NVJCrPltJsAAJO_jEb-kBASZj30nWKgZFtAQADAgADcwADNgQ"
+    _photo = ('menu')
     _caption = (
         "Вот ваш ключ для подключения \n"
     )

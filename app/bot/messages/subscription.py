@@ -20,7 +20,7 @@ class AddSubscriptionButtton:
     callback_data = "add_subscription"
 
 class ListSubscriptionMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILuWgnngoR_nxX7vX1R5NVJCrPltJsAAJO_jEb-kBASZj30nWKgZFtAQADAgADcwADNgQ"
+    _photo = 'menu'
     _caption = "Это список ваших подписок"
     _reply_markup = None
 
@@ -67,7 +67,7 @@ class ProtocolTypeCallbackData(CallbackData, prefix="protocol"):
 
 
 class DaysMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILvWgnq8qt76O702nMG3dcVBPQadjOAALp-zEb7xNBSZSYhD2OYhYXAQADAgADcwADNgQ"
+    _photo = ('durations')
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -83,7 +83,7 @@ class DaysMessage(BaseMediaBuilder):
     )
 
 class DeviceMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILvmgnq-UPxzIOOC-tTrofE0uTI-VHAALr-zEb7xNBScYqEjkLO7CNAQADAgADcwADNgQ"
+    _photo = ('device_count')
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -100,7 +100,7 @@ class DeviceMessage(BaseMediaBuilder):
 
 
 class ProtocolTypeMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILt2gnncEdg0JyRFVrCMOCat3Om1bDAAJM_jEb-kBASXPVU5fJG_HSAQADAgADcwADNgQ"
+    _photo = ('type_vpn')
     _caption = "Выберите протокол VPN"
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -114,7 +114,7 @@ class ProtocolTypeMessage(BaseMediaBuilder):
 
 
 class BuySubscriptionMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILtmgnnU-QDz8MRUWY4gwBTOeO5G6sAAJK_jEb-kBAST_2GxHYWDLYAQADAgADcwADNgQ"
+    _photo = ('buy')
     _caption = ""
     _reply_markup = None
 
@@ -143,7 +143,7 @@ class ChangeRegionSubscriptionButton:
     callback_data = "change_region"
 
 class SubscriptionMessage(BaseMediaBuilder):
-    _photo = "AgACAgIAAxkBAAILuWgnngoR_nxX7vX1R5NVJCrPltJsAAJO_jEb-kBASZj30nWKgZFtAQADAgADcwADNgQ"
+    _photo = ('menu')
     _caption = ""
     _reply_markup = None
 

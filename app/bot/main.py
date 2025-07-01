@@ -7,6 +7,7 @@ from redis.asyncio.client import Redis
 
 from bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
 from bot.middlewares.mediator import MediatorMiddleware
+from bot.static.init import photo_manager
 from domain.exception.base import ApplicationException
 from configs.app import app_settings
 
@@ -18,21 +19,23 @@ logger = logging.getLogger(__name__)
 
 
 async def startup_bot(bot: Bot):
-    if await bot.get_webhook_info() != app_settings.webhook_url or True:
+    if (await bot.get_webhook_info()).url != app_settings.webhook_url:
         await bot.set_webhook(
             url=app_settings.webhook_url,
             drop_pending_updates=False,
             allowed_updates=["message", "inline_query", "callback_query"],
             secret_token=app_settings.WEBHOOK_SECRET
         )
+    await photo_manager.init_photo(bot)
 
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
+
     if app_settings.CHAT_TELEGRAM:
         dp.update.middleware(CheckSubsChannelMiddleware())
 
 async def handle_exception(event: ErrorEvent):
-    logger.error("Handle error", exc_info=event.exception, extra={"error": event.exception})
+    logger.error("Handle error", exc_info=event.exception, extra={"error": event.exception.message}) # type: ignore
     if event.update.message:
         await event.update.message.answer(text=event.exception.message) # type: ignore
     else:

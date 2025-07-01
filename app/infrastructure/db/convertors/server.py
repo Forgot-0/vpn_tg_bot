@@ -7,9 +7,6 @@ from domain.values.servers import ApiType, ProtocolType, Region
 def convert_server_entity_to_document(server: Server) -> dict[str, Any]:
     return {
         "_id": server.id,
-        "ip": server.ip,
-        "port": server.port,
-        "domain": server.domain,
         "limit": server.limit,
         "region": {
                 "flag": server.region.flag,
@@ -19,6 +16,7 @@ def convert_server_entity_to_document(server: Server) -> dict[str, Any]:
         "free": server.free,
         "api_type": server.api_type.value,
         "api_config": server.api_config,
+        "auth_credits": server.auth_credits,
         "protocol_configs": {
             protocol.value: {
                 "config": config.config,
@@ -31,14 +29,12 @@ def convert_server_entity_to_document(server: Server) -> dict[str, Any]:
 def convert_server_document_to_entity(data: dict[str, Any]) -> Server:
     return Server(
         id=data['_id'],
-        ip=data['ip'],
-        port=data['port'],
-        domain=data['domain'],
         limit=data['limit'],
         region=Region(**data['region']),
         free=data['free'],
         api_type=ApiType(data['api_type']),
         api_config=data['api_config'],
+        auth_credits=data['auth_credits'],
         protocol_configs={
             ProtocolType(key): ProtocolConfig(
                 config=value["config"],

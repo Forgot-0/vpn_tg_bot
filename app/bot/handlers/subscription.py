@@ -25,7 +25,7 @@ from bot.messages.subscription import (
     SubscriptionCallbackData,
     SubscriptionMessage
 )
-from bot.states.subscription import SubscriptionStates, CreateSubscriptionStates
+from bot.states.subscription import RenewSubscriptionStates, CreateSubscriptionStates
 from infrastructure.mediator.mediator import Mediator
 
 
@@ -98,13 +98,13 @@ async def subscription(
         state: FSMContext,
         mediator: Mediator):
     subscription: SubscriptionDTO = await mediator.handle_query(GetByIdQuery(callback_data.subscription_id))
-    await state.set_state(SubscriptionStates.subscription_id)
+    await state.set_state(RenewSubscriptionStates.subscription_id)
     await state.update_data(subscription_id=subscription.id.hex)
 
     data = SubscriptionMessage().build(subscription)
     await callback_query.message.edit_media(**data)
 
-@router.callback_query(F.data==GetConfigSubscriptionButton.callback_data, SubscriptionStates.subscription_id)
+@router.callback_query(F.data==GetConfigSubscriptionButton.callback_data, RenewSubscriptionStates.subscription_id)
 async def get_config(
         callback_query: types.CallbackQuery,
         state: FSMContext,
@@ -119,16 +119,16 @@ async def get_config(
     await callback_query.answer()
 
 
-@router.callback_query(F.data==RenewSubscriptionButton.callback_data, SubscriptionStates.subscription_id)
+@router.callback_query(F.data==RenewSubscriptionButton.callback_data, RenewSubscriptionStates.subscription_id)
 async def renew_duration(
         callback_query: types.CallbackQuery,
         state: FSMContext):
     await callback_query.message.edit_media(**DaysMessage().build())
-    await state.set_state(SubscriptionStates.renew)
+    await state.set_state(RenewSubscriptionStates.renew)
     await callback_query.answer()
 
 
-@router.callback_query(DaysCallbackData.filter(), SubscriptionStates.renew)
+@router.callback_query(DaysCallbackData.filter(), RenewSubscriptionStates.renew)
 async def renew(
         callback_query: types.CallbackQuery,
         callback_data: DaysCallbackData,

@@ -82,3 +82,5 @@ cython_debug/
 
 # Logs
 .logs/
+
+app/bot/static/images_fileid.json

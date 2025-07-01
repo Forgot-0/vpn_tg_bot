@@ -36,7 +36,8 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
     payment_service: BasePaymentService
 
     async def handle(self, command: CreateSubscriptionCommand) -> PaymentDTO:
-        server = await self.server_repository.get_by_max_free()
+        protocol_types=[ProtocolType(t) for t in command.protocol_types]
+        server = await self.server_repository.get_by_max_free(protocol_types)
 
         if not server:
             raise
@@ -55,7 +56,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
                 code=server.region.code
             ),
             user_id=user.id,
-            protocol_types=[ProtocolType(t) for t in command.protocol_types]
+            protocol_types=protocol_types
         )
 
         await self.subscription_repository.create(subscription=subscription)

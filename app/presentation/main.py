@@ -1,15 +1,19 @@
 import logging
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
+from starlette.middleware.base import BaseHTTPMiddleware
 import uvicorn
 
 from bot.main import dp, bot
 from configs.app import app_settings
+from presentation.middlewares.context import set_request_id_middleware
+from presentation.middlewares.structlog import structlog_bind_middleware
 from presentation.webhooks.telegram import router as telegram_router
 from presentation.webhooks.yookassa import router as yookassa_router
 
 
 logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,6 +21,9 @@ async def lifespan(app: FastAPI):
     yield
     await dp.emit_shutdown(bot=bot)
 
+def setup_middlewares(app: FastAPI) -> None:
+    app.add_middleware(BaseHTTPMiddleware, dispatch=structlog_bind_middleware)
+    app.add_middleware(BaseHTTPMiddleware, dispatch=set_request_id_middleware)
 
 def init_api() -> FastAPI:
     logger.debug("Initialize API")
@@ -27,6 +34,7 @@ def init_api() -> FastAPI:
         debug=True,
         lifespan=lifespan,
     )
+    setup_middlewares(app=app)
 
     app.include_router(telegram_router)
     app.include_router(yookassa_router)

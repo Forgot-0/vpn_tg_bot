@@ -2,6 +2,10 @@ from typing import Any
 
 from aiogram.types import InputMediaPhoto
 
+from bot.static.init import photo_manager
+
+
+
 class BaseMessageBuilder:
     _text: str = ""
     _reply_markup: Any = None
@@ -46,11 +50,11 @@ class BaseMediaBuilder:
     @property
     def caption(self) -> str:
         return self._caption
-   
+
     def build(self) -> dict[str, Any]:
         content = {}
 
-        media = InputMediaPhoto(media=self.photo, caption=self.caption)
+        media = InputMediaPhoto(media=photo_manager.get_image_id(self.photo), caption=self.caption)
         content['media'] = media
 
         if self.reply_markup:

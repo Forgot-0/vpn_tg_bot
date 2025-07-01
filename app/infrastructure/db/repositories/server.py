@@ -2,6 +2,7 @@ from uuid import UUID
 
 from domain.entities.server import Server
 from domain.repositories.servers import BaseServerRepository
+from domain.values.servers import ProtocolType
 from infrastructure.db.convertors.server import (
     convert_server_document_to_entity,
     convert_server_entity_to_document
@@ -10,8 +11,19 @@ from infrastructure.db.repositories.base import BaseMongoDBRepository
 
 
 class ServerRepository(BaseMongoDBRepository, BaseServerRepository):
-    async def get_by_max_free(self) -> Server | None:
-        doc = await self._collection.find().sort({'free': 1}).to_list(length=1)
+    async def get_by_max_free(self, type_protocols: list[ProtocolType]) -> Server | None:
+        doc = await self._collection.aggregate([
+                {
+                    "$match": {
+                        "$and": [
+                            { f'protocol_configs.{protocols.value}': { "$exists": True } } 
+                            for protocols in type_protocols
+                        ]
+                    },
+                },
+                {"$sort": {"free": 1}},
+                { "$limit": 1 }
+            ]).to_list(length=1)
         return convert_server_document_to_entity(doc[0]) if doc else None
 
     async def create(self, server: Server) -> None:

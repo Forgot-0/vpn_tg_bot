@@ -106,14 +106,14 @@ def dummy_server() -> Server:
     )
     return Server(
         id=uuid4(),
-        ip="127.0.0.1",
-        port=8080,
-        domain="test.test",
         limit=10,
         free=1,
         region=Region(flag="🇩🇪", name="Germany", code="DE"),
         api_type=ApiType.mock,
-        api_config={},
+        api_config={
+            "dummy_data": "mock"
+        },
+        auth_credits={},
         protocol_configs={ProtocolType.mock: dummy_protocol_config}
     )
 
