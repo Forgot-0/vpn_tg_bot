@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import logging
 from uuid import UUID
 
-from application.dtos.subsciprions.subscription import SubscriptionDTO
+from application.dtos.subscriptions.subscription import SubscriptionDTO
 from application.queries.base import BaseQuery, BaseQueryHandler
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.values.subscriptions import SubscriptionId

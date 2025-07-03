@@ -48,7 +48,6 @@ class Base_APIConfig:
 @dataclass(frozen=True)
 class XUI_APIConfig(Base_APIConfig):
     ip: str
-    port: int
     panel_port: int
     panel_path: str
 

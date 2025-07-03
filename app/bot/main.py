@@ -18,8 +18,9 @@ from bot.handlers.subscription import router as subscription_router
 logger = logging.getLogger(__name__)
 
 
-async def startup_bot(bot: Bot):
+async def startup_bot(bot: Bot) -> None:
     if (await bot.get_webhook_info()).url != app_settings.webhook_url:
+        await bot.delete_webhook(drop_pending_updates=False)
         await bot.set_webhook(
             url=app_settings.webhook_url,
             drop_pending_updates=False,
@@ -27,6 +28,10 @@ async def startup_bot(bot: Bot):
             secret_token=app_settings.WEBHOOK_SECRET
         )
     await photo_manager.init_photo(bot)
+
+async def shutdown_bot(bot: Bot) -> None:
+    await bot.delete_webhook(drop_pending_updates=False)
+
 
 def add_middlewares(dp: Dispatcher):
     dp.update.middleware(MediatorMiddleware())
@@ -44,6 +49,7 @@ async def handle_exception(event: ErrorEvent):
 def init_dispatch() -> Dispatcher:
     dp = Dispatcher(storage=RedisStorage(Redis.from_url(app_settings.fsm_redis_url)))
     dp.startup.register(startup_bot)
+    dp.shutdown.register(shutdown_bot)
     add_middlewares(dp=dp)
     dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
 

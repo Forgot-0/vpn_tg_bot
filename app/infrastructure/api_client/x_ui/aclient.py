@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from http.cookies import SimpleCookie
+from typing import Any
 
 from aiohttp import ClientSession
 
@@ -9,7 +10,7 @@ from domain.entities.subscription import Subscription
 from domain.entities.user import User
 from domain.services.ports import BaseApiClient
 from domain.services.servers import decrypt
-from domain.values.servers import VPNConfig
+from domain.values.servers import ProtocolConfig, ProtocolType, VPNConfig
 from infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 
@@ -33,6 +34,9 @@ class A3xUiApiClient(BaseApiClient):
     def delete_client_url(self, server: Server, inbound_id: int, id: str) -> str:
         return f"{self._base_url(server)}/panel/api/inbounds/{inbound_id}/delClient/{id}"
 
+    def get_config_url(self, server: Server) -> str:
+        return f"{self._base_url(server)}/panel/api/inbounds/list"
+
     async def _login(self, session: ClientSession, server: Server) -> SimpleCookie:
         for key, value in server.auth_credits.items():
                 server.auth_credits[key] = decrypt(value)
@@ -42,6 +46,32 @@ class A3xUiApiClient(BaseApiClient):
             data=server.auth_credits
         )
         return resp_login.cookies
+
+    async def get_configs(self, server: Server)  -> list[ProtocolConfig]:
+        protocol_configs = []
+
+        async with ClientSession() as session:
+            auth_cookies = await self._login(session=session, server=server)
+            resp = await session.get(
+                url=self.get_config_url(server=server),
+                cookies=auth_cookies
+            )
+
+        inbounds = await resp.json()
+        if not inbounds['success']:
+            raise 
+
+        for ind in inbounds['obj']:
+            protocol_type = ProtocolType(ind['protocol'].upper())
+            builder = self.builder_factory.get(server.api_type, protocol_type)
+            protocol_configs.append(
+                ProtocolConfig(
+                    config=builder.build_config(ind),
+                    protocol_type=protocol_type
+                    )
+            )
+
+        return protocol_configs
 
     async def create_or_upgrade_subscription(
             self,

@@ -5,7 +5,7 @@ from typing import Any
 from domain.entities.server import Server
 from domain.entities.subscription import Subscription
 from domain.entities.user import User
-from domain.values.servers import ProtocolType, VPNConfig
+from domain.values.servers import ProtocolConfig, ProtocolType, VPNConfig
 
 
 
@@ -15,6 +15,9 @@ class BaseApiClient(ABC):
         self,user: User,
         subscription: Subscription,
         server: Server) -> list[VPNConfig]: ...
+
+    @abstractmethod
+    async def get_configs(self, server: Server)  -> list[ProtocolConfig]: ...
 
     @abstractmethod
     async def delete_inactive_clients(self, server: Server) -> None: ...
@@ -31,3 +34,6 @@ class BaseProtocolBuilder(ABC):
 
     @abstractmethod
     def builde_config_vpn(self, user: User, subscription: Subscription, server: Server) -> VPNConfig: ...
+
+    @abstractmethod
+    def build_config(self, data: dict[str, Any]) -> dict[str, Any]: ...

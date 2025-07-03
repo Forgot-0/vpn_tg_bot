@@ -22,13 +22,17 @@ class Server(AggregateRoot):
     protocol_configs: dict[ProtocolType, ProtocolConfig] = field(default_factory=dict)
 
     def __post_init__(self):
-        api_config_model = api_type_to_model[self.api_type]
+        api_config_model = api_type_to_model.get(self.api_type)
+
+        if not api_config_model:
+            raise
+
         api_config_model(**self.api_config)
 
     @classmethod
     def create(cls, limit: int, region: Region, api_type: ApiType, \
-            api_config: dict[str, str], auth_credits: dict[str, str], \
-            protocol_configs: dict[ProtocolType, ProtocolConfig]) -> "Server":
+            api_config: dict[str, Any], auth_credits: dict[str, str], \
+            protocol_configs: dict[ProtocolType, ProtocolConfig] | None = None) -> "Server":
 
         for key, val in auth_credits.items():
             auth_credits[key] = encrypt(val)
@@ -40,7 +44,7 @@ class Server(AggregateRoot):
             api_type=api_type,
             api_config=api_config,
             auth_credits=auth_credits,
-            protocol_configs=protocol_configs
+            protocol_configs=protocol_configs if protocol_configs else dict()
         )
 
         return server
