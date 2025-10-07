@@ -1,16 +1,14 @@
 from dataclasses import dataclass
 from http.cookies import SimpleCookie
-from typing import Any
 
 from aiohttp import ClientSession
 
-from configs.app import app_settings
 from domain.entities.server import Server
 from domain.entities.subscription import Subscription
 from domain.entities.user import User
 from domain.services.ports import BaseApiClient
 from domain.services.servers import decrypt
-from domain.values.servers import ProtocolConfig, ProtocolType, VPNConfig
+from domain.values.servers import ProtocolConfig, ProtocolType
 from infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 
@@ -62,7 +60,7 @@ class A3xUiApiClient(BaseApiClient):
             raise 
 
         for ind in inbounds['obj']:
-            protocol_type = ProtocolType(ind['protocol'].upper())
+            protocol_type = ProtocolType(ind['protocol'])
             builder = self.builder_factory.get(server.api_type, protocol_type)
             protocol_configs.append(
                 ProtocolConfig(
@@ -78,8 +76,7 @@ class A3xUiApiClient(BaseApiClient):
             user: User,
             subscription: Subscription,
             server: Server
-        ) -> list[VPNConfig]:
-        vpn_configs = []
+        ) -> None:
 
         async with ClientSession() as session:
             auth_cookies = await self._login(session=session, server=server)
@@ -103,10 +100,6 @@ class A3xUiApiClient(BaseApiClient):
                             json=json,
                             cookies=auth_cookies
                         )
-
-                vpn_configs.append(builder.builde_config_vpn(user, subscription, server))
-
-        return vpn_configs
 
     async def delete_inactive_clients(self) -> None: ...
 

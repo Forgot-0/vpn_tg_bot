@@ -78,7 +78,7 @@ def subs_price_service():
                 Region(flag="🇩🇪", name="Germany", code="DE"): 1.0,
             },
             protocol_multipliers={
-                ProtocolType.vless: 0.15,
+                ProtocolType.VLESS: 0.15,
                 ProtocolType.mock: 0.15
             }
         )

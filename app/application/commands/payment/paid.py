@@ -7,9 +7,7 @@ from domain.repositories.payment import BasePaymentRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
-from domain.values.servers import VPNConfig
 from infrastructure.api_client.factory import ApiClientFactory
-from infrastructure.tgbot.base import BaseTelegramBot
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +25,6 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
     subscription_repository: BaseSubscriptionRepository
     server_repository: BaseServerRepository
     api_panel_factory: ApiClientFactory
-    bot: BaseTelegramBot
 
     async def handle(self, command: PaidPaymentCommand) -> None:
         payment = await self.payment_repository.get_by_payment_id(payment_id=command.payment_id)
@@ -48,14 +45,11 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
         await self.payment_repository.update(payment=payment)
 
         api_client = self.api_panel_factory.get(server.api_type)
-        vpn_configs = await api_client.create_or_upgrade_subscription(
+        await api_client.create_or_upgrade_subscription(
             user=user,
             subscription=payment.subscription,
             server=server
         )
-
-        if user.telegram_id:
-            await self.bot.send_vpn_configs(user.telegram_id, vpn_configs=vpn_configs)
 
         await self.mediator.publish(payment.pull_events())
 

@@ -27,8 +27,8 @@ class CountryCode(Enum):
     SWITZERLAND = "CH"
 
 
-class ProtocolType(Enum):
-    vless = "VLESS"
+class ProtocolType(str, Enum):
+    VLESS = "vless"
     mock = "MOCK"
 
 @dataclass(frozen=True)

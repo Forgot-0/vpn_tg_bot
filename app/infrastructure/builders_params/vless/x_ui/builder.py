@@ -7,6 +7,7 @@ from domain.entities.subscription import Subscription
 from domain.entities.user import User
 from domain.services.ports import BaseProtocolBuilder
 from domain.values.servers import VPNConfig
+from infrastructure.api_client.x_ui.schema import Inbound
 
 
 @dataclass
@@ -32,31 +33,19 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
 
     def builde_config_vpn(self, user: User, subscription: Subscription, server: Server) -> VPNConfig:
         config = server.get_config_by_protocol(self.protocol_type).config
-
         return VPNConfig(
             protocol_type=self.protocol_type,
-            config=(
-                "vless://{id}@{ip}:{port}?security={security}&sni={sni}&fp={fp}&pbk={pbk}&"
-                "sid={sid}&spx={spx}&type=tcp&flow=xtls-rprx-vision#{name}-{id}"
-            ).format(
-                **config,
-                ip=server.api_config["ip"],
-                id=subscription.id.as_generic_type()
-                )
+            config=Inbound.from_json(config).gen_vless_link(
+                address=server.api_config["domain"] if server.api_config["domain"] else server.api_config["ip"],
+                client_id=subscription.id.as_generic_type(),
+                flow="xtls-rprx-vision",
+                remark=f"{subscription.id.as_generic_type()}"
+            )
         )
 
     def build_config(self, data: dict[str, Any]) -> dict[str, Any]:
-        vpn_config = {}
+        data['settings'] = json.loads(data['settings'])
+        data['streamSettings'] = (json.loads(data['streamSettings']))
+        data['sniffing'] = json.loads(data['sniffing'])
 
-        vpn_config['port'] = data['port']
-        vpn_config['inbound_id'] = data['id']
-        config = json.loads(data['streamSettings'])
-        vpn_config['security'] = config['security']
-        if 'realitySettings' in config:
-            vpn_config['sid'] = config['realitySettings']['shortIds'][0]
-            vpn_config['pbk'] = config['realitySettings']['settings']['publicKey']
-            vpn_config['fp'] = config['realitySettings']['settings']['fingerprint']
-            vpn_config['spx'] = config['realitySettings']['settings']['spiderX']
-            vpn_config['sni'] = config['realitySettings']['serverNames'][0]
-
-        return vpn_config
+        return data

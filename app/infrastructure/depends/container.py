@@ -31,8 +31,6 @@ from infrastructure.depends.init_repositories import (
 # from infrastructure.message_broker.base import BaseMessageBroker
 from infrastructure.mediator.mediator import Mediator
 from infrastructure.payments.base import BasePaymentService
-from infrastructure.tgbot.aiobot import AiohramTelegramBot
-from infrastructure.tgbot.base import BaseTelegramBot
 from configs.app import app_settings
 
 
@@ -118,14 +116,14 @@ def _init_container() -> Container:
                 Region("🇳🇱", "Нидерланды", "NL"): 1.0,
             },
             protocol_multipliers={
-                ProtocolType.vless: 0.15
+                ProtocolType.VLESS: 0.15
             }
         )
     )
 
     # BUILDER PROTOCOL
     factory_builder = ProtocolBuilderFactory()
-    factory_builder.register(ApiType.x_ui, ProtocolType.vless, Vless3XUIProtocolBuilder)
+    factory_builder.register(ApiType.x_ui, ProtocolType.VLESS, Vless3XUIProtocolBuilder)
 
     container.register(ProtocolBuilderFactory, instance=factory_builder)
 
@@ -134,18 +132,6 @@ def _init_container() -> Container:
     factory_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=factory_builder))
 
     container.register(ApiClientFactory, instance=factory_client)
-
-
-    # Bot telegram (for application)
-    container.register(
-        BaseTelegramBot,
-        factory=lambda: AiohramTelegramBot(Bot(
-            token=app_settings.BOT_TOKEN,
-            default=DefaultBotProperties(parse_mode='HTML')
-            ),
-        ),
-        scope=Scope.singleton
-    )
 
     # PAYMENT
 

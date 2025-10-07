@@ -29,7 +29,7 @@ def vless_reply_markup_config_builder() -> InlineKeyboardMarkup:
 
 def get_reply_markup_config_builder(protocol_type: ProtocolType) -> InlineKeyboardMarkup:
     match protocol_type:
-        case ProtocolType.vless:
+        case ProtocolType.VLESS:
             return vless_reply_markup_config_builder()
     raise
 
