@@ -2,7 +2,7 @@ from domain.entities.user import User
 from domain.entities.subscription import Subscription
 from domain.entities.server import Server
 from domain.services.ports import BaseApiClient
-from domain.values.servers import ProtocolType, VPNConfig
+from domain.values.servers import ProtocolConfig, ProtocolType, VPNConfig
 
 class MockApiClient(BaseApiClient):
     def __init__(self) -> None:
@@ -26,3 +26,6 @@ class MockApiClient(BaseApiClient):
     async def delete_client(self, user: User, subscription: Subscription, server: Server) -> None:
         key = (user.id, subscription.id, server.id)
         self.data.pop(key)
+
+    async def get_configs(self, server: Server) -> list[ProtocolConfig]:
+        return [ProtocolConfig({}, protocol_type=ProtocolType.mock)]

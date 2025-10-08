@@ -54,18 +54,19 @@ class Payment(AggregateRoot):
             user_id=user_id,
             total_price=total_price,
             discount=discount,
-            status=PaymentStatus("PENDING")
+            status=PaymentStatus.pending
         )
 
         return order
 
     def paid(self) -> None:
         self.payment_date = datetime.now()
-        self.status = PaymentStatus("SUCCESE")
+        self.status = PaymentStatus.succese
 
         self.register_event(
             PaidPaymentEvent(
                 order_id=self.id,
+                subscription_id=self.subscription.id.value,
                 user_id=self.user_id.value,
                 end_time=self.payment_date + timedelta(days=self.subscription.duration)
             )

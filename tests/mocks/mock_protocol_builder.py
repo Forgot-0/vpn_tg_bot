@@ -14,3 +14,6 @@ class MockProtocolBuilder(BaseProtocolBuilder):
             protocol_type=ProtocolType.mock,
             config="dummy_config"
         )
+
+    def build_config(self, data: dict[str, Any]) -> dict[str, Any]:
+        return {}

@@ -4,8 +4,6 @@ from aiogram import BaseMiddleware
 from aiogram.types import Update
 from aiogram.enums import ChatMemberStatus
 
-from configs.app import app_settings
-
 
 class CheckSubsChannelMiddleware(BaseMiddleware):
     async def __call__(
@@ -25,7 +23,7 @@ class CheckSubsChannelMiddleware(BaseMiddleware):
         # if chat_member.status in [
         #     ChatMemberStatus.KICKED,
         #     ChatMemberStatus.LEFT
-        # ]: 
+        # ]:
         #     await event.message.answer()
         #     return 
 

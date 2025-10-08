@@ -28,10 +28,14 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, VPNConfig]):
 
     async def handle(self, query: GetConfigQuery) -> VPNConfig:
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
+        if not subscription:
+            raise
+
         server = await self.server_reposiotry.get_by_id(subscription.server_id)
         user = await self.user_repositry.get_by_id(subscription.user_id)
 
-        if not user or not server or not subscription: raise
+        if not user or not server:
+            raise
 
         builder = self.builder_factory.get(server.api_type, subscription.protocol_types[0])
         config = builder.builde_config_vpn(user, subscription, server)
