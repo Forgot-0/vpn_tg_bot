@@ -12,6 +12,7 @@ from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
 from domain.services.subscription import SubscriptionPricingService
 from domain.values.servers import ProtocolType, Region
+from infrastructure.mediator.event import BaseEventBus
 from infrastructure.payments.base import BasePaymentService
 
 
@@ -34,6 +35,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
     subscription_repository: BaseSubscriptionRepository
     subs_price_service: SubscriptionPricingService
     payment_service: BasePaymentService
+    event_bus: BaseEventBus
 
     async def handle(self, command: CreateSubscriptionCommand) -> PaymentDTO:
         protocol_types=[ProtocolType(t) for t in command.protocol_types]
@@ -72,7 +74,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         await self.payment_repository.create(payment=payment)
 
-        await self.mediator.publish(
+        await self.event_bus.publish(
             user.pull_events()+payment.pull_events()+subscription.pull_events()+server.pull_events()
         )
 

@@ -37,7 +37,6 @@ class ImageManager:
 
         for key, path in self.images_paths.items():
             file_path = f"./bot/static/{path}"
-            print(file_path)
             resp = await bot.send_photo(app_settings.BOT_OWNER_ID, FSInputFile(file_path))
             self.images_fileId[key] = resp.photo[-1].file_id
 

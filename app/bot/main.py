@@ -6,7 +6,6 @@ from aiogram.fsm.storage.redis import RedisStorage
 from redis.asyncio.client import Redis
 
 from bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
-from bot.middlewares.mediator import MediatorMiddleware
 from bot.static.init import photo_manager
 from domain.exception.base import ApplicationException
 from configs.app import app_settings
@@ -26,15 +25,14 @@ async def startup_bot(bot: Bot) -> None:
             drop_pending_updates=False,
             allowed_updates=["message", "inline_query", "callback_query"],
             secret_token=app_settings.WEBHOOK_SECRET
-        )
-    await photo_manager.init_photo(bot)
+            )
+        await photo_manager.init_photo(bot)
 
 async def shutdown_bot(bot: Bot) -> None:
     await bot.delete_webhook(drop_pending_updates=False)
 
 
 def add_middlewares(dp: Dispatcher):
-    dp.update.middleware(MediatorMiddleware())
 
     if app_settings.CHAT_TELEGRAM:
         dp.update.middleware(CheckSubsChannelMiddleware())

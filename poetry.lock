@@ -159,6 +159,21 @@ yarl = ">=1.17.0,<2.0"
 speedups = ["Brotli ; platform_python_implementation == \"CPython\"", "aiodns (>=3.2.0) ; sys_platform == \"linux\" or sys_platform == \"darwin\"", "brotlicffi ; platform_python_implementation != \"CPython\""]
 
 [[package]]
+name = "aiojobs"
+version = "1.4.0"
+description = "Job scheduler for managing background tasks (asyncio)"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "aiojobs-1.4.0-py3-none-any.whl", hash = "sha256:e95eb0d10d1f6095aefb04d228d2b4b3747514503f26540de722c2228a8500ca"},
+    {file = "aiojobs-1.4.0.tar.gz", hash = "sha256:463665c75d1fcc46c78d44375c1034abf5e3f087894b0fc5ec4dd16ef90fdc98"},
+]
+
+[package.extras]
+aiohttp = ["aiohttp (>=3.9.0)"]
+
+[[package]]
 name = "aiokafka"
 version = "0.12.0"
 description = "Kafka integration with asyncio"
@@ -472,6 +487,18 @@ sdist = ["build (>=1.0.0)"]
 ssh = ["bcrypt (>=3.1.5)"]
 test = ["certifi (>=2024)", "cryptography-vectors (==45.0.4)", "pretend (>=0.7)", "pytest (>=7.4.0)", "pytest-benchmark (>=4.0)", "pytest-cov (>=2.10.1)", "pytest-xdist (>=3.5.0)"]
 test-randomorder = ["pytest-randomly"]
+
+[[package]]
+name = "dishka"
+version = "1.7.2"
+description = "Cute DI framework with scopes and agreeable API"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "dishka-1.7.2-py3-none-any.whl", hash = "sha256:f6faa6ab321903926b825b3337d77172ee693450279b314434864978d01fbad3"},
+    {file = "dishka-1.7.2.tar.gz", hash = "sha256:47d4cb5162b28c61bf5541860e605ed5eaf5c667122299c7ef657c86fc8d5a49"},
+]
 
 [[package]]
 name = "dnspython"
@@ -1041,18 +1068,6 @@ files = [
 ]
 
 [[package]]
-name = "punq"
-version = "0.7.0"
-description = "An IOC Container for Python 3.8+"
-optional = false
-python-versions = ">=3.8.1,<4.0"
-groups = ["main"]
-files = [
-    {file = "punq-0.7.0-py3-none-any.whl", hash = "sha256:7e0aca446c36a73674ec3fc078ec5e90e7a172ee349537d075ff20d73c3b1810"},
-    {file = "punq-0.7.0.tar.gz", hash = "sha256:bb7a6cc75a2e7d51b861b0e11f4830a12617b3ee33dbced9ce2be6a98ba39d63"},
-]
-
-[[package]]
 name = "pycparser"
 version = "2.22"
 description = "C parser in Python"
@@ -1591,4 +1606,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<4.0"
-content-hash = "e19bba85cf0c17862a830fd4ef1c637618cfd0b71ab8bf3cdaedbc9e734b5945"
+content-hash = "b3a72cd263a6606deb2aae7ed8b5d7ee8d12b31178deae4c5f2117d5f668db76"

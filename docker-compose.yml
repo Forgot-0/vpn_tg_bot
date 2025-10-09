@@ -46,7 +46,7 @@ services:
       timeout: 5s
       retries: 12
 
-    mongo:
+  mongo:
     image: mongo:8.0.15
     container_name: mongo
     restart: always

@@ -8,6 +8,7 @@ from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
 from infrastructure.api_client.factory import ApiClientFactory
+from infrastructure.mediator.event import BaseEventBus
 
 
 logger = logging.getLogger(__name__)
@@ -25,6 +26,7 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
     subscription_repository: BaseSubscriptionRepository
     server_repository: BaseServerRepository
     api_panel_factory: ApiClientFactory
+    event_bus: BaseEventBus 
 
     async def handle(self, command: PaidPaymentCommand) -> None:
         payment = await self.payment_repository.get_by_payment_id(payment_id=command.payment_id)
@@ -51,6 +53,6 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
             server=server
         )
 
-        await self.mediator.publish(payment.pull_events())
+        await self.event_bus.publish(payment.pull_events())
 
         logger.info("Paid payment", extra={"payment": payment})

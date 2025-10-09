@@ -2,20 +2,18 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.command import Command
 from aiogram.types import Message, CallbackQuery
+from dishka.integrations.aiogram import FromDishka
 
 from application.commands.users.create import CreateUserCommand
 from bot.messages.menu import AboutButton, AboutMessage, BackButton, HelpButton, HelpMessage, StartMessageBuilder
-from infrastructure.mediator.mediator import Mediator
+from infrastructure.mediator.base import BaseMediator
 
 
 router = Router()
 
-# @router.message()
-# async def s(message: Message):
-#     print(message)
 
 @router.message(Command("start"))
-async def start(message: Message, mediator: Mediator):
+async def start(message: Message, mediator: FromDishka[BaseMediator]):
     data = StartMessageBuilder().build()
     data['photo'] = data.pop("media").media
     print(data['photo'])

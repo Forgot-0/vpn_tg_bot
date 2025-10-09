@@ -5,10 +5,10 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 
 from application.dtos.payments.url import PaymentDTO
-from application.dtos.subsciprions.subscription import SubscriptionDTO
-from bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
+from application.dtos.subscriptions.subscription import SubscriptionDTO
+from bot.messages.base import BaseMediaBuilder
 from bot.messages.menu import BackButton, VPNButton
-from domain.values.servers import ProtocolType, VPNConfig
+from domain.values.servers import ProtocolType
 
 
 

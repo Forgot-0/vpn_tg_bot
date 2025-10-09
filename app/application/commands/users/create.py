@@ -6,6 +6,7 @@ from application.commands.base import BaseCommand, BaseCommandHandler
 from domain.entities.user import User
 from domain.repositories.users import BaseUserRepository
 from domain.values.users import UserId
+from infrastructure.mediator.event import BaseEventBus
 
 
 logger = logging.getLogger(__name__)
@@ -24,6 +25,7 @@ class CreateUserCommand(BaseCommand):
 @dataclass(frozen=True)
 class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
     user_repository: BaseUserRepository
+    event_bus: BaseEventBus
 
     async def handle(self, command: CreateUserCommand) -> None:
         user = await self.user_repository.get_by_telegram_id(telegram_id=command.tg_id)
@@ -39,5 +41,5 @@ class CreateUserCommandHandler(BaseCommandHandler[CreateUserCommand, None]):
         )
 
         await self.user_repository.create(user=user)
-        await self.mediator.publish(user.pull_events())
+        await self.event_bus.publish(user.pull_events())
         logger.info("Create user", extra={"user": user})
