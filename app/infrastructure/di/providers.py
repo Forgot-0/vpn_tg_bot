@@ -31,37 +31,28 @@ from infrastructure.payments.base import BasePaymentService
 class ApplicationProvider(Provider):
 
     @provide(scope=Scope.APP)
-    def mongo_clinet(self) -> AsyncIOMotorClient:
+    def mongo_client(self) -> AsyncIOMotorClient:
         return AsyncIOMotorClient(
             app_settings.mongo_url,
             serverSelectionTimeoutMS=3000,
             uuidRepresentation='standard'
         )
 
-    user_repository = provide(
-        init_mongo_user_repository,
-        provides=BaseUserRepository, 
-        scope=Scope.APP
-    )
+    @provide(scope=Scope.APP)
+    def user_reposiotry(self, client: AsyncIOMotorClient) -> BaseUserRepository:
+        return init_mongo_user_repository(client)
 
-    subscription_repository = provide(
-        init_mongo_subscription_repository,
-        provides=BaseSubscriptionRepository, 
-        scope=Scope.APP
-    )
+    @provide(scope=Scope.APP)
+    def subscription_repository(self, client: AsyncIOMotorClient) -> BaseSubscriptionRepository:
+        return init_mongo_subscription_repository(client)
 
-    payment_repository = provide(
-        init_mongo_payment_repository,
-        provides=BasePaymentRepository, 
-        scope=Scope.APP
-    )
+    @provide(scope=Scope.APP)
+    def payment_repository(self, client: AsyncIOMotorClient) -> BasePaymentRepository:
+        return init_mongo_payment_repository(client)
 
-    server_repository = provide(
-        init_mongo_server_repository,
-        provides=BaseServerRepository, 
-        scope=Scope.APP
-    )
-
+    @provide(scope=Scope.APP)
+    def server_repository(self, client: AsyncIOMotorClient) -> BaseServerRepository:
+        return init_mongo_server_repository(client)
 
     @provide(scope=Scope.APP)
     def subscription_service(self) -> SubscriptionPricingService:
@@ -88,11 +79,9 @@ class ApplicationProvider(Provider):
         factory_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=protocol_factory))
         return factory_client
 
-    payment_service = provide(
-        inti_yookass,
-        provides=BasePaymentService,
-        scope=Scope.APP
-    )
+    @provide(scope=Scope.APP)
+    def payment_service(self) -> BasePaymentService:
+        return inti_yookass()
 
     @provide(scope=Scope.APP)
     def event_mediator(self, container: AsyncContainer, event_maps: EventRegisty) -> BaseEventBus:

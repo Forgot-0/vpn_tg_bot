@@ -10,6 +10,7 @@ import uvicorn
 from bot.main import dp, bot
 from configs.app import app_settings
 from infrastructure.di.container import create_container
+from infrastructure.log.init import configure_logging
 from presentation.middlewares.context import set_request_id_middleware
 from presentation.middlewares.structlog import structlog_bind_middleware
 from presentation.webhooks.telegram import router as telegram_router
@@ -21,10 +22,9 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await dp.emit_startup(bot=bot)
-    aiogram_setup_dishka(container=app.state.dishka_container, router=dp, auto_inject=True)
+    await dp.emit_startup(bot=bot, dispatcher=dp)
     yield
-    await dp.emit_shutdown(bot=bot)
+    await dp.emit_shutdown(bot=bot, dispatcher=dp)
     await app.state.dishka_container.close()
 
 def setup_middlewares(app: FastAPI) -> None:
@@ -32,6 +32,7 @@ def setup_middlewares(app: FastAPI) -> None:
     app.add_middleware(BaseHTTPMiddleware, dispatch=set_request_id_middleware)
 
 def init_api() -> FastAPI:
+    configure_logging()
     logger.debug("Initialize API")
     app = FastAPI(
         title='Simple subscription',
@@ -39,8 +40,11 @@ def init_api() -> FastAPI:
         description='Simple subscription + DDD, CQRS',
         lifespan=lifespan,
     )
+
     container = create_container()
+    aiogram_setup_dishka(container=container, router=dp, auto_inject=True)
     fast_setup_dishka(app=app, container=container)
+
     setup_middlewares(app=app)
 
     app.include_router(telegram_router)
@@ -56,6 +60,7 @@ async def run_api(app: FastAPI) -> None:
         port=app_settings.WEBAPP_WEBHOOK_PORT,
         log_level=logging.INFO,
         log_config=None,
+        reload=True
     )
     server = uvicorn.Server(config)
     logger.info("Running API")

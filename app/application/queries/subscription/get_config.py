@@ -3,6 +3,7 @@ import logging
 from uuid import UUID
 
 from application.queries.base import BaseQuery, BaseQueryHandler
+from domain.entities.subscription import SubscriptionStatus
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
@@ -29,6 +30,9 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, VPNConfig]):
     async def handle(self, query: GetConfigQuery) -> VPNConfig:
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
         if not subscription:
+            raise
+
+        if subscription.status != SubscriptionStatus.ACTIVE:
             raise
 
         server = await self.server_reposiotry.get_by_id(subscription.server_id)

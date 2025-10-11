@@ -59,6 +59,18 @@ class Mock_APIConfig(Base_APIConfig):
     dummy_data: str
 
 
+@dataclass(frozen=True)
+class Base_APICredits:
+    ...
+
+
+@dataclass(frozen=True)
+class XUI_APICredits(Base_APICredits):
+    username: str
+    password: str
+    twoFactorCode: str | None = field(default=None)
+
+
 @dataclass
 class VPNConfig:
     protocol_type: ProtocolType

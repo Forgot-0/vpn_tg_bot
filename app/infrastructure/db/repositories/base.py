@@ -1,12 +1,13 @@
 from abc import ABC
 from dataclasses import dataclass
-from motor.core import AgnosticClient
+
+from motor.motor_asyncio import AsyncIOMotorClient
 
 
 
 @dataclass
 class BaseMongoDBRepository(ABC):
-    mongo_db_client: AgnosticClient
+    mongo_db_client: AsyncIOMotorClient
     mongo_db_db_name: str
     mongo_db_collection_name: str
 

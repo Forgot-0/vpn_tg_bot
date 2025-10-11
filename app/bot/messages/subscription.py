@@ -67,7 +67,7 @@ class ProtocolTypeCallbackData(CallbackData, prefix="protocol"):
 
 
 class DaysMessage(BaseMediaBuilder):
-    _photo = ('durations')
+    _photo = ('duration')
     _reply_markup = InlineKeyboardMarkup(
         inline_keyboard=[
             [

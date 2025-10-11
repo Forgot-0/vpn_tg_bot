@@ -1,4 +1,4 @@
-from domain.entities.subscription import Subscription
+from domain.entities.subscription import Subscription, SubscriptionStatus
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.values.subscriptions import SubscriptionId
 from domain.values.users import UserId
@@ -35,7 +35,9 @@ class SubscriptionRepository(BaseMongoDBRepository, BaseSubscriptionRepository):
         return convert_subscription_document_to_entity(doc) if doc else None
 
     async def get_by_user(self, user_id: UserId) -> list[Subscription]:
-        docs = await self._collection.find({"user_id": user_id.value}).to_list(length=None)
+        docs = await self._collection.find(
+            {"user_id": user_id.value, "status": {"$ne": SubscriptionStatus.PENDING.value}}
+        ).to_list(length=None)
         return [convert_subscription_document_to_entity(d) for d in docs]
 
     async def update(self, subscription: Subscription) -> None:

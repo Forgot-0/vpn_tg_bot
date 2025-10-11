@@ -2,7 +2,7 @@
 services:
   app:
     build:
-      context: ..
+      context: .
       dockerfile: Dockerfile
     container_name: "app"
     # restart: always
@@ -71,3 +71,4 @@ services:
 volumes:
   dbdata6:
   redis-data:
+  kafka-data:

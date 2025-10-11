@@ -1,11 +1,13 @@
 from uuid import UUID
+
+from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Depends, Request, Response
 
 from application.commands.payment.paid import PaidPaymentCommand
 from infrastructure.mediator.base import BaseMediator
 
 
-router = APIRouter(tags=['webhook'])
+router = APIRouter(tags=['webhook'], route_class=DishkaRoute)
 
 
 @router.post('/paid')
