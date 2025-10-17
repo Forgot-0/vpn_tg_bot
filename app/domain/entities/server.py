@@ -4,7 +4,6 @@ from uuid import UUID, uuid4
 
 
 from domain.entities.base import AggregateRoot
-from domain.services.servers import encrypt
 from domain.values.servers import api_type_to_model, ApiType, ProtocolConfig, ProtocolType, Region
 
 
@@ -33,9 +32,6 @@ class Server(AggregateRoot):
     def create(cls, limit: int, region: Region, api_type: ApiType, \
             api_config: dict[str, Any], auth_credits: dict[str, str], \
             protocol_configs: dict[ProtocolType, ProtocolConfig] | None = None) -> "Server":
-
-        for key, val in auth_credits.items():
-            auth_credits[key] = encrypt(val)
 
         server =  Server(
             limit=limit,

@@ -1,12 +1,14 @@
+from dataclasses import dataclass
+
 from cryptography.fernet import Fernet
 
-from configs.app import app_settings
 
+@dataclass
+class SecureService:
+    service: Fernet
 
-f = Fernet(app_settings.SECRET)
+    def encrypt(self, value: str) -> str:
+        return self.service.encrypt(value.encode()).decode()
 
-def encrypt(value: str) -> str:
-    return f.encrypt(value.encode()).decode()
-
-def decrypt(value: str) -> str:
-    return f.decrypt(value).decode()
+    def decrypt(self, value: str) -> str:
+        return self.service.decrypt(value).decode()

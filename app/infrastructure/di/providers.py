@@ -1,4 +1,4 @@
-
+from cryptography.fernet import Fernet
 from dishka import AsyncContainer, Provider, Scope, provide
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -7,6 +7,7 @@ from domain.repositories.payment import BasePaymentRepository
 from domain.repositories.servers import BaseServerRepository
 from domain.repositories.subscriptions import BaseSubscriptionRepository
 from domain.repositories.users import BaseUserRepository
+from domain.services.servers import SecureService
 from domain.services.subscription import SubscriptionPricingService
 from domain.values.servers import ApiType, ProtocolType, Region
 from infrastructure.api_client.factory import ApiClientFactory
@@ -55,6 +56,10 @@ class ApplicationProvider(Provider):
         return init_mongo_server_repository(client)
 
     @provide(scope=Scope.APP)
+    def secure_service(self) -> SecureService:
+        return SecureService(Fernet(app_settings.SECRET))
+
+    @provide(scope=Scope.APP)
     def subscription_service(self) -> SubscriptionPricingService:
         return SubscriptionPricingService(
             daily_rate=2,
@@ -74,9 +79,9 @@ class ApplicationProvider(Provider):
         return factory_builder
 
     @provide(scope=Scope.APP)
-    def client_factory(self, protocol_factory: ProtocolBuilderFactory) -> ApiClientFactory:
+    def client_factory(self, protocol_factory: ProtocolBuilderFactory, secure: SecureService) -> ApiClientFactory:
         factory_client = ApiClientFactory()
-        factory_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=protocol_factory))
+        factory_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=protocol_factory, secure_service=secure))
         return factory_client
 
     @provide(scope=Scope.APP)

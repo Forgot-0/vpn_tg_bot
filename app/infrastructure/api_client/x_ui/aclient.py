@@ -7,7 +7,7 @@ from domain.entities.server import Server
 from domain.entities.subscription import Subscription
 from domain.entities.user import User
 from domain.services.ports import BaseApiClient
-from domain.services.servers import decrypt
+from domain.services.servers import SecureService
 from domain.values.servers import ProtocolConfig, ProtocolType
 from infrastructure.builders_params.factory import ProtocolBuilderFactory
 
@@ -15,6 +15,7 @@ from infrastructure.builders_params.factory import ProtocolBuilderFactory
 @dataclass
 class A3xUiApiClient(BaseApiClient):
     builder_factory: ProtocolBuilderFactory
+    secure_service: SecureService
 
     def _base_url(self, server: Server) -> str:
         cfg = server.api_config
@@ -37,7 +38,7 @@ class A3xUiApiClient(BaseApiClient):
 
     async def _login(self, session: ClientSession, server: Server) -> SimpleCookie:
         for key, value in server.auth_credits.items():
-                server.auth_credits[key] = decrypt(value)
+                server.auth_credits[key] = self.secure_service.decrypt(value)
 
         resp_login = await session.post(
             self.login_url(server=server),
