@@ -6,6 +6,7 @@ from fastapi.routing import APIRouter
 from bot.main import dp, bot
 from configs.app import app_settings
 
+
 router = APIRouter(tags=['webhook'], route_class=DishkaRoute)
 
 

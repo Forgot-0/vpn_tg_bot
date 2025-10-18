@@ -15,12 +15,12 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
 
     def build_params(self, user: User, subscription: Subscription, server: Server) -> dict[str, Any]:
         return {
-            "id": server.get_config_by_protocol(self.protocol_type).config['inbound_id'],
+            "id": server.get_config_by_protocol(self.protocol_type).config['id'],
             "settings": json.dumps({
                 "clients": [
                     {
                         "id": subscription.id.as_generic_type(),
-                        "flow": server.get_config_by_protocol(self.protocol_type).config["flow"],
+                        "flow": "xtls-rprx-vision",
                         "email": subscription.id.as_generic_type(),
                         "expiryTime": int(subscription.end_date.timestamp()*1000),
                         "limitIp": subscription.device_count,

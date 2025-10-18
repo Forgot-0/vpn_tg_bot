@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Request, Response
 
 from application.commands.payment.paid import PaidPaymentCommand
 from infrastructure.mediator.base import BaseMediator
@@ -20,3 +20,4 @@ async def paid(requests: Request, mediator: BaseMediator):
         )
     )
     return Response()
+

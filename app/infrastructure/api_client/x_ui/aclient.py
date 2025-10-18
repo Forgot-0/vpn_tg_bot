@@ -19,7 +19,8 @@ class A3xUiApiClient(BaseApiClient):
 
     def _base_url(self, server: Server) -> str:
         cfg = server.api_config
-        return f"http://{cfg['ip']}:{cfg['panel_port']}/{cfg['panel_path']}"
+        protocol_http = "https" if cfg['domain'] else "http"
+        return f"{protocol_http}://{cfg['domain']}:{cfg['panel_port']}/{cfg['panel_path']}"
 
     def login_url(self, server: Server) -> str:
         return f"{self._base_url(server)}/login/"
@@ -92,7 +93,6 @@ class A3xUiApiClient(BaseApiClient):
                         json=json,
                         cookies=auth_cookies
                     )
-
                     resp = await resp.json()
 
                     if "Duplicate email:" in resp.get("msg", ""):
