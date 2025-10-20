@@ -89,3 +89,6 @@
 docker-compose -f docker_compose/monitoring.yaml up -d
 ```
 Это поднимет все необходимые сервисы из файла [docker_compose/monitoring.yaml](docker_compose/monitoring.yaml).
+
+
+
