@@ -15,6 +15,7 @@ from presentation.middlewares.context import set_request_id_middleware
 from presentation.middlewares.structlog import structlog_bind_middleware
 from presentation.webhooks.telegram import router as telegram_router
 from presentation.webhooks.yookassa import router as yookassa_router
+from presentation.routers.servers.router import router as server_oruter
 
 
 logger = logging.getLogger(__name__)
@@ -49,6 +50,7 @@ def init_api() -> FastAPI:
 
     app.include_router(telegram_router)
     app.include_router(yookassa_router)
+    app.include_router(server_oruter)
 
     return app
 

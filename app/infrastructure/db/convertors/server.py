@@ -1,7 +1,8 @@
+from dataclasses import asdict
 from typing import Any
 
 from domain.entities.server import ProtocolConfig, Server
-from domain.values.servers import ApiType, ProtocolType, Region
+from domain.values.servers import APIConfig, APICredits, ApiType, ProtocolType, Region
 
 
 def convert_server_entity_to_document(server: Server) -> dict[str, Any]:
@@ -15,8 +16,8 @@ def convert_server_entity_to_document(server: Server) -> dict[str, Any]:
             },
         "free": server.free,
         "api_type": server.api_type.value,
-        "api_config": server.api_config,
-        "auth_credits": server.auth_credits,
+        "api_config": asdict(server.api_config),
+        "auth_credits": asdict(server.auth_credits),
         "protocol_configs": {
             protocol.value: {
                 "config": config.config,
@@ -33,8 +34,8 @@ def convert_server_document_to_entity(data: dict[str, Any]) -> Server:
         region=Region(**data['region']),
         free=data['free'],
         api_type=ApiType(data['api_type']),
-        api_config=data['api_config'],
-        auth_credits=data['auth_credits'],
+        api_config=APIConfig(**data['api_config']),
+        auth_credits=APICredits(**data['auth_credits']),
         protocol_configs={
             ProtocolType(key): ProtocolConfig(
                 config=value["config"],

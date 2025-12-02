@@ -1,5 +1,7 @@
 from dishka import Provider, Scope, provide
 
+from application.commands.auth.login import LoginTelegramUserCommand, LoginTelegramUserCommandHandler
+from application.commands.auth.refresh import RefreshTokenCommand, RefreshTokenCommandHandler
 from application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
 from application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
 from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
@@ -9,6 +11,7 @@ from application.events.server.decrement_free import DecrementFreeServerEventHan
 from application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
 from application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
 from application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
+from application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
 from domain.events.base import BaseEvent
 from domain.events.paymens.paid import PaidPaymentEvent
 from infrastructure.log.event_handler import LogHandlerEvent
@@ -33,6 +36,10 @@ class MediatorProvider(Provider):
     decrement_server_handler = provide(DecrementFreeServerEventHandler, scope=Scope.APP)
     create_server_handler = provide(CreateServerCommandHandler, scope=Scope.APP)
 
+    login_telegram_handler = provide(LoginTelegramUserCommandHandler, scope=Scope.APP)
+    refresh_token_handler = provide(RefreshTokenCommandHandler, scope=Scope.APP)
+    verify_token_handler = provide(VerifyTokenQueryHandler, scope=Scope.APP)
+
     @provide(scope=Scope.APP)
     def command_maps(self) -> CommandRegisty:
         command_maps = CommandRegisty()
@@ -56,6 +63,12 @@ class MediatorProvider(Provider):
             CreateServerCommand, [CreateServerCommandHandler]
         )
 
+        command_maps.register_command(
+            LoginTelegramUserCommand, [LoginTelegramUserCommandHandler]
+        )
+        command_maps.register_command(
+            RefreshTokenCommand, [RefreshTokenCommandHandler]
+        )
         return command_maps
 
     @provide(scope=Scope.APP)
@@ -72,6 +85,10 @@ class MediatorProvider(Provider):
 
         query_maps.register_query(
             GetConfigQuery, GetConfigQueryHandler
+        )
+
+        query_maps.register_query(
+            VerifyTokenQuery, VerifyTokenQueryHandler
         )
 
         return query_maps

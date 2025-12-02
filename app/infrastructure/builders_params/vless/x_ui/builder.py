@@ -36,7 +36,7 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
         return VPNConfig(
             protocol_type=self.protocol_type,
             config=Inbound.from_json(config).gen_vless_link(
-                address=server.api_config["domain"] if server.api_config["domain"] else server.api_config["ip"],
+                address=server.api_config.domain if server.api_config.domain else server.api_config.ip,
                 client_id=subscription.id.as_generic_type(),
                 flow="xtls-rprx-vision",
                 remark=f"{subscription.id.as_generic_type()}"

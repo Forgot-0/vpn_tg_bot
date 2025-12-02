@@ -2,6 +2,7 @@ from cryptography.fernet import Fernet
 from dishka import AsyncContainer, Provider, Scope, provide
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from application.services.jwt_manager import JWTManager
 from configs.app import app_settings
 from domain.repositories.payment import BasePaymentRepository
 from domain.repositories.servers import BaseServerRepository
@@ -30,6 +31,15 @@ from infrastructure.payments.base import BasePaymentService
 
 
 class ApplicationProvider(Provider):
+
+    @provide(scope=Scope.APP)
+    def jwt_manager(self) -> JWTManager:
+        return JWTManager(
+            jwt_secret=app_settings.JWT_SECRET_KEY,
+            jwt_algorithm=app_settings.JWT_ALGORITHM,
+            access_token_expire_minutes=app_settings.ACCESS_TOKEN_EXPIRE_MINUTES,
+            refresh_token_expire_days=app_settings.REFRESH_TOKEN_EXPIRE_DAYS,
+        )
 
     @provide(scope=Scope.APP)
     def mongo_client(self) -> AsyncIOMotorClient:

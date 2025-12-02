@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 
 from domain.entities.base import AggregateRoot
-from domain.values.servers import api_type_to_model, ApiType, ProtocolConfig, ProtocolType, Region
+from domain.values.servers import APIConfig, APICredits, ApiType, ProtocolConfig, ProtocolType, Region
 
 
 @dataclass
@@ -15,22 +15,15 @@ class Server(AggregateRoot):
     free: int
 
     api_type: ApiType
-    api_config: dict[str, Any]
-    auth_credits: dict[str, str]
+    api_config: APIConfig
+    auth_credits: APICredits
 
     protocol_configs: dict[ProtocolType, ProtocolConfig] = field(default_factory=dict)
 
-    def __post_init__(self):
-        api_config_model = api_type_to_model.get(self.api_type)
-
-        if not api_config_model:
-            raise
-
-        api_config_model(**self.api_config)
 
     @classmethod
     def create(cls, limit: int, region: Region, api_type: ApiType, \
-            api_config: dict[str, Any], auth_credits: dict[str, str], \
+            api_config: APIConfig, auth_credits: APICredits, \
             protocol_configs: dict[ProtocolType, ProtocolConfig] | None = None) -> "Server":
 
         server =  Server(

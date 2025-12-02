@@ -57,4 +57,10 @@ class AppConfig(BaseConfig):
     LOG_HANDLERS: Annotated[list[Literal['stream', 'file']] | str, BeforeValidator(BaseConfig.parse_list)] = ['stream']
 
 
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 60
+
+    JWT_SECRET_KEY: str = ""
+    JWT_ALGORITHM: str = "HS256"
+
 app_settings = AppConfig()

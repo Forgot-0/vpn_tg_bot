@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from http.cookies import SimpleCookie
 
 from aiohttp import ClientSession
@@ -19,8 +19,8 @@ class A3xUiApiClient(BaseApiClient):
 
     def _base_url(self, server: Server) -> str:
         cfg = server.api_config
-        protocol_http = "https" if cfg['domain'] else "http"
-        return f"{protocol_http}://{cfg['domain']}:{cfg['panel_port']}/{cfg['panel_path']}"
+        protocol_http = "https" if cfg.domain else "http"
+        return f"{protocol_http}://{cfg.domain}:{cfg.panel_port}/{cfg.panel_path}"
 
     def login_url(self, server: Server) -> str:
         return f"{self._base_url(server)}/login/"
@@ -38,12 +38,17 @@ class A3xUiApiClient(BaseApiClient):
         return f"{self._base_url(server)}/panel/api/inbounds/list"
 
     async def _login(self, session: ClientSession, server: Server) -> SimpleCookie:
-        for key, value in server.auth_credits.items():
-                server.auth_credits[key] = self.secure_service.decrypt(value)
-
+        auth_credits = {
+            "username": self.secure_service.decrypt(server.auth_credits.username),
+            "password": self.secure_service.decrypt(server.auth_credits.password),
+            "twoFactorCode": (
+                self.secure_service.decrypt(server.auth_credits.twoFactorCode)
+                if server.auth_credits.twoFactorCode else None
+            ),
+        }
         resp_login = await session.post(
             self.login_url(server=server),
-            data=server.auth_credits
+            data=auth_credits
         )
         return resp_login.cookies
 
@@ -54,24 +59,24 @@ class A3xUiApiClient(BaseApiClient):
             auth_cookies = await self._login(session=session, server=server)
             resp = await session.get(
                 url=self.get_config_url(server=server),
-                cookies=auth_cookies
+                cookies=auth_cookies,
             )
 
-        inbounds = await resp.json()
-        if not inbounds['success']:
-            raise 
+            inbounds = await resp.json()
+            if not inbounds['success']:
+                raise 
 
-        for ind in inbounds['obj']:
-            protocol_type = ProtocolType(ind['protocol'])
-            builder = self.builder_factory.get(server.api_type, protocol_type)
-            protocol_configs.append(
-                ProtocolConfig(
-                    config=builder.build_config(ind),
-                    protocol_type=protocol_type
-                    )
-            )
+            for ind in inbounds['obj']:
+                protocol_type = ProtocolType(ind['protocol'])
+                builder = self.builder_factory.get(server.api_type, protocol_type)
+                protocol_configs.append(
+                    ProtocolConfig(
+                        config=builder.build_config(ind),
+                        protocol_type=protocol_type
+                        )
+                )
 
-        return protocol_configs
+            return protocol_configs
 
     async def create_or_upgrade_subscription(
             self,
