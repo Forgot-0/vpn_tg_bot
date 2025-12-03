@@ -12,6 +12,7 @@ from app.application.queries.subscription.get_by_id import GetByIdQuery, GetById
 from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
 from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
 from app.application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
+from app.application.queries.users.get_list import GetListUserQuery, GetListUserQueryHandler
 from app.domain.events.base import BaseEvent
 from app.domain.events.paymens.paid import PaidPaymentEvent
 from app.infrastructure.log.event_handler import LogHandlerEvent
@@ -25,6 +26,8 @@ class MediatorProvider(Provider):
     log_handler = provide(LogHandlerEvent, scope=Scope.APP)
 
     create_user_handler = provide(CreateUserCommandHandler, scope=Scope.APP)
+    get_user_list_handler = provide(GetListUserQueryHandler, scope=Scope.APP)
+
     paid_payment_handler = provide(PaidPaymentCommandHandler, scope=Scope.APP)
     create_subscription_handler = provide(CreateSubscriptionCommandHandler, scope=Scope.APP)
     renew_subscription_handler = provide(RenewSubscriptionCommandHandler, scope=Scope.APP)
@@ -91,6 +94,9 @@ class MediatorProvider(Provider):
             VerifyTokenQuery, VerifyTokenQueryHandler
         )
 
+        query_maps.register_query(
+            GetListUserQuery, GetListUserQueryHandler
+        )
         return query_maps
 
     @provide(scope=Scope.APP)

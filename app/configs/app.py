@@ -24,7 +24,6 @@ class AppConfig(BaseConfig):
     def webhook_url(self) -> str:
         return f"https://{self.DOMAIN}{self.TELEGRAM_WEBHOOK_PATH}"
 
-
     PAYMENT_SECRET: str = ""
     PAYMENT_ID: int = 0
 

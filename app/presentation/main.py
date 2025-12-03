@@ -45,6 +45,11 @@ def init_api() -> FastAPI:
         docs_url='/api/docs',
         description='Simple subscription + DDD, CQRS',
         lifespan=lifespan,
+        openapi_url=(
+            f"/api/v1/openapi.json"
+            if app_settings.ENVIRONMENT in ["local", "testing"]
+            else None
+        ),
     )
 
     container = create_container()

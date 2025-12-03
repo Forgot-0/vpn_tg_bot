@@ -16,5 +16,9 @@ async def telegram_webhook(request: Request):
     if secret != app_settings.WEBHOOK_SECRET or secret is None:
         raise
     update = Update.model_validate(await request.json(), context={"bot": bot})
-    await dp.feed_webhook_update(update=update, bot=bot, dishka_container=request.app.state.dishka_container)
+    await dp.feed_webhook_update(
+        update=update,
+        bot=bot,
+        dishka_container=request.app.state.dishka_container
+    )
     return Response()
