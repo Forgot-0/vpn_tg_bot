@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from application.commands.base import BaseCommand, BaseCommandHandler
+from application.dtos.users.jwt import UserJWTData
 from domain.entities.server import Server
 from domain.repositories.servers import BaseServerRepository
 from domain.services.servers import SecureService
@@ -24,6 +25,7 @@ class CreateServerCommand(BaseCommand):
     password: str
     twoFactorCode: str | None = field(default=None, kw_only=True)
 
+    user_jwt_data: UserJWTData
 
 @dataclass(frozen=True)
 class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
@@ -32,6 +34,9 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
     secure_service: SecureService
 
     async def handle(self, command: CreateServerCommand) -> None:
+        if command.user_jwt_data.role != "admin":
+            raise
+
         api_type = ApiType(command.api_type)
         api_panel = self.api_panel_factory.get(api_type)
 

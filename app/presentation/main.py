@@ -5,7 +5,6 @@ from dishka.integrations.fastapi import setup_dishka as fast_setup_dishka
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from starlette.middleware.base import BaseHTTPMiddleware
-import uvicorn
 
 from bot.main import dp, bot
 from configs.app import app_settings
@@ -15,8 +14,7 @@ from presentation.middlewares.context import set_request_id_middleware
 from presentation.middlewares.structlog import structlog_bind_middleware
 from presentation.webhooks.telegram import router as telegram_router
 from presentation.webhooks.yookassa import router as yookassa_router
-from presentation.routers.servers.router import router as server_oruter
-
+from presentation.routers.routers import router_v1
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +29,13 @@ async def lifespan(app: FastAPI):
 def setup_middlewares(app: FastAPI) -> None:
     app.add_middleware(BaseHTTPMiddleware, dispatch=structlog_bind_middleware)
     app.add_middleware(BaseHTTPMiddleware, dispatch=set_request_id_middleware)
+
+
+def setup_router(app: FastAPI) -> None:
+    app.include_router(telegram_router)
+    app.include_router(yookassa_router)
+    app.include_router(router_v1, prefix="/api/v1")
+
 
 def init_api() -> FastAPI:
     configure_logging()
@@ -47,23 +52,8 @@ def init_api() -> FastAPI:
     fast_setup_dishka(app=app, container=container)
 
     setup_middlewares(app=app)
-
-    app.include_router(telegram_router)
-    app.include_router(yookassa_router)
-    app.include_router(server_oruter)
+    setup_router(app=app)
 
     return app
 
 
-async def run_api(app: FastAPI) -> None:
-    config = uvicorn.Config(
-        app,
-        host=app_settings.WEBAPP_WEBHOOK_HOST,
-        port=app_settings.WEBAPP_WEBHOOK_PORT,
-        log_level=logging.INFO,
-        log_config=None,
-        reload=True
-    )
-    server = uvicorn.Server(config)
-    logger.info("Running API")
-    await server.serve()

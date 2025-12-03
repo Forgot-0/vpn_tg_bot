@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from application.dtos.users.jwt import UserJWTData
 from application.queries.tokens.verify import VerifyTokenQuery
 from infrastructure.mediator.base import BaseMediator
+from presentation.cookies import RefreshTokenCookieManager
 
 
 
@@ -32,3 +33,5 @@ class UserJWTDataGetter:
 
 
 CurrentUserJWTData = Annotated[UserJWTData, Depends(UserJWTDataGetter())]
+
+CookieManager = Annotated[RefreshTokenCookieManager, Depends(RefreshTokenCookieManager)]
