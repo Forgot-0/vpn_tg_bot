@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from domain.entities.subscription import Subscription
-from domain.repositories.discounts import BaseDiscountRepository, BaseDiscountUserRepository
+from app.domain.entities.subscription import Subscription
+from app.domain.repositories.discounts import BaseDiscountRepository, BaseDiscountUserRepository
 
 
 @dataclass

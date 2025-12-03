@@ -1,13 +1,13 @@
 from uuid import UUID
 
-from domain.entities.server import Server
-from domain.repositories.servers import BaseServerRepository
-from domain.values.servers import ProtocolType
-from infrastructure.db.convertors.server import (
+from app.domain.entities.server import Server
+from app.domain.repositories.servers import BaseServerRepository
+from app.domain.values.servers import ProtocolType
+from app.infrastructure.db.convertors.server import (
     convert_server_document_to_entity,
     convert_server_entity_to_document
 )
-from infrastructure.db.repositories.base import BaseMongoDBRepository
+from app.infrastructure.db.repositories.base import BaseMongoDBRepository
 
 
 class ServerRepository(BaseMongoDBRepository, BaseServerRepository):

@@ -2,11 +2,11 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter
 
-from application.commands.servers.create import CreateServerCommand
-from domain.values.servers import ApiType
-from infrastructure.mediator.base import BaseMediator
-from presentation.deps import CurrentUserJWTData
-from presentation.routers.v1.servers.requests import Create3XUISerrverRequest
+from app.application.commands.servers.create import CreateServerCommand
+from app.domain.values.servers import ApiType
+from app.infrastructure.mediator.base import BaseMediator
+from app.presentation.deps import CurrentUserJWTData
+from app.presentation.routers.v1.servers.requests import CreateServerRequest
 
 
 
@@ -16,7 +16,7 @@ router = APIRouter(route_class=DishkaRoute)
 @router.post("/{api_type}")
 async def create_server(
     api_type: ApiType,
-    server_request: Create3XUISerrverRequest,
+    server_request: CreateServerRequest,
     mediator: FromDishka[BaseMediator],
     user_jwt_data: CurrentUserJWTData
 ) -> None:

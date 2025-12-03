@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
-from domain.events.base import BaseEvent
-# from infrastructure.message_broker.base import BaseMessageBroker
-# from infrastructure.message_broker.convertors import convert_event_to_broker_message
+from app.domain.events.base import BaseEvent
+# from app.infrastructure.message_broker.base import BaseMessageBroker
+# from app.infrastructure.message_broker.convertors import convert_event_to_broker_message
 
 
 @dataclass(frozen=True)

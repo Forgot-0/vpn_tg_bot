@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import ClassVar
 from uuid import UUID
 
-from domain.events.base import BaseEvent
+from app.domain.events.base import BaseEvent
 
 
 @dataclass(frozen=True)

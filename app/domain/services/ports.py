@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
-from domain.entities.server import Server
-from domain.entities.subscription import Subscription
-from domain.entities.user import User
-from domain.values.servers import ProtocolConfig, ProtocolType, VPNConfig
+from app.domain.entities.server import Server
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.user import User
+from app.domain.values.servers import ProtocolConfig, ProtocolType, VPNConfig
 
 
 

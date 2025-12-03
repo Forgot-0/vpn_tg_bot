@@ -6,5 +6,5 @@ from app.presentation.routers.v1.servers.router import router as servers_router
 
 router_v1 = APIRouter()
 router_v1.include_router(auth_router, prefix="/auth", tags=["auth"])
-router_v1.include_router(servers_router, prefix="/servers", tags=["permissions"])
+router_v1.include_router(servers_router, prefix="/servers", tags=["servers"])
 router_v1.include_router(users_router, prefix="/users", tags=["users"])

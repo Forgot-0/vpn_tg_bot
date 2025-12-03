@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Type
 
-from application.queries.base import QR, BaseQuery, BaseQueryHandler
+from app.application.queries.base import QR, BaseQuery, BaseQueryHandler
 
 
 

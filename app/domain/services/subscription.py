@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from domain.entities.subscription import Subscription
-from domain.values.servers import ProtocolType, Region
+from app.domain.entities.subscription import Subscription
+from app.domain.values.servers import ProtocolType, Region
 
 
 @dataclass

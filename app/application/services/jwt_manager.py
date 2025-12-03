@@ -5,9 +5,9 @@ from uuid import uuid4
 
 from jose import jwt
 
-from application.dtos.tokens.token import Token, TokenGroup, TokenType
-from application.dtos.users.jwt import UserJWTData
-from application.services.utils import now_utc
+from app.application.dtos.tokens.token import Token, TokenGroup, TokenType
+from app.application.dtos.users.jwt import UserJWTData
+from app.application.services.utils import now_utc
 
 
 @dataclass

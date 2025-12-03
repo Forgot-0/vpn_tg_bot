@@ -3,12 +3,12 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Cookie, Response, status
 
-from application.commands.auth.login import LoginTelegramUserCommand
-from application.commands.auth.refresh import RefreshTokenCommand
-from infrastructure.mediator.base import BaseMediator
-from presentation.deps import CookieManager, CurrentUserJWTData
-from presentation.routers.v1.auth.requests import LoginTelegram
-from presentation.routers.v1.auth.response import AccessTokenResponse
+from app.application.commands.auth.login import LoginTelegramUserCommand
+from app.application.commands.auth.refresh import RefreshTokenCommand
+from app.infrastructure.mediator.base import BaseMediator
+from app.presentation.deps import CookieManager, CurrentUserJWTData
+from app.presentation.routers.v1.auth.requests import LoginTelegram
+from app.presentation.routers.v1.auth.response import AccessTokenResponse
 
 
 router = APIRouter(route_class=DishkaRoute)

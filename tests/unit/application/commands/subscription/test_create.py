@@ -1,8 +1,8 @@
 import pytest
 
-from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
-from application.dtos.payments.url import PaymentDTO
-from domain.values.servers import ProtocolType
+from app.application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
+from app.application.dtos.payments.url import PaymentDTO
+from app.domain.values.servers import ProtocolType
 
 
 @pytest.mark.asyncio

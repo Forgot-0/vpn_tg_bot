@@ -1,8 +1,8 @@
 
 from dataclasses import dataclass, field
 from typing import Type
-from domain.services.ports import BaseApiClient
-from domain.values.servers import ApiType
+from app.domain.services.ports import BaseApiClient
+from app.domain.values.servers import ApiType
 
 
 @dataclass

@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from domain.entities.subscription import Subscription
-from domain.values.subscriptions import SubscriptionId
-from domain.values.users import UserId
+from app.domain.entities.subscription import Subscription
+from app.domain.values.subscriptions import SubscriptionId
+from app.domain.values.users import UserId
 
 
 @dataclass

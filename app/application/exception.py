@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from domain.exception.base import ApplicationException
+from app.domain.exception.base import ApplicationException
 
 
 

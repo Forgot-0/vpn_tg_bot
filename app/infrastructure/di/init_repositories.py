@@ -1,10 +1,10 @@
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from infrastructure.db.repositories.payment import PaymentRepository
-from infrastructure.db.repositories.server import ServerRepository
-from infrastructure.db.repositories.subscription import SubscriptionRepository
-from infrastructure.db.repositories.user import UserRepository
+from app.infrastructure.db.repositories.payment import PaymentRepository
+from app.infrastructure.db.repositories.server import ServerRepository
+from app.infrastructure.db.repositories.subscription import SubscriptionRepository
+from app.infrastructure.db.repositories.user import UserRepository
 
 
 

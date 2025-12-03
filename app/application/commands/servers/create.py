@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from application.commands.base import BaseCommand, BaseCommandHandler
-from application.dtos.users.jwt import UserJWTData
-from domain.entities.server import Server
-from domain.repositories.servers import BaseServerRepository
-from domain.services.servers import SecureService
-from domain.values.servers import APIConfig, APICredits, ApiType, Region
-from infrastructure.api_client.factory import ApiClientFactory
+from app.application.commands.base import BaseCommand, BaseCommandHandler
+from app.application.dtos.users.jwt import UserJWTData
+from app.domain.entities.server import Server
+from app.domain.repositories.servers import BaseServerRepository
+from app.domain.services.servers import SecureService
+from app.domain.values.servers import APIConfig, APICredits, ApiType, Region
+from app.infrastructure.api_client.factory import ApiClientFactory
 
 
 @dataclass(frozen=True)

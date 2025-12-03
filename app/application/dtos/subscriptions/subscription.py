@@ -3,10 +3,10 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from application.dtos.base import BaseDTO
-from domain.entities.subscription import Subscription
-from domain.values.servers import ProtocolType
-from domain.values.subscriptions import SubscriptionId
+from app.application.dtos.base import BaseDTO
+from app.domain.entities.subscription import Subscription
+from app.domain.values.servers import ProtocolType
+from app.domain.values.subscriptions import SubscriptionId
 
 
 @dataclass

@@ -2,9 +2,9 @@ from typing import Any
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from bot.messages.base import BaseMediaBuilder
-from bot.messages.menu import BackButton
-from domain.values.servers import ProtocolType, VPNConfig
+from app.bot.messages.base import BaseMediaBuilder
+from app.bot.messages.menu import BackButton
+from app.domain.values.servers import ProtocolType, VPNConfig
 
 
 

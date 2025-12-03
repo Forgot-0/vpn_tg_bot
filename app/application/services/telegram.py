@@ -4,8 +4,8 @@ import json
 from operator import itemgetter
 from urllib.parse import parse_qsl
 
-from application.dtos.users.web_app import WebAppInitData
-from configs.app import app_settings
+from app.application.dtos.users.web_app import WebAppInitData
+from app.configs.app import app_settings
 
 
 def check_webapp_signature(init_data: str) -> bool:

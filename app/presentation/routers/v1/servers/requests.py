@@ -3,7 +3,7 @@
 from pydantic import BaseModel, Field
 
 
-class Create3XUISerrverRequest(BaseModel):
+class CreateServerRequest(BaseModel):
     limit: int
     region_code: str
 

@@ -2,10 +2,10 @@ from dataclasses import dataclass
 import logging
 from uuid import UUID
 
-from application.dtos.subscriptions.subscription import SubscriptionDTO
-from application.queries.base import BaseQuery, BaseQueryHandler
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.values.subscriptions import SubscriptionId
+from app.application.dtos.subscriptions.subscription import SubscriptionDTO
+from app.application.queries.base import BaseQuery, BaseQueryHandler
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.values.subscriptions import SubscriptionId
 
 
 logger = logging.getLogger(__name__)

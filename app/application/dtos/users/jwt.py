@@ -1,9 +1,9 @@
 
 from pydantic import BaseModel
 
-from application.dtos.tokens.token import Token
-from configs.app import app_settings
-from domain.entities.user import User
+from app.application.dtos.tokens.token import Token
+from app.configs.app import app_settings
+from app.domain.entities.user import User
 
 
 class UserJWTData(BaseModel):
@@ -12,10 +12,10 @@ class UserJWTData(BaseModel):
 
     @classmethod
     def create_from_user(cls, user: User) -> "UserJWTData":
-        role = "admin" if app_settings.BOT_OWNER_ID == user.id else "user"
+        role = "admin" if app_settings.BOT_OWNER_ID == user.telegram_id else "user"
 
         return cls(
-            id=str(user.id),
+            id=str(user.id.value),
             role=role,
         )
 

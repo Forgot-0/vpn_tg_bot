@@ -1,6 +1,6 @@
 from typing import Annotated, Literal
 from pydantic import BeforeValidator, computed_field
-from configs.base import BaseConfig
+from app.configs.base import BaseConfig
 
 
 class AppConfig(BaseConfig):

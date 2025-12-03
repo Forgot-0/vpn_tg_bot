@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from application.events.base import BaseEventHandler
-from domain.events.paymens.paid import PaidPaymentEvent
-from domain.repositories.payment import BasePaymentRepository
-from domain.repositories.servers import BaseServerRepository
+from app.application.events.base import BaseEventHandler
+from app.domain.events.paymens.paid import PaidPaymentEvent
+from app.domain.repositories.payment import BasePaymentRepository
+from app.domain.repositories.servers import BaseServerRepository
 
 
 

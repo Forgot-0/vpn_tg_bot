@@ -2,13 +2,13 @@ from dataclasses import dataclass
 import logging
 from uuid import UUID
 
-from application.commands.base import BaseCommand, BaseCommandHandler
-from domain.repositories.payment import BasePaymentRepository
-from domain.repositories.servers import BaseServerRepository
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.repositories.users import BaseUserRepository
-from infrastructure.api_client.factory import ApiClientFactory
-from infrastructure.mediator.event import BaseEventBus
+from app.application.commands.base import BaseCommand, BaseCommandHandler
+from app.domain.repositories.payment import BasePaymentRepository
+from app.domain.repositories.servers import BaseServerRepository
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.repositories.users import BaseUserRepository
+from app.infrastructure.api_client.factory import ApiClientFactory
+from app.infrastructure.mediator.event import BaseEventBus
 
 
 logger = logging.getLogger(__name__)

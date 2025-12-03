@@ -2,12 +2,12 @@ from dataclasses import dataclass
 import json
 from typing import Any
 
-from domain.entities.server import Server
-from domain.entities.subscription import Subscription
-from domain.entities.user import User
-from domain.services.ports import BaseProtocolBuilder
-from domain.values.servers import VPNConfig
-from infrastructure.api_client.x_ui.schema import Inbound
+from app.domain.entities.server import Server
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.user import User
+from app.domain.services.ports import BaseProtocolBuilder
+from app.domain.values.servers import VPNConfig
+from app.infrastructure.api_client.x_ui.schema import Inbound
 
 
 @dataclass

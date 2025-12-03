@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from domain.entities.reward import Reward, RewardUser
+from app.domain.entities.reward import Reward, RewardUser
 
 
 @dataclass

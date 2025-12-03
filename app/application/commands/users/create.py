@@ -2,11 +2,11 @@ from dataclasses import dataclass
 import logging
 from uuid import UUID
 
-from application.commands.base import BaseCommand, BaseCommandHandler
-from domain.entities.user import User
-from domain.repositories.users import BaseUserRepository
-from domain.values.users import UserId
-from infrastructure.mediator.event import BaseEventBus
+from app.application.commands.base import BaseCommand, BaseCommandHandler
+from app.domain.entities.user import User
+from app.domain.repositories.users import BaseUserRepository
+from app.domain.values.users import UserId
+from app.infrastructure.mediator.event import BaseEventBus
 
 
 logger = logging.getLogger(__name__)

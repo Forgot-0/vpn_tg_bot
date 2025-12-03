@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from uuid import uuid4, UUID
 import pytest
-from application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
-from application.dtos.payments.url import PaymentDTO
-from domain.entities.subscription import SubscriptionStatus
+from app.application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
+from app.application.dtos.payments.url import PaymentDTO
+from app.domain.entities.subscription import SubscriptionStatus
 
 
 

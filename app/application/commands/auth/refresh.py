@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
-from application.commands.base import BaseCommand, BaseCommandHandler
-from application.dtos.tokens.token import TokenGroup
-from application.dtos.users.jwt import UserJWTData
-from application.services.jwt_manager import JWTManager
+from app.application.commands.base import BaseCommand, BaseCommandHandler
+from app.application.dtos.tokens.token import TokenGroup
+from app.application.dtos.users.jwt import UserJWTData
+from app.application.services.jwt_manager import JWTManager
 
 
 @dataclass(frozen=True)

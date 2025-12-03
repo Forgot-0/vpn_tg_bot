@@ -3,8 +3,8 @@ from dishka.integrations.fastapi import DishkaRoute, FromDishka
 from fastapi import Request, Response
 from fastapi.routing import APIRouter
 
-from bot.main import dp, bot
-from configs.app import app_settings
+from app.bot.main import dp, bot
+from app.configs.app import app_settings
 
 
 router = APIRouter(tags=['webhook'], route_class=DishkaRoute)

@@ -2,7 +2,7 @@ from typing import Any
 
 from aiogram.types import InputMediaPhoto
 
-from bot.static.init import photo_manager
+from app.bot.static.init import photo_manager
 
 
 

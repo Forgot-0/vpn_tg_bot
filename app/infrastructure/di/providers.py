@@ -2,32 +2,32 @@ from cryptography.fernet import Fernet
 from dishka import AsyncContainer, Provider, Scope, provide
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from application.services.jwt_manager import JWTManager
-from configs.app import app_settings
-from domain.repositories.payment import BasePaymentRepository
-from domain.repositories.servers import BaseServerRepository
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.repositories.users import BaseUserRepository
-from domain.services.servers import SecureService
-from domain.services.subscription import SubscriptionPricingService
-from domain.values.servers import ApiType, ProtocolType, Region
-from infrastructure.api_client.factory import ApiClientFactory
-from infrastructure.api_client.x_ui.aclient import A3xUiApiClient
-from infrastructure.builders_params.factory import ProtocolBuilderFactory
-from infrastructure.builders_params.vless.x_ui.builder import Vless3XUIProtocolBuilder
-from infrastructure.di.init_payment import inti_yookass
-from infrastructure.di.init_repositories import (
+from app.application.services.jwt_manager import JWTManager
+from app.configs.app import app_settings
+from app.domain.repositories.payment import BasePaymentRepository
+from app.domain.repositories.servers import BaseServerRepository
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.repositories.users import BaseUserRepository
+from app.domain.services.servers import SecureService
+from app.domain.services.subscription import SubscriptionPricingService
+from app.domain.values.servers import ApiType, ProtocolType, Region
+from app.infrastructure.api_client.factory import ApiClientFactory
+from app.infrastructure.api_client.x_ui.aclient import A3xUiApiClient
+from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
+from app.infrastructure.builders_params.vless.x_ui.builder import Vless3XUIProtocolBuilder
+from app.infrastructure.di.init_payment import inti_yookass
+from app.infrastructure.di.init_repositories import (
     init_mongo_payment_repository,
     init_mongo_server_repository,
     init_mongo_subscription_repository,
     init_mongo_user_repository
 )
-from infrastructure.mediator.base import BaseMediator
-from infrastructure.mediator.commands import CommandRegisty
-from infrastructure.mediator.event import BaseEventBus, EventRegisty, MediatorEventBus
-from infrastructure.mediator.mediator import DishkaMediator
-from infrastructure.mediator.queries import QueryRegistry
-from infrastructure.payments.base import BasePaymentService
+from app.infrastructure.mediator.base import BaseMediator
+from app.infrastructure.mediator.commands import CommandRegisty
+from app.infrastructure.mediator.event import BaseEventBus, EventRegisty, MediatorEventBus
+from app.infrastructure.mediator.mediator import DishkaMediator
+from app.infrastructure.mediator.queries import QueryRegistry
+from app.infrastructure.payments.base import BasePaymentService
 
 
 class ApplicationProvider(Provider):

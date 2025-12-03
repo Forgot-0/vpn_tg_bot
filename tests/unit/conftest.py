@@ -1,13 +1,13 @@
 from uuid import uuid4
 import pytest
 
-from domain.entities.server import ProtocolConfig, Server
-from domain.entities.subscription import Subscription
-from domain.entities.user import User
-from domain.services.subscription import SubscriptionPricingService
-from domain.values.servers import ApiType, ProtocolType, Region
-from infrastructure.api_client.factory import ApiClientFactory
-from infrastructure.builders_params.factory import ProtocolBuilderFactory
+from app.domain.entities.server import ProtocolConfig, Server
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.user import User
+from app.domain.services.subscription import SubscriptionPricingService
+from app.domain.values.servers import ApiType, ProtocolType, Region
+from app.infrastructure.api_client.factory import ApiClientFactory
+from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 from tests.mocks.mock_mediator import MockMediator
 from tests.mocks.mock_subscription_repository import MockSubscriptionRepository

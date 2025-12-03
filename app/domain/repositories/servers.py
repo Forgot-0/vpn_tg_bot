@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.entities.server import Server
-from domain.values.servers import ProtocolType
+from app.domain.entities.server import Server
+from app.domain.values.servers import ProtocolType
 
 
 @dataclass

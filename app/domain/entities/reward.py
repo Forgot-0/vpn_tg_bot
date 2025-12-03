@@ -2,9 +2,9 @@ from dataclasses import dataclass, field
 from typing import Any
 from uuid import UUID, uuid4
 
-from domain.entities.base import AggregateRoot
-from domain.entities.subscription import Subscription
-from domain.values.users import UserId
+from app.domain.entities.base import AggregateRoot
+from app.domain.entities.subscription import Subscription
+from app.domain.values.users import UserId
 
 
 

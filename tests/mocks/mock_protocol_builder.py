@@ -1,9 +1,9 @@
 from typing import Any
-from domain.entities.user import User
-from domain.entities.subscription import Subscription
-from domain.entities.server import Server
-from domain.services.ports import BaseProtocolBuilder
-from domain.values.servers import ProtocolType, VPNConfig
+from app.domain.entities.user import User
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.server import Server
+from app.domain.services.ports import BaseProtocolBuilder
+from app.domain.values.servers import ProtocolType, VPNConfig
 
 class MockProtocolBuilder(BaseProtocolBuilder):
     def build_params(self, user: User, subscription: Subscription, server: Server) -> dict[str, Any]:

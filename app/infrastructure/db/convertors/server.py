@@ -1,8 +1,8 @@
 from dataclasses import asdict
 from typing import Any
 
-from domain.entities.server import ProtocolConfig, Server
-from domain.values.servers import APIConfig, APICredits, ApiType, ProtocolType, Region
+from app.domain.entities.server import ProtocolConfig, Server
+from app.domain.values.servers import APIConfig, APICredits, ApiType, ProtocolType, Region
 
 
 def convert_server_entity_to_document(server: Server) -> dict[str, Any]:

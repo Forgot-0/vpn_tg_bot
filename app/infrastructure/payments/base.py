@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from domain.entities.payment import Payment
+from app.domain.entities.payment import Payment
 
 
 @dataclass

@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from domain.values.base import BaseValueObject
+from app.domain.values.base import BaseValueObject
 
 
 class UserId(BaseValueObject[UUID]):

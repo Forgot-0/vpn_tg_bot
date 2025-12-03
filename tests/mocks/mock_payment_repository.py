@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
-from domain.entities.payment import Payment, PaymentStatus
-from domain.repositories.payment import BasePaymentRepository
+from app.domain.entities.payment import Payment, PaymentStatus
+from app.domain.repositories.payment import BasePaymentRepository
 
 
 class MockPaymentRepository(BasePaymentRepository):

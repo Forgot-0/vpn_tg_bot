@@ -1,8 +1,8 @@
 from typing import Any
 
-from domain.entities.payment import Payment, PaymentStatus
-from domain.values.users import UserId
-from infrastructure.db.convertors.subscription import (
+from app.domain.entities.payment import Payment, PaymentStatus
+from app.domain.values.users import UserId
+from app.infrastructure.db.convertors.subscription import (
     convert_subscription_document_to_entity,
     convert_subscription_entity_to_document
 )

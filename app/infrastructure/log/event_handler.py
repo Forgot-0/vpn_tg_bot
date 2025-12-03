@@ -1,8 +1,8 @@
 
 import logging
 
-from application.events.base import BaseEventHandler
-from domain.events.base import BaseEvent
+from app.application.events.base import BaseEventHandler
+from app.domain.events.base import BaseEvent
 
 
 logger = logging.getLogger(__name__)

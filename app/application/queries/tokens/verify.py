@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from application.dtos.users.jwt import UserJWTData
-from application.queries.base import BaseQuery, BaseQueryHandler
-from application.services.jwt_manager import JWTManager
+from app.application.dtos.users.jwt import UserJWTData
+from app.application.queries.base import BaseQuery, BaseQueryHandler
+from app.application.services.jwt_manager import JWTManager
 
 
 

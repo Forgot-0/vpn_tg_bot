@@ -3,16 +3,16 @@ from datetime import datetime
 import logging
 from uuid import UUID
 
-from application.commands.base import BaseCommand, BaseCommandHandler
-from application.dtos.payments.url import PaymentDTO
-from domain.entities.payment import Payment
-from domain.repositories.payment import BasePaymentRepository
-from domain.repositories.servers import BaseServerRepository
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.repositories.users import BaseUserRepository
-from domain.services.subscription import SubscriptionPricingService
-from domain.values.subscriptions import SubscriptionId
-from infrastructure.payments.base import BasePaymentService
+from app.application.commands.base import BaseCommand, BaseCommandHandler
+from app.application.dtos.payments.url import PaymentDTO
+from app.domain.entities.payment import Payment
+from app.domain.repositories.payment import BasePaymentRepository
+from app.domain.repositories.servers import BaseServerRepository
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.repositories.users import BaseUserRepository
+from app.domain.services.subscription import SubscriptionPricingService
+from app.domain.values.subscriptions import SubscriptionId
+from app.infrastructure.payments.base import BasePaymentService
 
 
 logger = logging.getLogger(__name__)

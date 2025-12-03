@@ -1,6 +1,6 @@
-from domain.values.servers import ApiType, ProtocolType, VPNConfig
-from infrastructure.builders_params.factory import ProtocolBuilderFactory
-from domain.entities.server import ProtocolConfig
+from app.domain.values.servers import ApiType, ProtocolType, VPNConfig
+from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
+from app.domain.entities.server import ProtocolConfig
 
 
 def test_protocol_builder_factory(

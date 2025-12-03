@@ -3,8 +3,8 @@ from typing import Any
 from uuid import UUID, uuid4
 
 
-from domain.entities.base import AggregateRoot
-from domain.values.servers import APIConfig, APICredits, ApiType, ProtocolConfig, ProtocolType, Region
+from app.domain.entities.base import AggregateRoot
+from app.domain.values.servers import APIConfig, APICredits, ApiType, ProtocolConfig, ProtocolType, Region
 
 
 @dataclass

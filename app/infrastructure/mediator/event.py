@@ -6,8 +6,8 @@ from typing import Type
 
 from dishka import AsyncContainer
 
-from application.events.base import BaseEventHandler
-from domain.events.base import BaseEvent
+from app.application.events.base import BaseEventHandler
+from app.domain.events.base import BaseEvent
 
 
 

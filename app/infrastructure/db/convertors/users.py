@@ -2,9 +2,9 @@
 
 from typing import Any
 
-from domain.entities.user import User
-from domain.values.users import UserId
-from infrastructure.db.convertors.subscription import (
+from app.domain.entities.user import User
+from app.domain.values.users import UserId
+from app.infrastructure.db.convertors.subscription import (
     convert_subscription_document_to_entity,
     convert_subscription_entity_to_document
 )

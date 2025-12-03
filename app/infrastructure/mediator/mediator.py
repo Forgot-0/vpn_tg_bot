@@ -4,9 +4,9 @@ from dataclasses import dataclass
 
 from dishka import AsyncContainer
 
-from application.commands.base import CR, BaseCommand
-from application.queries.base import QR, BaseQuery
-from infrastructure.mediator.base import BaseMediator
+from app.application.commands.base import CR, BaseCommand
+from app.application.queries.base import QR, BaseQuery
+from app.infrastructure.mediator.base import BaseMediator
 
 
 

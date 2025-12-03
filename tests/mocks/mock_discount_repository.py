@@ -1,7 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
-from domain.entities.discount import Discount
-from domain.repositories.discounts import BaseDiscountRepository
+from app.domain.entities.discount import Discount
+from app.domain.repositories.discounts import BaseDiscountRepository
 
 class MockDiscountRepository(BaseDiscountRepository):
     def __init__(self):

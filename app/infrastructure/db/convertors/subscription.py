@@ -1,9 +1,9 @@
 from typing import Any
 from uuid import UUID
-from domain.entities.subscription import Subscription, SubscriptionStatus
-from domain.values.servers import ProtocolType, Region
-from domain.values.subscriptions import SubscriptionId
-from domain.values.users import UserId
+from app.domain.entities.subscription import Subscription, SubscriptionStatus
+from app.domain.values.servers import ProtocolType, Region
+from app.domain.values.subscriptions import SubscriptionId
+from app.domain.values.users import UserId
 
 
 def convert_subscription_entity_to_document(subscription: Subscription) -> dict[str, Any]:

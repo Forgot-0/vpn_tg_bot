@@ -1,6 +1,6 @@
 from collections import defaultdict
-from domain.values.servers import VPNConfig
-from infrastructure.tgbot.base import BaseTelegramBot
+from app.domain.values.servers import VPNConfig
+from app.infrastructure.tgbot.base import BaseTelegramBot
 
 
 class MockTelegramBot(BaseTelegramBot):

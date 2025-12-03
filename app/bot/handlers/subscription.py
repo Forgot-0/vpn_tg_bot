@@ -3,15 +3,15 @@ from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 from dishka.integrations.aiogram import FromDishka
 
-from application.commands.subscriptions.create import CreateSubscriptionCommand
-from application.commands.subscriptions.renew import RenewSubscriptionCommand
-from application.dtos.subscriptions.subscription import SubscriptionDTO
-from application.queries.subscription.get_by_id import GetByIdQuery
-from application.queries.subscription.get_by_tgid import GetByTgIdQuery
-from application.queries.subscription.get_config import GetConfigQuery
-from bot.messages.config import ConfigMessage
-from bot.messages.menu import VPNButton
-from bot.messages.subscription import (
+from app.application.commands.subscriptions.create import CreateSubscriptionCommand
+from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
+from app.application.dtos.subscriptions.subscription import SubscriptionDTO
+from app.application.queries.subscription.get_by_id import GetByIdQuery
+from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery
+from app.application.queries.subscription.get_config import GetConfigQuery
+from app.bot.messages.config import ConfigMessage
+from app.bot.messages.menu import VPNButton
+from app.bot.messages.subscription import (
     AddSubscriptionButtton,
     DaysCallbackData,
     DaysMessage,
@@ -26,8 +26,8 @@ from bot.messages.subscription import (
     SubscriptionCallbackData,
     SubscriptionMessage
 )
-from bot.states.subscription import RenewSubscriptionStates, CreateSubscriptionStates
-from infrastructure.mediator.base import BaseMediator
+from app.bot.states.subscription import RenewSubscriptionStates, CreateSubscriptionStates
+from app.infrastructure.mediator.base import BaseMediator
 
 
 router = Router()

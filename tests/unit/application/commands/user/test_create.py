@@ -1,6 +1,6 @@
 import pytest
 
-from application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
+from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 
 
 

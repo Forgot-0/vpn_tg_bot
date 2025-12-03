@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
-from domain.entities.base import AggregateRoot
+from app.domain.entities.base import AggregateRoot
 
 
 T = TypeVar('T', bound='BaseDTO')

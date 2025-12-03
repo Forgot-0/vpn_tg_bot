@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 from enum import Enum
 from uuid import UUID, uuid4
 
-from domain.entities.base import AggregateRoot
-from domain.values.servers import ProtocolType, Region
-from domain.values.subscriptions import SubscriptionId
-from domain.values.users import UserId
+from app.domain.entities.base import AggregateRoot
+from app.domain.values.servers import ProtocolType, Region
+from app.domain.values.subscriptions import SubscriptionId
+from app.domain.values.users import UserId
 
 
 class SubscriptionStatus(Enum):

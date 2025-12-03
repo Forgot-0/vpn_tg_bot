@@ -4,11 +4,11 @@ from uuid import UUID
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 
-from application.dtos.payments.url import PaymentDTO
-from application.dtos.subscriptions.subscription import SubscriptionDTO
-from bot.messages.base import BaseMediaBuilder
-from bot.messages.menu import BackButton, VPNButton
-from domain.values.servers import ProtocolType
+from app.application.dtos.payments.url import PaymentDTO
+from app.application.dtos.subscriptions.subscription import SubscriptionDTO
+from app.bot.messages.base import BaseMediaBuilder
+from app.bot.messages.menu import BackButton, VPNButton
+from app.domain.values.servers import ProtocolType
 
 
 

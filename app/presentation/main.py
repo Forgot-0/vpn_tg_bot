@@ -6,15 +6,15 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from bot.main import dp, bot
-from configs.app import app_settings
-from infrastructure.di.container import create_container
-from infrastructure.log.init import configure_logging
-from presentation.middlewares.context import set_request_id_middleware
-from presentation.middlewares.structlog import structlog_bind_middleware
-from presentation.webhooks.telegram import router as telegram_router
-from presentation.webhooks.yookassa import router as yookassa_router
-from presentation.routers.routers import router_v1
+from app.bot.main import dp, bot
+from app.configs.app import app_settings
+from app.infrastructure.di.container import create_container
+from app.infrastructure.log.init import configure_logging
+from app.presentation.middlewares.context import set_request_id_middleware
+from app.presentation.middlewares.structlog import structlog_bind_middleware
+from app.presentation.webhooks.telegram import router as telegram_router
+from app.presentation.webhooks.yookassa import router as yookassa_router
+from app.presentation.routers.routers import router_v1
 
 logger = logging.getLogger(__name__)
 

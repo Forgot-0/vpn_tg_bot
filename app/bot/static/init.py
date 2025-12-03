@@ -1,8 +1,9 @@
 from json import JSONDecodeError, dumps, loads
+from pathlib import Path
 from aiogram import Bot
 from aiogram.types import FSInputFile
 
-from configs.app import app_settings
+from app.configs.app import app_settings
 
 class ImageManager:
     def __init__(self):
@@ -19,14 +20,14 @@ class ImageManager:
 
     async def load_image_ids(self) -> dict[str, str]:
         try:
-            with open("./bot/static/images_fileid.json", "r") as f:
+            with open("./app/bot/static/images_fileid.json", "r") as f:
                 data = f.read()
                 return loads(data) if data else {}
         except (JSONDecodeError, FileNotFoundError):
             return {}
 
     async def save_image_ids(self) -> None:
-        with open('./bot/static/images_fileid.json', 'w') as f:
+        with open('./app/bot/static/images_fileid.json', 'w') as f:
             f.write(dumps(self.images_fileId))
 
     async def init_photo(self, bot: Bot) -> None:
@@ -36,8 +37,11 @@ class ImageManager:
             return
 
         for key, path in self.images_paths.items():
-            file_path = f"./bot/static/{path}"
-            resp = await bot.send_photo(app_settings.BOT_OWNER_ID, FSInputFile(file_path))
+            file_path = Path(__file__).parent / path
+            resp = await bot.send_photo(app_settings.BOT_OWNER_ID, FSInputFile(path=file_path, filename=path))
+            if resp.photo is None:
+                raise
+
             self.images_fileId[key] = resp.photo[-1].file_id
 
         await self.save_image_ids()

@@ -1,7 +1,7 @@
 from uuid import uuid4
 import pytest
 
-from application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
+from app.application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
 
 
 @pytest.mark.asyncio

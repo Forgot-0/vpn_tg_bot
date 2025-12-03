@@ -1,9 +1,9 @@
 from typing import List, Optional
 from uuid import UUID
-from domain.entities.subscription import Subscription
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.values.subscriptions import SubscriptionId
-from domain.values.users import UserId
+from app.domain.entities.subscription import Subscription
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.values.subscriptions import SubscriptionId
+from app.domain.values.users import UserId
 
 
 class MockSubscriptionRepository(BaseSubscriptionRepository):

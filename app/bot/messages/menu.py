@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
+from app.bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
 
 
 class VPNButton:

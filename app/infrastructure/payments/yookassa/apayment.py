@@ -3,8 +3,8 @@ from uuid import UUID
 import aiohttp
 
 
-from domain.entities.payment import Payment
-from infrastructure.payments.base import BasePaymentService
+from app.domain.entities.payment import Payment
+from app.infrastructure.payments.base import BasePaymentService
 
 
 @dataclass

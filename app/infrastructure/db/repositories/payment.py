@@ -1,11 +1,11 @@
 from datetime import datetime
 from uuid import UUID
-from domain.entities.payment import Payment, PaymentStatus
-from domain.repositories.payment import BasePaymentRepository
-from infrastructure.db.convertors.payment import (
+from app.domain.entities.payment import Payment, PaymentStatus
+from app.domain.repositories.payment import BasePaymentRepository
+from app.infrastructure.db.convertors.payment import (
     convert_order_document_to_entity, convert_order_entity_to_document
 )
-from infrastructure.db.repositories.base import BaseMongoDBRepository
+from app.infrastructure.db.repositories.base import BaseMongoDBRepository
 
 
 class PaymentRepository(BaseMongoDBRepository, BasePaymentRepository):

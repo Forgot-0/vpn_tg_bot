@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 from enum import Enum
 from uuid import UUID, uuid4
 
-from domain.entities.base import AggregateRoot
-from domain.entities.discount import Discount
-from domain.entities.subscription import Subscription
-from domain.events.paymens.paid import PaidPaymentEvent
-from domain.values.users import UserId
+from app.domain.entities.base import AggregateRoot
+from app.domain.entities.discount import Discount
+from app.domain.entities.subscription import Subscription
+from app.domain.events.paymens.paid import PaidPaymentEvent
+from app.domain.values.users import UserId
 
 
 

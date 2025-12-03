@@ -4,10 +4,10 @@ from dishka.integrations.fastapi import FromDishka, inject
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
-from application.dtos.users.jwt import UserJWTData
-from application.queries.tokens.verify import VerifyTokenQuery
-from infrastructure.mediator.base import BaseMediator
-from presentation.cookies import RefreshTokenCookieManager
+from app.application.dtos.users.jwt import UserJWTData
+from app.application.queries.tokens.verify import VerifyTokenQuery
+from app.infrastructure.mediator.base import BaseMediator
+from app.presentation.cookies import RefreshTokenCookieManager
 
 
 
@@ -34,4 +34,7 @@ class UserJWTDataGetter:
 
 CurrentUserJWTData = Annotated[UserJWTData, Depends(UserJWTDataGetter())]
 
-CookieManager = Annotated[RefreshTokenCookieManager, Depends(RefreshTokenCookieManager)]
+def get_refresh_token_manager() -> RefreshTokenCookieManager:
+    return RefreshTokenCookieManager()
+
+CookieManager = Annotated[RefreshTokenCookieManager, Depends(get_refresh_token_manager)]

@@ -1,7 +1,7 @@
 import base64
 
-from infrastructure.payments.yookassa.apayment import YooKassaPaymentService
-from configs.app import app_settings
+from app.infrastructure.payments.yookassa.apayment import YooKassaPaymentService
+from app.configs.app import app_settings
 
 
 def inti_yookass():

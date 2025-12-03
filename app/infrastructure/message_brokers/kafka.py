@@ -5,7 +5,7 @@ import orjson
 from aiokafka import AIOKafkaConsumer
 from aiokafka.producer import AIOKafkaProducer
 
-from infrastructure.message_brokers.base import BaseMessageBroker
+from app.infrastructure.message_brokers.base import BaseMessageBroker
 
 
 @dataclass

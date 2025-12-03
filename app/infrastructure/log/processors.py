@@ -6,7 +6,7 @@ from uuid import UUID
 import orjson
 import structlog
 
-from domain.values.base import BaseValueObject
+from app.domain.values.base import BaseValueObject
 
 logger = logging.getLogger(__name__)
 

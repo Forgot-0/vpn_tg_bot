@@ -1,8 +1,8 @@
 from typing import List, Optional
 from uuid import UUID
-from domain.entities.reward import RewardUser
-from domain.repositories.rewards import BaseRewardUserRepository
-from domain.values.users import UserId
+from app.domain.entities.reward import RewardUser
+from app.domain.repositories.rewards import BaseRewardUserRepository
+from app.domain.values.users import UserId
 
 class MockRewardUserRepository(BaseRewardUserRepository):
     def __init__(self):

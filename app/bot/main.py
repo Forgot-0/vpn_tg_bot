@@ -5,13 +5,13 @@ from aiogram.types import ErrorEvent
 from aiogram.fsm.storage.redis import RedisStorage
 from redis.asyncio.client import Redis
 
-from bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
-from bot.static.init import photo_manager
-from domain.exception.base import ApplicationException
-from configs.app import app_settings
+from app.bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
+from app.bot.static.init import photo_manager
+from app.domain.exception.base import ApplicationException
+from app.configs.app import app_settings
 
-from bot.handlers.start import router as start_router
-from bot.handlers.subscription import router as subscription_router
+from app.bot.handlers.start import router as start_router
+from app.bot.handlers.subscription import router as subscription_router
 
 
 logger = logging.getLogger(__name__)

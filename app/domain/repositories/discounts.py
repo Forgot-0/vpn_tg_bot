@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.entities.discount import Discount, DiscountUser
+from app.domain.entities.discount import Discount, DiscountUser
 
 
 @dataclass

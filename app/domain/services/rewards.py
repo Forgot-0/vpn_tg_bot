@@ -2,12 +2,12 @@ from copy import deepcopy
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.entities.payment import Payment
-from domain.entities.reward import Reward, RewardUser
-from domain.exception.base import AlredyReceiveRewardException
-from domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
-from domain.repositories.users import BaseUserRepository
-from domain.values.users import UserId
+from app.domain.entities.payment import Payment
+from app.domain.entities.reward import Reward, RewardUser
+from app.domain.exception.base import AlredyReceiveRewardException
+from app.domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
+from app.domain.repositories.users import BaseUserRepository
+from app.domain.values.users import UserId
 
 
 @dataclass

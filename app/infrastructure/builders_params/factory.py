@@ -1,9 +1,9 @@
 
 from dataclasses import dataclass, field
 from typing import Type
-from domain.entities.server import ProtocolConfig
-from domain.services.ports import BaseProtocolBuilder
-from domain.values.servers import ApiType, ProtocolType
+from app.domain.entities.server import ProtocolConfig
+from app.domain.services.ports import BaseProtocolBuilder
+from app.domain.values.servers import ApiType, ProtocolType
 
 
 @dataclass

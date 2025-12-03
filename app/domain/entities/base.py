@@ -2,7 +2,7 @@ from abc import ABC
 from copy import copy
 from dataclasses import dataclass, field
 
-from domain.events.base import BaseEvent
+from app.domain.events.base import BaseEvent
 
 
 

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.events.base import BaseEvent
+from app.domain.events.base import BaseEvent
 
 
 @dataclass(frozen=True)

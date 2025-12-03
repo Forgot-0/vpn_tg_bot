@@ -2,14 +2,14 @@ from dataclasses import dataclass
 import logging
 from uuid import UUID
 
-from application.queries.base import BaseQuery, BaseQueryHandler
-from domain.entities.subscription import SubscriptionStatus
-from domain.repositories.servers import BaseServerRepository
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.repositories.users import BaseUserRepository
-from domain.values.servers import VPNConfig
-from domain.values.subscriptions import SubscriptionId
-from infrastructure.builders_params.factory import ProtocolBuilderFactory
+from app.application.queries.base import BaseQuery, BaseQueryHandler
+from app.domain.entities.subscription import SubscriptionStatus
+from app.domain.repositories.servers import BaseServerRepository
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.repositories.users import BaseUserRepository
+from app.domain.values.servers import VPNConfig
+from app.domain.values.subscriptions import SubscriptionId
+from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 
 logger = logging.getLogger(__name__)

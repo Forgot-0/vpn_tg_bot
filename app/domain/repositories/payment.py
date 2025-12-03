@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.entities.payment import Payment
+from app.domain.entities.payment import Payment
 
 
 

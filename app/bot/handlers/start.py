@@ -4,9 +4,9 @@ from aiogram.filters.command import Command
 from aiogram.types import Message, CallbackQuery
 from dishka.integrations.aiogram import FromDishka
 
-from application.commands.users.create import CreateUserCommand
-from bot.messages.menu import AboutButton, AboutMessage, BackButton, HelpButton, HelpMessage, StartMessageBuilder
-from infrastructure.mediator.base import BaseMediator
+from app.application.commands.users.create import CreateUserCommand
+from app.bot.messages.menu import AboutButton, AboutMessage, BackButton, HelpButton, HelpMessage, StartMessageBuilder
+from app.infrastructure.mediator.base import BaseMediator
 
 
 router = Router()

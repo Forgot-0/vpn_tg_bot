@@ -1,6 +1,6 @@
 import pytest
 
-from application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
+from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
 
 
 

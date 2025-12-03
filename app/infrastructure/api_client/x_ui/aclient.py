@@ -3,13 +3,13 @@ from http.cookies import SimpleCookie
 
 from aiohttp import ClientSession
 
-from domain.entities.server import Server
-from domain.entities.subscription import Subscription
-from domain.entities.user import User
-from domain.services.ports import BaseApiClient
-from domain.services.servers import SecureService
-from domain.values.servers import ProtocolConfig, ProtocolType
-from infrastructure.builders_params.factory import ProtocolBuilderFactory
+from app.domain.entities.server import Server
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.user import User
+from app.domain.services.ports import BaseApiClient
+from app.domain.services.servers import SecureService
+from app.domain.values.servers import ProtocolConfig, ProtocolType
+from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 
 @dataclass

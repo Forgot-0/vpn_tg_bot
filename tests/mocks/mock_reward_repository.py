@@ -1,7 +1,7 @@
 from typing import List, Any, Optional
 from uuid import UUID
-from domain.entities.reward import Reward
-from domain.repositories.rewards import BaseRewardRepository
+from app.domain.entities.reward import Reward
+from app.domain.repositories.rewards import BaseRewardRepository
 
 
 class MockRewardRepository(BaseRewardRepository):

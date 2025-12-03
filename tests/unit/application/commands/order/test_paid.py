@@ -1,8 +1,8 @@
 from uuid import uuid4
 import pytest
 
-from application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
-from domain.entities.payment import Payment, PaymentStatus
+from app.application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
+from app.domain.entities.payment import Payment, PaymentStatus
 
 
 @pytest.mark.asyncio

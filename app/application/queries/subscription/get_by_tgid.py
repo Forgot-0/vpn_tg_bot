@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 import logging
 
-from application.dtos.subscriptions.subscription import SubscriptionDTO
-from application.queries.base import BaseQuery, BaseQueryHandler
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.repositories.users import BaseUserRepository
+from app.application.dtos.subscriptions.subscription import SubscriptionDTO
+from app.application.queries.base import BaseQuery, BaseQueryHandler
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.repositories.users import BaseUserRepository
 
 logger = logging.getLogger(__name__)
 

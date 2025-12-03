@@ -1,8 +1,8 @@
 from typing import Optional
 from uuid import UUID
-from domain.entities.discount import DiscountUser
-from domain.repositories.discounts import BaseDiscountUserRepository
-from domain.values.users import UserId
+from app.domain.entities.discount import DiscountUser
+from app.domain.repositories.discounts import BaseDiscountUserRepository
+from app.domain.values.users import UserId
 
 
 class MockDiscountUserRepository(BaseDiscountUserRepository):

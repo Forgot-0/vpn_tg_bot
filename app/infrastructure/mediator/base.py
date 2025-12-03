@@ -2,8 +2,8 @@
 from abc import ABC
 from dataclasses import dataclass
 
-from infrastructure.mediator.commands import CommandMediator
-from infrastructure.mediator.queries import QueryMediator
+from app.infrastructure.mediator.commands import CommandMediator
+from app.infrastructure.mediator.queries import QueryMediator
 
 
 

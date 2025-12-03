@@ -1,7 +1,7 @@
 import pytest
 
-from application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
-from domain.values.servers import ProtocolType
+from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
+from app.domain.values.servers import ProtocolType
 
 
 

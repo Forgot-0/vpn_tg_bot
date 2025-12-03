@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from domain.entities.user import User
-from domain.values.users import UserId
+from app.domain.entities.user import User
+from app.domain.values.users import UserId
 
 
 @dataclass

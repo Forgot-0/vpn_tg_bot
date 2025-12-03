@@ -1,12 +1,12 @@
-from domain.entities.subscription import Subscription, SubscriptionStatus
-from domain.repositories.subscriptions import BaseSubscriptionRepository
-from domain.values.subscriptions import SubscriptionId
-from domain.values.users import UserId
-from infrastructure.db.convertors.subscription import (
+from app.domain.entities.subscription import Subscription, SubscriptionStatus
+from app.domain.repositories.subscriptions import BaseSubscriptionRepository
+from app.domain.values.subscriptions import SubscriptionId
+from app.domain.values.users import UserId
+from app.infrastructure.db.convertors.subscription import (
     convert_subscription_document_to_entity,
     convert_subscription_entity_to_document
 )
-from infrastructure.db.repositories.base import BaseMongoDBRepository
+from app.infrastructure.db.repositories.base import BaseMongoDBRepository
 
 
 class SubscriptionRepository(BaseMongoDBRepository, BaseSubscriptionRepository):

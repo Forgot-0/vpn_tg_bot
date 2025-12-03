@@ -3,8 +3,8 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from domain.entities.base import AggregateRoot
-from domain.values.users import UserId
+from app.domain.entities.base import AggregateRoot
+from app.domain.values.users import UserId
 
 
 @dataclass

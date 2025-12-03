@@ -4,8 +4,8 @@ from pathlib import Path
 import structlog
 from structlog.processors import CallsiteParameter, CallsiteParameterAdder
 
-from configs.app import app_settings
-from infrastructure.log.processors import get_render_processor
+from app.configs.app import app_settings
+from app.infrastructure.log.processors import get_render_processor
 
 
 def configure_logging() -> None:

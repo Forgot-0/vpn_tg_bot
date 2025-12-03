@@ -1,23 +1,23 @@
 from dishka import Provider, Scope, provide
 
-from application.commands.auth.login import LoginTelegramUserCommand, LoginTelegramUserCommandHandler
-from application.commands.auth.refresh import RefreshTokenCommand, RefreshTokenCommandHandler
-from application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
-from application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
-from application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
-from application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
-from application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
-from application.events.server.decrement_free import DecrementFreeServerEventHandler
-from application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
-from application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
-from application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
-from application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
-from domain.events.base import BaseEvent
-from domain.events.paymens.paid import PaidPaymentEvent
-from infrastructure.log.event_handler import LogHandlerEvent
-from infrastructure.mediator.commands import CommandRegisty
-from infrastructure.mediator.event import EventRegisty
-from infrastructure.mediator.queries import QueryRegistry
+from app.application.commands.auth.login import LoginTelegramUserCommand, LoginTelegramUserCommandHandler
+from app.application.commands.auth.refresh import RefreshTokenCommand, RefreshTokenCommandHandler
+from app.application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
+from app.application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
+from app.application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
+from app.application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
+from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
+from app.application.events.server.decrement_free import DecrementFreeServerEventHandler
+from app.application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
+from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
+from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
+from app.application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
+from app.domain.events.base import BaseEvent
+from app.domain.events.paymens.paid import PaidPaymentEvent
+from app.infrastructure.log.event_handler import LogHandlerEvent
+from app.infrastructure.mediator.commands import CommandRegisty
+from app.infrastructure.mediator.event import EventRegisty
+from app.infrastructure.mediator.queries import QueryRegistry
 
 
 class MediatorProvider(Provider):

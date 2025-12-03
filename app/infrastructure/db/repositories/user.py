@@ -1,8 +1,8 @@
-from domain.entities.user import User
-from domain.repositories.users import BaseUserRepository
-from domain.values.users import UserId
-from infrastructure.db.convertors.users import convert_user_document_to_entity, convert_user_entity_to_document
-from infrastructure.db.repositories.base import BaseMongoDBRepository
+from app.domain.entities.user import User
+from app.domain.repositories.users import BaseUserRepository
+from app.domain.values.users import UserId
+from app.infrastructure.db.convertors.users import convert_user_document_to_entity, convert_user_entity_to_document
+from app.infrastructure.db.repositories.base import BaseMongoDBRepository
 
 
 class UserRepository(BaseMongoDBRepository, BaseUserRepository):

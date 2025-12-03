@@ -4,7 +4,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Type
 
-from application.commands.base import CR, BaseCommand, BaseCommandHandler
+from app.application.commands.base import CR, BaseCommand, BaseCommandHandler
 
 
 

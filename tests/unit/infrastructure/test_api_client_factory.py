@@ -1,6 +1,6 @@
 import pytest
-from domain.values.servers import ApiType
-from infrastructure.api_client.factory import ApiClientFactory
+from app.domain.values.servers import ApiType
+from app.infrastructure.api_client.factory import ApiClientFactory
 
 
 @pytest.mark.asyncio
