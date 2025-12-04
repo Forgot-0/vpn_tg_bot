@@ -7,7 +7,7 @@ from jose import jwt
 
 from app.application.dtos.tokens.token import Token, TokenGroup, TokenType
 from app.application.dtos.users.jwt import UserJWTData
-from app.application.services.utils import now_utc
+from app.domain.services.utils import now_utc
 
 
 @dataclass

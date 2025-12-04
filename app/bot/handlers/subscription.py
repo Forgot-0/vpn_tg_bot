@@ -9,6 +9,7 @@ from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.queries.subscription.get_by_id import GetByIdQuery
 from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery
 from app.application.queries.subscription.get_config import GetConfigQuery
+from app.bot.deps import UserJWTDataGetter
 from app.bot.messages.config import ConfigMessage
 from app.bot.messages.menu import VPNButton
 from app.bot.messages.subscription import (
@@ -75,7 +76,8 @@ async def process_protocol(
         callback_query: types.CallbackQuery,
         callback_data: ProtocolTypeCallbackData,
         state: FSMContext,
-        mediator: FromDishka[BaseMediator]
+        mediator: FromDishka[BaseMediator],
+        user_jwt_getter: FromDishka[UserJWTDataGetter],
     ) -> None:
 
     data = await state.get_data()
@@ -83,10 +85,10 @@ async def process_protocol(
     devices = data.get("devices", 1)
 
     command = CreateSubscriptionCommand(
-        telegram_id=callback_query.from_user.id,
         duration=days,
         device_count=devices,
-        protocol_types=[callback_data.protocol_type]
+        protocol_types=[callback_data.protocol_type],
+        user_jwt_data=await user_jwt_getter(mediator, callback_query)
     )
 
     payment_response, *_ = await mediator.handle_command(command)
@@ -137,12 +139,15 @@ async def renew(
         callback_query: types.CallbackQuery,
         callback_data: DaysCallbackData,
         state: FSMContext,
-        mediator: FromDishka[BaseMediator]) -> None:
+        mediator: FromDishka[BaseMediator],
+        user_jwt_getter: FromDishka[UserJWTDataGetter],
+) -> None:
     data = await state.get_data()
     payment_response, *_ = await mediator.handle_command(
         RenewSubscriptionCommand(
             subscription_id=UUID(data['subscription_id']),
-            duration=callback_data.days
+            duration=callback_data.days,
+            user_jwt_data=await user_jwt_getter(mediator, callback_query)
         )
     )
     await callback_query.message.edit_media(**BuySubscriptionMessage().build(payment_response))

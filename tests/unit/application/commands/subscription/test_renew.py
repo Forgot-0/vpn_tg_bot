@@ -4,6 +4,7 @@ import pytest
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
 from app.application.dtos.payments.url import PaymentDTO
 from app.domain.entities.subscription import SubscriptionStatus
+from app.domain.services.utils import now_utc
 
 
 
@@ -56,7 +57,7 @@ async def test_renew_subscription_command_handler_expired(
     dummy_subscription
 ):
     dummy_subscription.status = SubscriptionStatus.EXPIRED
-    dummy_subscription.start_date = datetime.now() - timedelta(days=31)
+    dummy_subscription.start_date = now_utc() - timedelta(days=31)
     mock_subscription_repository._data[dummy_subscription.id] = dummy_subscription
 
     new_duration = 30

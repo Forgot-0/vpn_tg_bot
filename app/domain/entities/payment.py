@@ -7,6 +7,7 @@ from app.domain.entities.base import AggregateRoot
 from app.domain.entities.discount import Discount
 from app.domain.entities.subscription import Subscription
 from app.domain.events.paymens.paid import PaidPaymentEvent
+from app.domain.services.utils import now_utc
 from app.domain.values.users import UserId
 
 
@@ -29,7 +30,7 @@ class Payment(AggregateRoot):
     payment_date: datetime | None = field(default=None, kw_only=True)
     payment_id: UUID | None = field(default=None, kw_only=True)
     created_at: datetime = field(
-        default_factory=datetime.now,
+        default_factory=now_utc,
         kw_only=True
     )
 
@@ -60,7 +61,7 @@ class Payment(AggregateRoot):
         return order
 
     def paid(self) -> None:
-        self.payment_date = datetime.now()
+        self.payment_date = now_utc()
         self.status = PaymentStatus.succese
 
         self.register_event(

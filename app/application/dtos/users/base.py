@@ -8,6 +8,7 @@ from uuid import UUID
 from app.application.dtos.base import BaseDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.domain.entities.user import User
+from app.domain.services.utils import now_utc
 from app.presentation.schemas.filters import FilterParam, ListParams, SortParam
 
 
@@ -26,7 +27,7 @@ class UserDTO(BaseDTO):
     referred_by: UUID | None = field(default=None)
     referrals_count: int = field(default=0)
 
-    created_at: datetime = field(default_factory=datetime.now)
+    created_at: datetime = field(default_factory=now_utc)
 
     subscriptions: list[SubscriptionDTO] = field(default_factory=list)
 

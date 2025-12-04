@@ -27,6 +27,7 @@ class CreateServerCommand(BaseCommand):
 
     user_jwt_data: UserJWTData
 
+
 @dataclass(frozen=True)
 class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
     server_repository: BaseServerRepository

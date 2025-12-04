@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 from app.domain.entities.payment import Payment
-from app.app.infrastructure.payments.base import BasePaymentService
+from app.infrastructure.payments.base import BasePaymentService
 
 class MockPaymentService(BasePaymentService):
     async def create(self, order: Payment) -> tuple[str, str]:

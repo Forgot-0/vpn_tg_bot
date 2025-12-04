@@ -26,7 +26,6 @@ class GetByIdQueryHandler(BaseQueryHandler[GetByIdQuery, SubscriptionDTO]):
         if not subscription:
             raise
 
-
         subscription_dto = SubscriptionDTO.from_entity(subscription)
 
         logger.debug(

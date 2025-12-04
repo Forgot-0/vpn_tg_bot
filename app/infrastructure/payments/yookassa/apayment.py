@@ -4,14 +4,14 @@ import aiohttp
 
 
 from app.domain.entities.payment import Payment
-from app.infrastructure.payments.base import BasePaymentService
+from app.infrastructure.payments.base import BasePaymentService, PaymentAnswer
 
 
 @dataclass
 class YooKassaPaymentService(BasePaymentService):
     auth_base64: str
 
-    async def create(self, order: Payment) -> tuple[str, str]:
+    async def create(self, order: Payment) -> PaymentAnswer:
         url = 'https://api.yookassa.ru/v3/payments'
 
         headers = {
@@ -40,7 +40,7 @@ class YooKassaPaymentService(BasePaymentService):
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=data, headers=headers) as response:
                 result = await response.json()
-                return result['confirmation']['confirmation_url'], result['id']
+                return PaymentAnswer(url=result['confirmation']['confirmation_url'], payment_id=result['id'])
 
     async def check(self, payment_id: UUID) -> dict[str, str]:
         url = f'https://api.yookassa.ru/v3/payments/{payment_id}'

@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
+from app.domain.services.utils import now_utc
 from app.domain.values.users import UserId
 
 
@@ -25,7 +25,7 @@ class Discount(AggregateRoot):
     def is_valid(self) -> bool:
         flag = True
         if self.conditions.get('end_time'):
-            flag = flag and self.conditions['end_time'] > datetime.now()
+            flag = flag and self.conditions['end_time'] > now_utc()
 
         if self.conditions.get('max_uses'):
             flag = flag and self.conditions['max_uses'] > self.uses

@@ -4,6 +4,7 @@ from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.dtos.payments.url import PaymentDTO
+from app.application.dtos.users.jwt import UserJWTData
 from app.domain.entities.payment import Payment
 from app.domain.entities.subscription import Subscription
 from app.domain.repositories.payment import BasePaymentRepository
@@ -12,6 +13,7 @@ from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
 from app.domain.services.subscription import SubscriptionPricingService
 from app.domain.values.servers import ProtocolType, Region
+from app.domain.values.users import UserId
 from app.infrastructure.mediator.event import BaseEventBus
 from app.infrastructure.payments.base import BasePaymentService
 
@@ -21,15 +23,14 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class CreateSubscriptionCommand(BaseCommand):
-    telegram_id: int
     duration: int
     device_count: int
     protocol_types: list[str]
+    user_jwt_data: UserJWTData
 
 
 @dataclass(frozen=True)
 class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, PaymentDTO]):
-    user_repository: BaseUserRepository
     payment_repository: BasePaymentRepository
     server_repository: BaseServerRepository
     subscription_repository: BaseSubscriptionRepository
@@ -44,10 +45,6 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
         if not server:
             raise
 
-        user = await self.user_repository.get_by_telegram_id(telegram_id=command.telegram_id)
-        if not user:
-            raise 
-
         subscription = Subscription(
             duration=command.duration,
             device_count=command.device_count,
@@ -57,7 +54,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
                 name=server.region.name,
                 code=server.region.code
             ),
-            user_id=user.id,
+            user_id=UserId(UUID(command.user_jwt_data.id)),
             protocol_types=protocol_types
         )
 
@@ -65,19 +62,19 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         payment = Payment.create(
             subscription=subscription,
-            user_id=user.id,
+            user_id=UserId(UUID(command.user_jwt_data.id)),
             price=self.subs_price_service.calculate(subscription)
         )
 
-        url, payment_id = await self.payment_service.create(order=payment)
-        payment.payment_id = UUID(payment_id)
+        payment_data = await self.payment_service.create(order=payment)
+        payment.payment_id = UUID(payment_data.payment_id)
 
         await self.payment_repository.create(payment=payment)
 
         await self.event_bus.publish(
-            user.pull_events()+payment.pull_events()+subscription.pull_events()+server.pull_events()
+            payment.pull_events()+subscription.pull_events()+server.pull_events()
         )
 
         logger.info("Create subscription", extra={"subscription": subscription})
 
-        return PaymentDTO(url, payment.total_price)
+        return PaymentDTO(payment_data.url, payment.total_price)

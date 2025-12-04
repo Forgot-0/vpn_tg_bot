@@ -5,13 +5,12 @@ from app.domain.entities.server import ProtocolConfig, Server
 from app.domain.entities.subscription import Subscription
 from app.domain.entities.user import User
 from app.domain.services.subscription import SubscriptionPricingService
-from app.domain.values.servers import ApiType, ProtocolType, Region
+from app.domain.values.servers import APIConfig, APICredits, ApiType, ProtocolType, Region
 from app.infrastructure.api_client.factory import ApiClientFactory
 from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 from tests.mocks.mock_mediator import MockMediator
 from tests.mocks.mock_subscription_repository import MockSubscriptionRepository
-from tests.mocks.mock_tgbot import MockTelegramBot
 from tests.mocks.mock_user_repository import MockUserRepository
 from tests.mocks.mock_payment_repository import MockPaymentRepository
 from tests.mocks.mock_server_repository import MockServerRepository
@@ -27,11 +26,6 @@ from tests.mocks.mock_payment_service import MockPaymentService
 @pytest.fixture
 def mock_subscription_repository():
     return MockSubscriptionRepository()
-
-
-@pytest.fixture
-def mock_user_repository():
-    return MockUserRepository()
 
 
 @pytest.fixture
@@ -110,10 +104,8 @@ def dummy_server() -> Server:
         free=1,
         region=Region(flag="🇩🇪", name="Germany", code="DE"),
         api_type=ApiType.mock,
-        api_config={
-            "dummy_data": "mock"
-        },
-        auth_credits={},
+        api_config=APIConfig(ip="dummy", panel_path="/dummy", panel_port=1),
+        auth_credits=APICredits(username="dummy", password="dummy"),
         protocol_configs={ProtocolType.mock: dummy_protocol_config}
     )
 
@@ -143,11 +135,6 @@ def protocol_builder_factory(mock_protocol_builder):
     dummy_protocol_type = ProtocolType.mock
     factory.register(dummy_api_type, dummy_protocol_type, type(mock_protocol_builder))
     return factory
-
-
-@pytest.fixture
-def mock_telegram_bot():
-    return MockTelegramBot()
 
 
 @pytest.fixture

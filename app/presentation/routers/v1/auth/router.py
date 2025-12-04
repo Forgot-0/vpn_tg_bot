@@ -17,7 +17,7 @@ router = APIRouter(route_class=DishkaRoute)
 
 
 @router.post(
-    "/login",
+    "/login_by_tg",
     status_code=status.HTTP_200_OK
 )
 async def login_by_tg(
@@ -34,7 +34,6 @@ async def login_by_tg(
     cookie_manager.set_refresh_token(response, token_group.refresh_token)
 
     return AccessTokenResponse(access_token=token_group.access_token)
-
 
 
 @router.post(

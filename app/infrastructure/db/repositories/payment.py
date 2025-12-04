@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import UUID
 from app.domain.entities.payment import Payment, PaymentStatus
 from app.domain.repositories.payment import BasePaymentRepository
+from app.domain.services.utils import now_utc
 from app.infrastructure.db.convertors.payment import (
     convert_order_document_to_entity, convert_order_entity_to_document
 )
@@ -16,7 +17,7 @@ class PaymentRepository(BaseMongoDBRepository, BasePaymentRepository):
     async def pay(self, id: UUID) -> None:
         await self._collection.update_one(
             {"_id": id},
-            {"$set": {"status": PaymentStatus.succese.value, "payment_date": datetime.now()}}
+            {"$set": {"status": PaymentStatus.succese.value, "payment_date": now_utc()}}
         )
 
     async def get_by_id(self, id: UUID) -> Payment | None:

@@ -6,6 +6,7 @@ from app.domain.entities.base import AggregateRoot
 from app.domain.entities.subscription import Subscription
 from app.domain.events.users.created import NewUserEvent
 from app.domain.events.users.referred import ReferralAssignedEvent, ReferredUserEvent
+from app.domain.services.utils import now_utc
 from app.domain.values.users import UserId
 
 
@@ -24,7 +25,7 @@ class User(AggregateRoot):
     referred_by: UserId | None = field(default=None)
     referrals_count: int = field(default=0)
 
-    created_at: datetime = field(default_factory=datetime.now)
+    created_at: datetime = field(default_factory=now_utc)
 
     subscriptions: list[Subscription] = field(default_factory=list)
 

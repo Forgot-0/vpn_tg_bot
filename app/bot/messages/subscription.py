@@ -8,6 +8,7 @@ from app.application.dtos.payments.url import PaymentDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.bot.messages.base import BaseMediaBuilder
 from app.bot.messages.menu import BackButton, VPNButton
+from app.domain.services.utils import now_utc
 from app.domain.values.servers import ProtocolType
 
 
@@ -31,7 +32,7 @@ class ListSubscriptionMessage(BaseMediaBuilder):
                 [InlineKeyboardButton(
                     text=(
                     f"Осталось: "
-                    f"{max(((subscription.start_date + timedelta(days=subscription.duration))-datetime.now()).days, 0)}, "
+                    f"{max(((subscription.start_date + timedelta(days=subscription.duration))-now_utc()).days, 0)}, "
                     f"регион: {subscription.flag}"
                     ),
                     callback_data=SubscriptionCallbackData(subscription_id=subscription.id).pack()
@@ -149,7 +150,7 @@ class SubscriptionMessage(BaseMediaBuilder):
 
     def build(self, subscription: SubscriptionDTO) -> dict[str, Any]:
         content =  super().build()
-        left = (subscription.start_date + timedelta(days=subscription.duration))-datetime.now()
+        left = (subscription.start_date + timedelta(days=subscription.duration))-now_utc()
         if left.days < 0: left = 0
         content['media'].caption = (
             f"Ваша подписка\n"

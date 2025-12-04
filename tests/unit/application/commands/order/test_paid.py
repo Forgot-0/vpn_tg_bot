@@ -15,9 +15,9 @@ async def test_paid_order_command_handler(
     dummy_user,
     dummy_subscription,
     dummy_server,
-    mock_event_mediator,
     mock_telegram_bot,
-    subs_price_service
+    subs_price_service,
+    mock_event_mediator
 ):
     mock_bot = mock_telegram_bot
 
@@ -42,8 +42,7 @@ async def test_paid_order_command_handler(
         server_repository=mock_server_repository,
         subscription_repository=mock_subscription_repository,
         api_panel_factory=api_client_factory,
-        bot=mock_bot,
-        mediator=mock_event_mediator
+        event_bus=mock_event_mediator
     )
 
     ret = await handler.handle(command)
@@ -60,7 +59,6 @@ async def test_paid_order_command_handler_payment_not_found(
     mock_subscription_repository,
     api_client_factory,
     mock_event_mediator,
-    mock_telegram_bot,
 ):
     non_existent_payment_id = uuid4()
     command = PaidPaymentCommand(payment_id=non_existent_payment_id)
@@ -70,8 +68,7 @@ async def test_paid_order_command_handler_payment_not_found(
         server_repository=mock_server_repository,
         subscription_repository=mock_subscription_repository,
         api_panel_factory=api_client_factory,
-        bot=mock_telegram_bot,
-        mediator=mock_event_mediator
+        event_bus=mock_event_mediator
     )
     with pytest.raises(Exception):
         await handler.handle(command)
