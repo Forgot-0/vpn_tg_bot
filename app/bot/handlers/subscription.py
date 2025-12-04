@@ -7,9 +7,9 @@ from app.application.commands.subscriptions.create import CreateSubscriptionComm
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.queries.subscription.get_by_id import GetByIdQuery
-from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery
+from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery
 from app.application.queries.subscription.get_config import GetConfigQuery
-from app.bot.deps import UserJWTDataGetter
+from app.bot.deps import user_jwt_getter
 from app.bot.messages.config import ConfigMessage
 from app.bot.messages.menu import VPNButton
 from app.bot.messages.subscription import (
@@ -37,9 +37,13 @@ router = Router()
 @router.callback_query(F.data==VPNButton.callback_data)
 async def subscriptions(
     callback_query: types.CallbackQuery,
-    mediator: FromDishka[BaseMediator]
+    mediator: FromDishka[BaseMediator],
 ) -> None:
-    subscriptions: list[SubscriptionDTO] = await mediator.handle_query(GetByTgIdQuery(callback_query.from_user.id))
+    subscriptions: list[SubscriptionDTO] = await mediator.handle_query(
+        GetSubscriptionsUserQuery(
+            user_jwt_data=await user_jwt_getter(mediator, callback_query)
+        )
+    )
     await callback_query.message.edit_media(**ListSubscriptionMessage().build(subscriptions))
     await callback_query.answer()
 
@@ -77,7 +81,6 @@ async def process_protocol(
         callback_data: ProtocolTypeCallbackData,
         state: FSMContext,
         mediator: FromDishka[BaseMediator],
-        user_jwt_getter: FromDishka[UserJWTDataGetter],
     ) -> None:
 
     data = await state.get_data()
@@ -102,22 +105,35 @@ async def subscription(
         callback_query: types.CallbackQuery,
         callback_data: SubscriptionCallbackData,
         state: FSMContext,
-        mediator: FromDishka[BaseMediator]) -> None:
-    subscription: SubscriptionDTO = await mediator.handle_query(GetByIdQuery(callback_data.subscription_id))
+        mediator: FromDishka[BaseMediator],
+) -> None:
+    subscription: SubscriptionDTO = await mediator.handle_query(
+        GetByIdQuery(
+            callback_data.subscription_id,
+            user_jwt_data=await user_jwt_getter(mediator, callback_query)
+        )
+    )
     await state.set_state(RenewSubscriptionStates.subscription_id)
     await state.update_data(subscription_id=subscription.id.hex)
 
     data = SubscriptionMessage().build(subscription)
     await callback_query.message.edit_media(**data)
 
+
 @router.callback_query(F.data==GetConfigSubscriptionButton.callback_data, RenewSubscriptionStates.subscription_id)
 async def get_config(
         callback_query: types.CallbackQuery,
         state: FSMContext,
-        mediator: FromDishka[BaseMediator]) -> None:
+        mediator: FromDishka[BaseMediator],
+) -> None:
     data = await state.get_data()
 
-    configs = await mediator.handle_query(GetConfigQuery(UUID(data['subscription_id'])))
+    configs = await mediator.handle_query(
+        GetConfigQuery(
+            subscription_id=UUID(data['subscription_id']),
+            user_jwt_data=await user_jwt_getter(mediator, callback_query)
+        )
+    )
 
     await callback_query.message.edit_media(**ConfigMessage().build(configs))
 
@@ -140,7 +156,6 @@ async def renew(
         callback_data: DaysCallbackData,
         state: FSMContext,
         mediator: FromDishka[BaseMediator],
-        user_jwt_getter: FromDishka[UserJWTDataGetter],
 ) -> None:
     data = await state.get_data()
     payment_response, *_ = await mediator.handle_command(

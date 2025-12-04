@@ -1,6 +1,6 @@
 import pytest
 
-from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
+from app.application.queries.subscription.get_by_tgid import GetSubscriptionsUserQuery, GetSubscriptionsUserQueryHandler
 
 
 
@@ -13,12 +13,12 @@ async def test_get_by_telegram_id_query(
 ) -> None:
     await mock_user_repository.create(dummy_user)
     await mock_subscription_repository.create(dummy_subscription)
-    handler = GetByTgIdQueryHandler(
+    handler = GetSubscriptionsUserQueryHandler(
         user_repository=mock_user_repository,
         subscription_repository=mock_subscription_repository,
     )
 
-    result = await handler.handle(GetByTgIdQuery(dummy_user.telegram_id))
+    result = await handler.handle(GetSubscriptionsUserQuery(dummy_user.telegram_id))
 
     assert len(result) > 0
 
@@ -30,13 +30,13 @@ async def test_get_by_telegram_id_query_not_found_user(
     dummy_user
 ) -> None:
     await mock_subscription_repository.create(dummy_subscription)
-    handler = GetByTgIdQueryHandler(
+    handler = GetSubscriptionsUserQueryHandler(
         user_repository=mock_user_repository,
         subscription_repository=mock_subscription_repository,
     )
 
     with pytest.raises(Exception):
-        await handler.handle(GetByTgIdQuery(dummy_user.telegram_id))
+        await handler.handle(GetSubscriptionsUserQuery(dummy_user.telegram_id))
 
 @pytest.mark.asyncio
 async def test_get_by_telegram_id_query_not_found_subscription(
@@ -45,10 +45,10 @@ async def test_get_by_telegram_id_query_not_found_subscription(
     dummy_user
 ) -> None:
     await mock_user_repository.create(dummy_user)
-    handler = GetByTgIdQueryHandler(
+    handler = GetSubscriptionsUserQueryHandler(
         user_repository=mock_user_repository,
         subscription_repository=mock_subscription_repository,
     )
 
-    result = await handler.handle(GetByTgIdQuery(dummy_user.telegram_id))
+    result = await handler.handle(GetSubscriptionsUserQuery(dummy_user.telegram_id))
     assert len(result) == 0

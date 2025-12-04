@@ -9,9 +9,10 @@ from app.application.commands.subscriptions.renew import RenewSubscriptionComman
 from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from app.application.events.server.decrement_free import DecrementFreeServerEventHandler
 from app.application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
-from app.application.queries.subscription.get_by_tgid import GetByTgIdQuery, GetByTgIdQueryHandler
+from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery, GetSubscriptionsUserQueryHandler
 from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
 from app.application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
+from app.application.queries.users.get_by_tg_id import GetUserByTgIdQuery, GetUserByTgIdQueryHandler
 from app.application.queries.users.get_list import GetListUserQuery, GetListUserQueryHandler
 from app.application.queries.users.get_me import GetMeUserQuery, GetMeUserQueryHandler
 from app.domain.events.base import BaseEvent
@@ -34,7 +35,7 @@ class MediatorProvider(Provider):
     create_subscription_handler = provide(CreateSubscriptionCommandHandler, scope=Scope.APP)
     renew_subscription_handler = provide(RenewSubscriptionCommandHandler, scope=Scope.APP)
 
-    tg_id_handler = provide(GetByTgIdQueryHandler, scope=Scope.APP)
+    tg_id_handler = provide(GetSubscriptionsUserQueryHandler, scope=Scope.APP)
     user_id_handler = provide(GetByIdQueryHandler, scope=Scope.APP)
     config_handler = provide(GetConfigQueryHandler, scope=Scope.APP)
 
@@ -44,6 +45,7 @@ class MediatorProvider(Provider):
     login_telegram_handler = provide(LoginTelegramUserCommandHandler, scope=Scope.APP)
     refresh_token_handler = provide(RefreshTokenCommandHandler, scope=Scope.APP)
     verify_token_handler = provide(VerifyTokenQueryHandler, scope=Scope.APP)
+    get_user_by_tg_id_handler = provide(GetUserByTgIdQueryHandler, scope=Scope.APP)
 
     @provide(scope=Scope.APP)
     def command_maps(self) -> CommandRegisty:
@@ -81,7 +83,7 @@ class MediatorProvider(Provider):
         query_maps = QueryRegistry()
 
         query_maps.register_query(
-            GetByTgIdQuery, GetByTgIdQueryHandler
+            GetSubscriptionsUserQuery, GetSubscriptionsUserQueryHandler
         )
 
         query_maps.register_query(
@@ -94,6 +96,9 @@ class MediatorProvider(Provider):
 
         query_maps.register_query(
             VerifyTokenQuery, VerifyTokenQueryHandler
+        )
+        query_maps.register_query(
+            GetUserByTgIdQuery, GetUserByTgIdQueryHandler
         )
 
         query_maps.register_query(
