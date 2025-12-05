@@ -12,11 +12,9 @@ class UserJWTData(BaseModel):
 
     @classmethod
     def create_from_user(cls, user: User) -> "UserJWTData":
-        role = "admin" if app_settings.BOT_OWNER_ID == user.telegram_id else "user"
-
         return cls(
             id=str(user.id.value),
-            role=role,
+            role=user.role.value,
         )
 
     @classmethod

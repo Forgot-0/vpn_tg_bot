@@ -13,7 +13,10 @@ services:
     volumes:
       - .:/app
 
-    command: ["sh", "-c", "uvicorn app.presentation.main:init_api --reload --host ${WEBAPP_WEBHOOK_HOST} --port ${WEBAPP_WEBHOOK_PORT} --no-access-log"]
+    command: [
+      "sh", "-c",
+      "uvicorn app.presentation.main:init_api --reload --host ${WEBAPP_WEBHOOK_HOST} --port ${WEBAPP_WEBHOOK_PORT} --no-access-log"
+    ]
 
   kafka:
     image: apache/kafka:4.0.0

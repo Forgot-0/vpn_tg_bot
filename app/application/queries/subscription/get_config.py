@@ -4,13 +4,14 @@ from uuid import UUID
 
 from app.application.dtos.users.jwt import UserJWTData
 from app.application.queries.base import BaseQuery, BaseQueryHandler
+from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.entities.subscription import SubscriptionStatus
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
 from app.domain.values.servers import VPNConfig
 from app.domain.values.subscriptions import SubscriptionId
-from app.domain.values.users import UserId
+from app.domain.values.users import UserId, UserRole
 from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 
@@ -29,13 +30,16 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, VPNConfig]):
     user_repositry: BaseUserRepository
     server_reposiotry: BaseServerRepository
     builder_factory: ProtocolBuilderFactory
+    role_access_control: RoleAccessControl
 
     async def handle(self, query: GetConfigQuery) -> VPNConfig:
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
         if not subscription:
             raise
 
-        if query.user_jwt_data.role != "admin" and UserId(UUID(query.user_jwt_data.id)) != subscription.user_id:
+        if self.role_access_control.can_action(
+            UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
+        ) and UserId(UUID(query.user_jwt_data.id)) != subscription.user_id:
             raise
 
         if subscription.status != SubscriptionStatus.ACTIVE:

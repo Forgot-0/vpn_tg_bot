@@ -28,6 +28,7 @@ async def startup_bot(bot: Bot) -> None:
             )
         await photo_manager.init_photo(bot)
 
+
 async def shutdown_bot(bot: Bot) -> None:
     await bot.delete_webhook(drop_pending_updates=False)
 

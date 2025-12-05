@@ -29,7 +29,6 @@ class CountryCode(Enum):
 
 class ProtocolType(str, Enum):
     VLESS = "vless"
-    mock = "MOCK"
 
 
 @dataclass(frozen=True)
@@ -40,7 +39,6 @@ class ProtocolConfig:
 
 class ApiType(Enum):
     x_ui = "3X-UI"
-    mock = "MOCK"
 
 
 @dataclass(frozen=True)

@@ -3,10 +3,12 @@ from typing import Any
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.dtos.users.jwt import UserJWTData
+from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.entities.server import Server
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.services.servers import SecureService
 from app.domain.values.servers import APIConfig, APICredits, ApiType, Region
+from app.domain.values.users import UserRole
 from app.infrastructure.api_client.factory import ApiClientFactory
 
 
@@ -33,9 +35,12 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
     server_repository: BaseServerRepository
     api_panel_factory: ApiClientFactory
     secure_service: SecureService
+    role_access_control: RoleAccessControl
 
     async def handle(self, command: CreateServerCommand) -> None:
-        if command.user_jwt_data.role != "admin":
+        if self.role_access_control.can_action(
+            UserRole(command.user_jwt_data.role), target_role=UserRole.ADMIN
+        ):
             raise
 
         api_type = ApiType(command.api_type)

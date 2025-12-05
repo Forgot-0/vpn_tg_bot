@@ -58,8 +58,6 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
             protocol_types=protocol_types
         )
 
-        await self.subscription_repository.create(subscription=subscription)
-
         payment = Payment.create(
             subscription=subscription,
             user_id=UserId(UUID(command.user_jwt_data.id)),

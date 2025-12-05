@@ -1,3 +1,4 @@
+from enum import StrEnum
 from uuid import UUID
 
 from app.domain.values.base import BaseValueObject
@@ -10,3 +11,18 @@ class UserId(BaseValueObject[UUID]):
 
     def as_generic_type(self) -> str:
         return str(self.value)
+
+
+
+class UserRole(StrEnum):
+    SUPER_ADMIN = "super_admin"
+    ADMIN = "admin"
+    USER = "user"
+
+    @property
+    def is_assignable(self) -> bool:
+        return self != UserRole.SUPER_ADMIN
+
+    @property
+    def is_changeable(self) -> bool:
+        return self != UserRole.SUPER_ADMIN

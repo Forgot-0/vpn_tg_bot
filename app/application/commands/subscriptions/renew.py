@@ -10,6 +10,7 @@ from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.services.subscription import SubscriptionPricingService
 from app.domain.values.subscriptions import SubscriptionId
+from app.domain.values.users import UserId
 from app.infrastructure.payments.base import BasePaymentService
 
 
@@ -33,6 +34,9 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
     async def handle(self, command: RenewSubscriptionCommand) -> PaymentDTO:
         subscription = await self.subscription_repository.get_by_id(id=SubscriptionId(command.subscription_id))
         if not subscription: raise
+
+        if subscription.user_id != UserId(UUID(command.user_jwt_data.id)):
+            raise
 
         current_price = self.subs_price_service.calculate(subscription)
 

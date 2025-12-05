@@ -7,13 +7,14 @@ from app.domain.entities.subscription import Subscription
 from app.domain.events.users.created import NewUserEvent
 from app.domain.events.users.referred import ReferralAssignedEvent, ReferredUserEvent
 from app.domain.services.utils import now_utc
-from app.domain.values.users import UserId
+from app.domain.values.users import UserId, UserRole
 
 
 
 @dataclass
 class User(AggregateRoot):
     id: UserId = field(default_factory=lambda: UserId(uuid4()), kw_only=True)
+    role: UserRole = field(default=UserRole.USER)
 
     telegram_id: int | None = None
 

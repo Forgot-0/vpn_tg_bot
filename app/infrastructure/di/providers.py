@@ -3,6 +3,7 @@ from dishka import AsyncContainer, Provider, Scope, provide
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.application.services.jwt_manager import JWTManager
+from app.application.services.role_hierarchy import RoleAccessControl
 from app.configs.app import app_settings
 from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.repositories.servers import BaseServerRepository
@@ -31,6 +32,7 @@ from app.infrastructure.payments.base import BasePaymentService
 
 
 class ApplicationProvider(Provider):
+    role_access_control = provide(RoleAccessControl, scope=Scope.APP)
 
     @provide(scope=Scope.APP)
     def jwt_manager(self) -> JWTManager:
