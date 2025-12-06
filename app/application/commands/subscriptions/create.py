@@ -15,7 +15,7 @@ from app.domain.services.subscription import SubscriptionPricingService
 from app.domain.values.servers import ProtocolType, Region
 from app.domain.values.users import UserId
 from app.infrastructure.mediator.event import BaseEventBus
-from app.infrastructure.payments.base import BasePaymentService
+from app.application.services.payment import BasePaymentService
 
 
 logger = logging.getLogger(__name__)

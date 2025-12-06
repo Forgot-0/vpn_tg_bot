@@ -39,7 +39,7 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
 
         payment.paid()
         payment.subscription.activate()
-        await self.subscription_repository.create(subscription=payment.subscription)
+        await self.subscription_repository.update(subscription=payment.subscription)
 
         server = await self.server_repository.get_by_id(server_id=payment.subscription.server_id)
         if not server: raise

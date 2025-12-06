@@ -32,3 +32,4 @@ class GetSubscriptionsUserQueryHandler(BaseQueryHandler[GetSubscriptionsUserQuer
             extra={"tg_id": query.user_jwt_data.id, "subscriptions": subscriptions_dto}
         )
         return subscriptions_dto
+

@@ -11,7 +11,7 @@ from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.services.subscription import SubscriptionPricingService
 from app.domain.values.subscriptions import SubscriptionId
 from app.domain.values.users import UserId
-from app.infrastructure.payments.base import BasePaymentService
+from app.application.services.payment import BasePaymentService
 
 
 logger = logging.getLogger(__name__)

@@ -16,19 +16,19 @@ from app.infrastructure.api_client.factory import ApiClientFactory
 from app.infrastructure.api_client.x_ui.aclient import A3xUiApiClient
 from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 from app.infrastructure.builders_params.vless.x_ui.builder import Vless3XUIProtocolBuilder
-from app.infrastructure.di.init_payment import inti_yookass
-from app.infrastructure.di.init_repositories import (
-    init_mongo_payment_repository,
-    init_mongo_server_repository,
-    init_mongo_subscription_repository,
-    init_mongo_user_repository
-)
 from app.infrastructure.mediator.base import BaseMediator
 from app.infrastructure.mediator.commands import CommandRegisty
 from app.infrastructure.mediator.event import BaseEventBus, EventRegisty, MediatorEventBus
 from app.infrastructure.mediator.mediator import DishkaMediator
 from app.infrastructure.mediator.queries import QueryRegistry
-from app.infrastructure.payments.base import BasePaymentService
+from app.application.services.payment import BasePaymentService
+from app.setup.di.init_payment import inti_yookass
+from app.setup.di.init_repositories import (
+    init_mongo_payment_repository,
+    init_mongo_server_repository,
+    init_mongo_subscription_repository,
+    init_mongo_user_repository
+)
 
 
 class ApplicationProvider(Provider):

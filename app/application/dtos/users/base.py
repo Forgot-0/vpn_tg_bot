@@ -61,14 +61,18 @@ class UserDTO(BaseDTO):
             subscriptions=[SubscriptionDTO.from_entity(subscription) for subscription in entity.subscriptions],
         )
 
+
+@dataclass
 class UserSortParam(SortParam):
     field: Literal["id", "username", "created_at", "referrals_count", "telegram_id"]
 
 
+@dataclass
 class UserFilterParam(FilterParam):
     field: Literal["id", "username", "telegram_id", "referred_by", "fullname"]
 
 
+@dataclass
 class UserListParams(ListParams):
     sort: list[UserSortParam] | None = field(default=None)
     filters: list[UserFilterParam] | None = field(default=None)

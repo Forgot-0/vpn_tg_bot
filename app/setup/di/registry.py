@@ -11,6 +11,8 @@ from app.application.events.server.decrement_free import DecrementFreeServerEven
 from app.application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
 from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery, GetSubscriptionsUserQueryHandler
 from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
+from app.application.queries.subscription.get_list import GetListSubscriptionsQuery, GetListSubscriptionsQueryHandler
+from app.application.queries.subscription.get_price import GetPriceSubscriptionQuery, GetPriceSubscriptionQueryHandler
 from app.application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
 from app.application.queries.users.get_by_tg_id import GetUserByTgIdQuery, GetUserByTgIdQueryHandler
 from app.application.queries.users.get_list import GetListUserQuery, GetListUserQueryHandler
@@ -34,6 +36,8 @@ class MediatorProvider(Provider):
     paid_payment_handler = provide(PaidPaymentCommandHandler, scope=Scope.APP)
     create_subscription_handler = provide(CreateSubscriptionCommandHandler, scope=Scope.APP)
     renew_subscription_handler = provide(RenewSubscriptionCommandHandler, scope=Scope.APP)
+    get_list_subscription_handler= provide(GetListSubscriptionsQueryHandler, scope=Scope.APP)
+    get_price_subs_handler = provide(GetPriceSubscriptionQueryHandler, scope=Scope.APP)
 
     tg_id_handler = provide(GetSubscriptionsUserQueryHandler, scope=Scope.APP)
     user_id_handler = provide(GetByIdQueryHandler, scope=Scope.APP)
@@ -106,6 +110,12 @@ class MediatorProvider(Provider):
         )
         query_maps.register_query(
             GetMeUserQuery, GetMeUserQueryHandler
+        )
+        query_maps.register_query(
+            GetListSubscriptionsQuery, GetListSubscriptionsQueryHandler
+        )
+        query_maps.register_query(
+            GetPriceSubscriptionQuery, GetPriceSubscriptionQueryHandler
         )
         return query_maps
 

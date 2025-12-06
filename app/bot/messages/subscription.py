@@ -110,7 +110,7 @@ class ProtocolTypeMessage(BaseMediaBuilder):
                 callback_data=ProtocolTypeCallbackData(protocol_type=protocol_type.value).pack()
             )] 
             for protocol_type in ProtocolType
-        ][:-1] + [[InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]]
+        ] + [[InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]]
     )
 
 

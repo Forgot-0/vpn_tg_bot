@@ -15,6 +15,7 @@ class SubscriptionStatus(Enum):
     ACTIVE = "active"
     EXPIRED = "expired"
 
+
 @dataclass
 class Subscription(AggregateRoot):
     id: SubscriptionId = field(default_factory=lambda: SubscriptionId(uuid4()), kw_only=True)

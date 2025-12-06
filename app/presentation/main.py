@@ -8,13 +8,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.bot.main import dp, bot
 from app.configs.app import app_settings
-from app.infrastructure.di.container import create_container
 from app.infrastructure.log.init import configure_logging
 from app.presentation.middlewares.context import set_request_id_middleware
 from app.presentation.middlewares.structlog import structlog_bind_middleware
 from app.presentation.webhooks.telegram import router as telegram_router
 from app.presentation.webhooks.yookassa import router as yookassa_router
 from app.presentation.routers.routers import router_v1
+from app.setup.di.container import create_container
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ def init_api() -> FastAPI:
     )
 
     container = create_container()
+
     aiogram_setup_dishka(container=container, router=dp, auto_inject=True)
     fast_setup_dishka(app=app, container=container)
 
@@ -60,5 +61,4 @@ def init_api() -> FastAPI:
     setup_router(app=app)
 
     return app
-
 

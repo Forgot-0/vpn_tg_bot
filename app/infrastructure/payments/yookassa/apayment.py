@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from uuid import UUID
+from uuid import UUID, uuid4
 import aiohttp
 
 
 from app.domain.entities.payment import Payment
-from app.infrastructure.payments.base import BasePaymentService, PaymentAnswer
+from app.application.services.payment import BasePaymentService, PaymentAnswer
 
 
 @dataclass
@@ -40,7 +40,7 @@ class YooKassaPaymentService(BasePaymentService):
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=data, headers=headers) as response:
                 result = await response.json()
-                return PaymentAnswer(url=result['confirmation']['confirmation_url'], payment_id=result['id'])
+                return PaymentAnswer(url="https://www.youtube.com/", payment_id=uuid4().hex)#PaymentAnswer(url=result['confirmation']['confirmation_url'], payment_id=result['id'])
 
     async def check(self, payment_id: UUID) -> dict[str, str]:
         url = f'https://api.yookassa.ru/v3/payments/{payment_id}'
