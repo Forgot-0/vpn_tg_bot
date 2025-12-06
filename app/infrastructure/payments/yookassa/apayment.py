@@ -40,7 +40,7 @@ class YooKassaPaymentService(BasePaymentService):
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=data, headers=headers) as response:
                 result = await response.json()
-                return PaymentAnswer(url="https://www.youtube.com/", payment_id=uuid4().hex)#PaymentAnswer(url=result['confirmation']['confirmation_url'], payment_id=result['id'])
+                return PaymentAnswer(url=result['confirmation']['confirmation_url'], payment_id=result['id'])
 
     async def check(self, payment_id: UUID) -> dict[str, str]:
         url = f'https://api.yookassa.ru/v3/payments/{payment_id}'
