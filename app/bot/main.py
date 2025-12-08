@@ -26,7 +26,7 @@ async def startup_bot(bot: Bot) -> None:
             allowed_updates=["message", "inline_query", "callback_query"],
             secret_token=app_settings.WEBHOOK_SECRET
             )
-        await photo_manager.init_photo(bot)
+    await photo_manager.init_photo(bot)
 
 
 async def shutdown_bot(bot: Bot) -> None:

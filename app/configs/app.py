@@ -62,4 +62,5 @@ class AppConfig(BaseConfig):
     JWT_SECRET_KEY: str = ""
     JWT_ALGORITHM: str = "HS256"
 
+
 app_settings = AppConfig()

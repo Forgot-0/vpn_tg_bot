@@ -22,6 +22,7 @@ from app.infrastructure.mediator.event import BaseEventBus, EventRegisty, Mediat
 from app.infrastructure.mediator.mediator import DishkaMediator
 from app.infrastructure.mediator.queries import QueryRegistry
 from app.application.services.payment import BasePaymentService
+from app.infrastructure.payments.test import TestPaymentService
 from app.setup.di.init_payment import inti_yookass
 from app.setup.di.init_repositories import (
     init_mongo_payment_repository,
@@ -98,7 +99,8 @@ class ApplicationProvider(Provider):
 
     @provide(scope=Scope.APP)
     def payment_service(self) -> BasePaymentService:
-        return inti_yookass()
+        # return inti_yookass()
+        return TestPaymentService()
 
     @provide(scope=Scope.APP)
     def event_mediator(self, container: AsyncContainer, event_maps: EventRegisty) -> BaseEventBus:

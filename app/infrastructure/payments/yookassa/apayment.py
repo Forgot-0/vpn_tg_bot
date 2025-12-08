@@ -60,3 +60,4 @@ class YooKassaPaymentService(BasePaymentService):
                 else:
                     error_response = await response.json()
                     raise
+
