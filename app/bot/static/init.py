@@ -4,6 +4,7 @@ from aiogram import Bot
 from aiogram.types import FSInputFile
 
 from app.configs.app import app_settings
+from app.application.exception import ImageNotFoundException
 
 class ImageManager:
     def __init__(self):
@@ -40,7 +41,7 @@ class ImageManager:
             file_path = Path(__file__).parent / path
             resp = await bot.send_photo(app_settings.BOT_OWNER_ID, FSInputFile(path=file_path, filename=path))
             if resp.photo is None:
-                raise
+                raise ImageNotFoundException(photo_key=key)
 
             self.images_fileId[key] = resp.photo[-1].file_id
 

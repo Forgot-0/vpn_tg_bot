@@ -17,8 +17,10 @@ class RefreshTokenCommandHandler(BaseCommandHandler[RefreshTokenCommand, TokenGr
     jwt_manager: JWTManager
 
     async def handle(self, command: RefreshTokenCommand) -> TokenGroup:
+        from app.application.exception import BadRequestException
+
         if command.refresh_token is None:
-            raise
+            raise BadRequestException()
 
         return await self.jwt_manager.refresh_tokens(
             refresh_token=command.refresh_token,

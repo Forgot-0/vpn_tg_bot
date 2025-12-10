@@ -5,6 +5,7 @@ import aiohttp
 
 from app.domain.entities.payment import Payment
 from app.application.services.payment import BasePaymentService, PaymentAnswer
+from app.application.exception import PaymentException
 
 
 @dataclass
@@ -59,5 +60,5 @@ class YooKassaPaymentService(BasePaymentService):
 
                 else:
                     error_response = await response.json()
-                    raise
+                    raise PaymentException()
 

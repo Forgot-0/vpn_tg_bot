@@ -48,6 +48,7 @@ def safe_parse_webapp_init_data(
 
     if check_webapp_signature(init_data):
         return parse_webapp_init_data(init_data)
-    raise
+    from app.application.exception import UnauthorizedException
+    raise UnauthorizedException()
 
 

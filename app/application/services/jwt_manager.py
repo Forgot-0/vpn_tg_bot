@@ -8,6 +8,7 @@ from jose import jwt
 from app.application.dtos.tokens.token import Token, TokenGroup, TokenType
 from app.application.dtos.users.jwt import UserJWTData
 from app.domain.services.utils import now_utc
+from app.application.exception import InvalidTokenException
 
 
 @dataclass
@@ -69,7 +70,7 @@ class JWTManager:
         token_data = Token(**payload)
 
         if token_data.type != token_type:
-            raise 
+            raise InvalidTokenException(token=token)
 
         return token_data
 

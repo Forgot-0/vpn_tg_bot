@@ -44,19 +44,22 @@ class Subscription(AggregateRoot):
 
     def upgrade_devices(self, new_device_count: int):
         if self.status in (SubscriptionStatus.EXPIRED, SubscriptionStatus.PENDING):
-            raise
+            from app.domain.exception.base import InvalidEntityStateException
+            raise InvalidEntityStateException(detail="Cannot upgrade devices in current subscription state")
 
         self.device_count = new_device_count
 
     def change_region(self, new_region: Region):
         if self.status in (SubscriptionStatus.EXPIRED, SubscriptionStatus.PENDING):
-            raise
+            from app.domain.exception.base import InvalidEntityStateException
+            raise InvalidEntityStateException(detail="Cannot change region in current subscription state")
 
         self.region = new_region
 
     def renew(self, duration: int):
         if self.status  == SubscriptionStatus.PENDING:
-            raise
+            from app.domain.exception.base import InvalidEntityStateException
+            raise InvalidEntityStateException(detail="Cannot renew a pending subscription")
 
         if self.end_date < now_utc():
             self.start_date = now_utc()

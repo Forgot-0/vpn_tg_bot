@@ -33,23 +33,25 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, VPNConfig]):
     role_access_control: RoleAccessControl
 
     async def handle(self, query: GetConfigQuery) -> VPNConfig:
+        from app.application.exception import NotFoundException, ForbiddenException, ConflictException
+
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
         if not subscription:
-            raise
+            raise NotFoundException()
 
         if self.role_access_control.can_action(
             UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
         ) and UserId(UUID(query.user_jwt_data.id)) != subscription.user_id:
-            raise
+            raise ForbiddenException()
 
         if subscription.status != SubscriptionStatus.ACTIVE:
-            raise
+            raise ConflictException()
 
         server = await self.server_reposiotry.get_by_id(subscription.server_id)
         user = await self.user_repositry.get_by_id(subscription.user_id)
 
         if not user or not server:
-            raise
+            raise NotFoundException()
 
         builder = self.builder_factory.get(server.api_type, subscription.protocol_types[0])
         config = builder.builde_config_vpn(user, subscription, server)

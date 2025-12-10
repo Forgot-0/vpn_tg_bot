@@ -10,6 +10,7 @@ from app.domain.services.ports import BaseApiClient
 from app.domain.services.servers import SecureService
 from app.domain.values.servers import ProtocolConfig, ProtocolType
 from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
+from app.application.exception import ApiClientException
 
 
 @dataclass
@@ -64,7 +65,7 @@ class A3xUiApiClient(BaseApiClient):
 
             inbounds = await resp.json()
             if not inbounds['success']:
-                raise 
+                raise ApiClientException(detail=inbounds)
 
             for ind in inbounds['obj']:
                 protocol_type = ProtocolType(ind['protocol'])

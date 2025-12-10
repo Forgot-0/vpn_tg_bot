@@ -26,15 +26,17 @@ class GetByIdQueryHandler(BaseQueryHandler[GetByIdQuery, SubscriptionDTO]):
     role_access_control: RoleAccessControl
 
     async def handle(self, query: GetByIdQuery) -> SubscriptionDTO:
+        from app.application.exception import NotFoundException, ForbiddenException
+
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
 
         if not subscription:
-            raise
+            raise NotFoundException()
 
         if self.role_access_control.can_action(
             UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
         ) and UserId(UUID(query.user_jwt_data.id)) != subscription.user_id:
-            raise
+            raise ForbiddenException()
 
         subscription_dto = SubscriptionDTO.from_entity(subscription)
 

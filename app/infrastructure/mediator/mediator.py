@@ -20,7 +20,8 @@ class DishkaMediator(BaseMediator):
 
         handler_registy = self.command_registy.get_handler_types(command)
         if not handler_registy:
-            raise 
+            from app.application.exception import NotFoundException
+            raise NotFoundException()
 
         for handler_type in handler_registy:
             async with self.container() as requests_container:

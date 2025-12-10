@@ -7,6 +7,7 @@ from app.application.services.jwt_manager import JWTManager
 from app.application.services.telegram import safe_parse_webapp_init_data
 from app.domain.entities.user import User
 from app.domain.repositories.users import BaseUserRepository
+from app.application.exception import BadRequestException
 
 
 
@@ -23,7 +24,7 @@ class LoginTelegramUserCommandHandler(BaseCommandHandler[LoginTelegramUserComman
     async def handle(self, command: LoginTelegramUserCommand) -> TokenGroup:
         user_data = safe_parse_webapp_init_data(command.init_data)
         if user_data.user is None:
-            raise
+            raise BadRequestException()
 
         user = await self.user_repository.get_by_telegram_id(telegram_id=user_data.user.id)
         if user:

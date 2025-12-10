@@ -21,5 +21,6 @@ class GetMeUserQueryHandler(BaseQueryHandler[GetMeUserQuery, PaginatedResult[Use
     async def handle(self, query: GetMeUserQuery) -> UserDTO:
         user = await self.user_repository.get_by_id(id=UserId(UUID(query.user_jwt_data.id)))
         if user is None:
-            raise
+            from app.application.exception import NotFoundException
+            raise NotFoundException()
         return UserDTO.from_entity(user)

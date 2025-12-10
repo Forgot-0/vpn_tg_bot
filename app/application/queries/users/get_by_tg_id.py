@@ -17,5 +17,6 @@ class GetUserByTgIdQueryHandler(BaseQueryHandler[GetUserByTgIdQuery, UserJWTData
     async def handle(self, query: GetUserByTgIdQuery) -> UserJWTData:
        user = await self.user_repository.get_by_telegram_id(query.telegram_id)
        if user is None:
-           raise
+           from app.application.exception import NotFoundException
+           raise NotFoundException()
        return UserJWTData.create_from_user(user)

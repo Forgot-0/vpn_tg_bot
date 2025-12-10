@@ -12,6 +12,7 @@ from app.domain.services.subscription import SubscriptionPricingService
 from app.domain.values.subscriptions import SubscriptionId
 from app.domain.values.users import UserId
 from app.application.services.payment import BasePaymentService
+from app.application.exception import NotFoundException, ForbiddenException
 
 
 logger = logging.getLogger(__name__)
@@ -33,10 +34,11 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
 
     async def handle(self, command: RenewSubscriptionCommand) -> PaymentDTO:
         subscription = await self.subscription_repository.get_by_id(id=SubscriptionId(command.subscription_id))
-        if not subscription: raise
+        if not subscription:
+            raise NotFoundException()
 
         if subscription.user_id != UserId(UUID(command.user_jwt_data.id)):
-            raise
+            raise ForbiddenException()
 
         current_price = self.subs_price_service.calculate(subscription)
 

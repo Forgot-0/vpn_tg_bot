@@ -2,12 +2,13 @@ from enum import StrEnum
 from uuid import UUID
 
 from app.domain.values.base import BaseValueObject
+from app.domain.exception.base import NotEmptyException
 
 
 class UserId(BaseValueObject[UUID]):
     def validate(self):
         if not self.value:
-            raise 
+            raise NotEmptyException(field_name="user_id")
 
     def as_generic_type(self) -> str:
         return str(self.value)

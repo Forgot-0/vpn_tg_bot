@@ -7,7 +7,7 @@ from redis.asyncio.client import Redis
 
 from app.bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
 from app.bot.static.init import photo_manager
-from app.domain.exception.base import ApplicationException
+from app.domain.exception.base import DomainException
 from app.configs.app import app_settings
 
 from app.bot.handlers.start import router as start_router
@@ -50,7 +50,7 @@ def init_dispatch() -> Dispatcher:
     dp.startup.register(startup_bot)
     dp.shutdown.register(shutdown_bot)
     add_middlewares(dp=dp)
-    dp.error.register(handle_exception, ExceptionTypeFilter(ApplicationException))
+    dp.error.register(handle_exception, ExceptionTypeFilter(DomainException))
 
     dp.include_router(start_router)
     dp.include_router(subscription_router)

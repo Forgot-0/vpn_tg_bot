@@ -18,7 +18,8 @@ class QueryRegistry:
 
     def get_handler_types(self, query: BaseQuery) -> Type[BaseQueryHandler]:
         if query.__class__ not in self.quries_map:
-            raise 
+            from app.application.exception import NotFoundException
+            raise NotFoundException()
 
         return self.quries_map[query.__class__]
 

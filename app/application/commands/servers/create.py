@@ -10,6 +10,7 @@ from app.domain.services.servers import SecureService
 from app.domain.values.servers import APIConfig, APICredits, ApiType, Region
 from app.domain.values.users import UserRole
 from app.infrastructure.api_client.factory import ApiClientFactory
+from app.application.exception import ForbiddenException
 
 
 @dataclass(frozen=True)
@@ -41,7 +42,7 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
         if self.role_access_control.can_action(
             UserRole(command.user_jwt_data.role), target_role=UserRole.ADMIN
         ):
-            raise
+            raise ForbiddenException()
 
         api_type = ApiType(command.api_type)
         api_panel = self.api_panel_factory.get(api_type)

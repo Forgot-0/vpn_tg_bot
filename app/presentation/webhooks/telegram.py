@@ -5,6 +5,7 @@ from fastapi.routing import APIRouter
 
 from app.bot.main import dp, bot
 from app.configs.app import app_settings
+from app.application.exception import ForbiddenException
 
 
 router = APIRouter(tags=['webhook'], route_class=DishkaRoute)
@@ -14,7 +15,7 @@ router = APIRouter(tags=['webhook'], route_class=DishkaRoute)
 async def telegram_webhook(request: Request):
     secret = (request.headers.get("x-telegram-bot-api-secret-token"))
     if secret != app_settings.WEBHOOK_SECRET or secret is None:
-        raise
+        raise ForbiddenException()
     update = Update.model_validate(await request.json(), context={"bot": bot})
     await dp.feed_webhook_update(
         update=update,

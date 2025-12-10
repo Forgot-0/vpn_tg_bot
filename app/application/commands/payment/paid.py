@@ -30,19 +30,23 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
 
     async def handle(self, command: PaidPaymentCommand) -> None:
         payment = await self.payment_repository.get_by_payment_id(payment_id=command.payment_id)
+        from app.application.exception import NotFoundException
+
         if not payment:
-            raise
+            raise NotFoundException()
 
         user = await self.user_repository.get_by_id(id=payment.user_id)
 
-        if not user: raise
+        if not user:
+            raise NotFoundException()
 
         payment.paid()
         payment.subscription.activate()
         await self.subscription_repository.update(subscription=payment.subscription)
 
         server = await self.server_repository.get_by_id(server_id=payment.subscription.server_id)
-        if not server: raise
+        if not server:
+            raise NotFoundException()
 
         await self.payment_repository.update(payment=payment)
 

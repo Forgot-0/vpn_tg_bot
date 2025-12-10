@@ -16,6 +16,7 @@ from app.domain.values.servers import ProtocolType, Region
 from app.domain.values.users import UserId
 from app.infrastructure.mediator.event import BaseEventBus
 from app.application.services.payment import BasePaymentService
+from app.application.exception import NotFoundException
 
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
         server = await self.server_repository.get_by_max_free(protocol_types)
 
         if not server:
-            raise
+            raise NotFoundException()
 
         subscription = Subscription(
             duration=command.duration,

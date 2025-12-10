@@ -38,12 +38,14 @@ def check_ip_in_ranges(client_ip: str) -> bool:
 
 @router.post('/paid')
 async def paid(request: Request, mediator: FromDishka[BaseMediator]) -> Response:
+    from app.application.exception import BadRequestException, ForbiddenException
+
     if request.client is None:
-        raise
+        raise BadRequestException()
 
     client_ip = request.client.host
     if not check_ip_in_ranges(client_ip):
-        raise
+        raise ForbiddenException()
 
     data = (await request.json())
 

@@ -8,7 +8,7 @@ from app.application.dtos.users.jwt import UserJWTData
 from app.application.queries.tokens.verify import VerifyTokenQuery
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.cookies import RefreshTokenCookieManager
-
+from app.application.exception import UnauthorizedException
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
@@ -23,7 +23,7 @@ class UserJWTDataGetter:
         token: Annotated[str, Depends(oauth2_scheme)],
     ) -> UserJWTData:
         if token is None:
-            raise
+            raise UnauthorizedException()
 
         user_jwt_data: UserJWTData
         user_jwt_data = await mediator.handle_query(

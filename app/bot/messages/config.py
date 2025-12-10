@@ -31,7 +31,8 @@ def get_reply_markup_config_builder(protocol_type: ProtocolType) -> InlineKeyboa
     match protocol_type:
         case ProtocolType.VLESS:
             return vless_reply_markup_config_builder()
-    raise
+    from app.application.exception import BadRequestException
+    raise BadRequestException()
 
 
 class ConfigMessage(BaseMediaBuilder):

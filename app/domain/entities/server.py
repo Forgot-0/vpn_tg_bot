@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.values.servers import APIConfig, APICredits, ApiType, ProtocolConfig, ProtocolType, Region
+from app.domain.exception.base import EntityNotFoundException, EntityConflictException
 
 
 @dataclass
@@ -41,10 +42,10 @@ class Server(AggregateRoot):
     def get_config_by_protocol(self, protocol_type: ProtocolType) -> ProtocolConfig:
         config = self.protocol_configs.get(protocol_type)
         if config is None:
-            raise
+            raise EntityNotFoundException(entity=f'protocol:{protocol_type.name}')
         return config
 
     def add_protocol_config(self, config: ProtocolConfig) -> None:
         if config.protocol_type in self.protocol_configs:
-            raise
+            raise EntityConflictException(entity=f'protocol:{config.protocol_type.name}')
         self.protocol_configs[config.protocol_type] = config
