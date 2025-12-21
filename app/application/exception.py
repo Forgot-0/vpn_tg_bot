@@ -92,6 +92,17 @@ class InvalidTokenException(ApplicationException):
 
 
 @dataclass(kw_only=True)
+class ExpiredTokenException(ApplicationException):
+    token: str
+    code: str = "EXPIRED_TOKEN"
+    status: int = 401
+
+    @property
+    def message(self) -> str:
+        return 'Expired token'
+
+
+@dataclass(kw_only=True)
 class PaymentException(ApplicationException):
     code: str = "PAYMENT_ERROR"
     status: int = 502

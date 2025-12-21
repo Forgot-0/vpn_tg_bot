@@ -22,6 +22,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+node_modules/
 
 # Unit test / coverage reports
 htmlcov/

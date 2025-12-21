@@ -15,7 +15,8 @@ services:
 
     command: [
       "sh", "-c",
-      "uvicorn app.presentation.main:init_api --reload --host ${WEBAPP_WEBHOOK_HOST} --port ${WEBAPP_WEBHOOK_PORT} --no-access-log"
+      "uvicorn app.presentation.main:init_api --reload --host ${WEBAPP_WEBHOOK_HOST}
+      --port ${WEBAPP_WEBHOOK_PORT} --no-access-log"
     ]
 
   kafka:

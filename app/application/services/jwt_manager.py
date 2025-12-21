@@ -3,12 +3,12 @@ from datetime import timedelta
 from typing import Any
 from uuid import uuid4
 
-from jose import jwt
+from jose import ExpiredSignatureError, JWTError, jwt
 
 from app.application.dtos.tokens.token import Token, TokenGroup, TokenType
 from app.application.dtos.users.jwt import UserJWTData
 from app.domain.services.utils import now_utc
-from app.application.exception import InvalidTokenException
+from app.application.exception import ExpiredTokenException, InvalidTokenException
 
 
 @dataclass
@@ -23,12 +23,12 @@ class JWTManager:
         return jwt.encode(payload, self.jwt_secret, algorithm=self.jwt_algorithm)
 
     def decode(self, token: str) -> dict[str, Any]:
-        # try:
-        data = jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_algorithm])
-        # except ExpiredSignatureError as err:
-        #     raise ExpiredTokenException(token=token) from err
-        # except JWTError as err:
-        #     raise InvalidTokenException(token=token) from err
+        try:
+            data = jwt.decode(token, self.jwt_secret, algorithms=[self.jwt_algorithm])
+        except ExpiredSignatureError as err:
+            raise ExpiredTokenException(token=token) from err
+        except JWTError as err:
+            raise InvalidTokenException(token=token) from err
         return data
 
     def generate_payload(self, user_data: UserJWTData, token_type: TokenType) -> dict[str, Any]:
