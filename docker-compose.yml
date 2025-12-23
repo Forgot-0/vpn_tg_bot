@@ -10,6 +10,8 @@ services:
       - "8080:8080"
     env_file:
       - ./.env
+    networks:
+      - app-network
     volumes:
       - .:/app
 
@@ -42,6 +44,8 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+    networks:
+      - app-network
     volumes:
       - kafka-data:/var/lib/kafka/data
     healthcheck:
@@ -56,6 +60,8 @@ services:
     restart: always
     ports:
       - '27017:27017'
+    networks:
+      - app-network
     volumes:
       - dbdata6:/data/db
     environment:
@@ -69,6 +75,8 @@ services:
     ports:
       - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning
+    networks:
+      - app-network
     volumes:
       - redis-data:/data
 
@@ -76,3 +84,7 @@ volumes:
   dbdata6:
   redis-data:
   kafka-data:
+
+networks:
+  app-network:
+    driver: bridge
