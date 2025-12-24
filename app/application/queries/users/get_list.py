@@ -21,7 +21,7 @@ class GetListUserQueryHandler(BaseQueryHandler[GetListUserQuery, PaginatedResult
     role_access_control: RoleAccessControl
 
     async def handle(self, query: GetListUserQuery) -> PaginatedResult[UserDTO]:
-        if self.role_access_control.can_action(
+        if not self.role_access_control.can_action(
             UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
         ): raise
 

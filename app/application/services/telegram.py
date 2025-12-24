@@ -5,6 +5,7 @@ from operator import itemgetter
 from urllib.parse import parse_qsl
 
 from app.application.dtos.users.web_app import WebAppInitData
+from app.application.exception import UnauthorizedException
 from app.configs.app import app_settings
 
 
@@ -48,7 +49,6 @@ def safe_parse_webapp_init_data(
 
     if check_webapp_signature(init_data):
         return parse_webapp_init_data(init_data)
-    from app.application.exception import UnauthorizedException
     raise UnauthorizedException()
 
 

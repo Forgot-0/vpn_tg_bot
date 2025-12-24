@@ -4,6 +4,7 @@ from uuid import UUID
 
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.dtos.users.jwt import UserJWTData
+from app.application.exception import ForbiddenException, NotFoundException
 from app.application.queries.base import BaseQuery, BaseQueryHandler
 from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
@@ -26,8 +27,6 @@ class GetByIdQueryHandler(BaseQueryHandler[GetByIdQuery, SubscriptionDTO]):
     role_access_control: RoleAccessControl
 
     async def handle(self, query: GetByIdQuery) -> SubscriptionDTO:
-        from app.application.exception import NotFoundException, ForbiddenException
-
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
 
         if not subscription:

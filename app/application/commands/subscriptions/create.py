@@ -66,7 +66,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
         )
 
         payment_data = await self.payment_service.create(order=payment)
-        payment.payment_id = UUID(payment_data.payment_id)
+        payment.payment_id = payment_data.payment_id
 
         await self.payment_repository.create(payment=payment)
 

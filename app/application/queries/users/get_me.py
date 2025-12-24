@@ -2,8 +2,9 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.application.dtos.base import PaginatedResult
-from app.application.dtos.users.base import UserDTO, UserListParams
+from app.application.dtos.users.base import UserDTO
 from app.application.dtos.users.jwt import UserJWTData
+from app.application.exception import NotFoundException
 from app.application.queries.base import BaseQuery, BaseQueryHandler
 from app.domain.repositories.users import BaseUserRepository
 from app.domain.values.users import UserId
@@ -21,6 +22,5 @@ class GetMeUserQueryHandler(BaseQueryHandler[GetMeUserQuery, PaginatedResult[Use
     async def handle(self, query: GetMeUserQuery) -> UserDTO:
         user = await self.user_repository.get_by_id(id=UserId(UUID(query.user_jwt_data.id)))
         if user is None:
-            from app.application.exception import NotFoundException
             raise NotFoundException()
         return UserDTO.from_entity(user)

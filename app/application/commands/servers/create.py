@@ -39,7 +39,7 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
     role_access_control: RoleAccessControl
 
     async def handle(self, command: CreateServerCommand) -> None:
-        if self.role_access_control.can_action(
+        if not self.role_access_control.can_action(
             UserRole(command.user_jwt_data.role), target_role=UserRole.ADMIN
         ):
             raise ForbiddenException()

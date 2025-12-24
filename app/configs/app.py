@@ -1,4 +1,4 @@
-from typing import Annotated, Literal
+from typing import Annotated, ClassVar, Literal
 from pydantic import BeforeValidator, computed_field
 from app.configs.base import BaseConfig
 
@@ -18,6 +18,8 @@ class AppConfig(BaseConfig):
 
     DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
+
+    BACKEND_CORS_ORIGINS: ClassVar[Annotated[list[str] | str, BeforeValidator(BaseConfig.parse_list)]] = []
 
     @computed_field
     @property
