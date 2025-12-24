@@ -4,7 +4,6 @@ from uuid import UUID
 
 from app.domain.entities.payment import Payment
 from app.domain.entities.reward import Reward, RewardUser
-from app.domain.exception.base import AlredyReceiveRewardException
 from app.domain.repositories.rewards import BaseRewardRepository, BaseRewardUserRepository
 from app.domain.repositories.users import BaseUserRepository
 from app.domain.values.users import UserId
@@ -76,7 +75,7 @@ class RewardService:
         )
 
         if reward_user.count <= 0:
-            raise AlredyReceiveRewardException()  
+            raise
 
         await self.reward_user_repository.receive(
             reward_id=reward_id,

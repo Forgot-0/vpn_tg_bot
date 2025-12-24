@@ -70,7 +70,7 @@ class User(AggregateRoot):
     def assignReferral(self, referral_id: UserId) -> None:
         if self.id == referral_id:
             from app.domain.exception.base import InvalidEntityStateException
-            raise InvalidEntityStateException(detail="User cannot refer themself")
+            raise InvalidEntityStateException(text="User cannot refer themself")
 
         self.referrals_count += 1
 

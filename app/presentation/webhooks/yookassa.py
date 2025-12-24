@@ -1,5 +1,4 @@
 from ipaddress import IPv4Address, IPv6Address, ip_address, ip_network
-from uuid import UUID
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
@@ -51,7 +50,7 @@ async def paid(request: Request, mediator: FromDishka[BaseMediator]) -> Response
 
     await mediator.handle_command(
         PaidPaymentCommand(
-            payment_id=UUID(hex=data['object']['id']),
+            payment_id=data['object']['id'],
         )
     )
     return Response()

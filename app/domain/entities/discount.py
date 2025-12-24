@@ -19,7 +19,7 @@ class Discount(AggregateRoot):
     uses: int = field(default=0)
     is_active: bool = field(default=True)
 
-    def apply(self, price: float) -> int:
+    def apply(self, price: float) -> float:
         return int((1-self.percent/100)*price)
 
     def is_valid(self) -> bool:

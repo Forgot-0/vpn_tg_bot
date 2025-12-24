@@ -51,11 +51,11 @@ class EntityConflictException(DomainException):
 
 @dataclass(kw_only=True)
 class InvalidEntityStateException(DomainException):
-    detail: str | None = None
+    text: str | None = None
     code: str = "INVALID_ENTITY_STATE"
     status: int = 400
 
     @property
     def message(self) -> str:
-        return self.detail or 'Invalid entity state'
+        return self.text or 'Invalid entity state'
 

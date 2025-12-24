@@ -28,7 +28,7 @@ class Payment(AggregateRoot):
     status: PaymentStatus
 
     payment_date: datetime | None = field(default=None, kw_only=True)
-    payment_id: UUID | None = field(default=None, kw_only=True)
+    payment_id: str | None = field(default=None, kw_only=True)
     created_at: datetime = field(
         default_factory=now_utc,
         kw_only=True

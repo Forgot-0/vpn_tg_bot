@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import logging
-from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.domain.repositories.payment import BasePaymentRepository
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class PaidPaymentCommand(BaseCommand):
-    payment_id: UUID
+    payment_id: str
 
 
 @dataclass(frozen=True)
