@@ -8,7 +8,7 @@ from fastapi import Response
 class RefreshTokenCookieManager:
     COOKIE_NAME: str = "refresh_token"
     PATH: str = "/"
-    SAMESITE: Literal["lax", "strict", "none"] = "none"
+    SAMESITE: Literal["lax", "strict", "none"] = "strict"
     HTTPONLY: bool = True
     SECURE: bool = True
 

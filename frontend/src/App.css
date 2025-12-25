@@ -1,0 +1,103 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Telegram WebApp specific styles */
+html {
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+/* Dark mode support */
+.dark {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.dark .bg-white {
+  background-color: #2d2d2d;
+}
+
+.dark .text-gray-800 {
+  color: #e0e0e0;
+}
+
+.dark .text-gray-600 {
+  color: #b0b0b0;
+}
+
+.dark .text-gray-700 {
+  color: #c0c0c0;
+}
+
+.dark .text-gray-900 {
+  color: #f0f0f0;
+}
+
+.dark .bg-gray-50 {
+  background-color: #1a1a1a;
+}
+
+.dark .bg-gray-200 {
+  background-color: #3d3d3d;
+}
+
+.dark .border-gray-300 {
+  border-color: #4d4d4d;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Button focus styles */
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Input focus styles */
+input:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+

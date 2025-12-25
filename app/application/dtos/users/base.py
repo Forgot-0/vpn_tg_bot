@@ -16,6 +16,7 @@ from app.presentation.schemas.filters import FilterParam, ListParams, SortParam
 @dataclass
 class UserDTO(BaseDTO):
     id: UUID
+    role: str
 
     telegram_id: int | None = field(default=None)
 
@@ -28,6 +29,7 @@ class UserDTO(BaseDTO):
     referrals_count: int = field(default=0)
 
     created_at: datetime = field(default_factory=now_utc)
+
 
     subscriptions: list[SubscriptionDTO] = field(default_factory=list)
 
@@ -43,6 +45,7 @@ class UserDTO(BaseDTO):
             referred_by=UUID(data['referred_by']) if isinstance(data['referred_by'], str) else data['referred_by'],
             referrals_count=data['referrals_count'],
             created_at=data['created_at'],
+            role=data['role'],
             subscriptions=[SubscriptionDTO.from_dict(subscription) for subscription in data['subscriptions']],
         )
 
@@ -58,6 +61,7 @@ class UserDTO(BaseDTO):
             referred_by=entity.referred_by.value if entity.referred_by else None,
             referrals_count=entity.referrals_count,
             created_at=entity.created_at,
+            role=entity.role.value,
             subscriptions=[SubscriptionDTO.from_entity(subscription) for subscription in entity.subscriptions],
         )
 
