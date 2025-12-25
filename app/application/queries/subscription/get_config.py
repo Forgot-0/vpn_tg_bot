@@ -58,6 +58,6 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, VPNConfig]):
 
         logger.debug(
             "Get config subscription",
-            extra={"subscription_id": query.subscription_id, "config": config}
+            extra={"subscription_id": query.subscription_id,}
         )
         return config

@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 from app.domain.entities.base import AggregateRoot
 from app.domain.entities.discount import Discount
 from app.domain.exception.base import InvalidEntityStateException
-from app.domain.services.utils import now_utc
+from app.domain.services.utils import now_utc, replace
 from app.domain.values.servers import ProtocolType, Region
 from app.domain.values.subscriptions import SubscriptionId
 from app.domain.values.users import UserId
@@ -59,7 +59,7 @@ class Subscription(AggregateRoot):
         return self.start_date + timedelta(days=self.duration)
 
     def is_active(self) -> bool:
-        return now_utc() < self.start_date + timedelta(days=self.duration)
+        return now_utc() < replace(self.end_date)
 
     def activate(self) -> None:
         self.status = SubscriptionStatus.ACTIVE
@@ -80,7 +80,7 @@ class Subscription(AggregateRoot):
         if self.status  == SubscriptionStatus.PENDING:
             raise InvalidEntityStateException(text="Cannot renew a pending subscription")
 
-        if self.end_date < now_utc():
+        if replace(self.end_date) < now_utc():
             self.start_date = now_utc()
             self.duration = duration
         else:

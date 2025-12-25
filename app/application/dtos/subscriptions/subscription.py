@@ -18,6 +18,7 @@ class SubscriptionDTO(BaseDTO):
     flag: str
     name: str
     code: str
+    status: str
     protocol_types: list[ProtocolType]
 
     @classmethod
@@ -30,6 +31,7 @@ class SubscriptionDTO(BaseDTO):
             flag=data['flag'],
             name=data['name'],
             code=data['code'],
+            status=data['status'],
             protocol_types=data['protocol_types'],
         )
 
@@ -43,6 +45,7 @@ class SubscriptionDTO(BaseDTO):
             flag=entity.region.flag,
             name=entity.region.name,
             code=entity.region.code,
+            status=entity.status.value,
             protocol_types=entity.protocol_types
         )
 

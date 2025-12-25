@@ -20,7 +20,7 @@ from app.application.queries.subscription.get_list import GetListSubscriptionsQu
 from app.application.queries.subscription.get_price import GetPriceSubscriptionQuery
 from app.domain.values.servers import VPNConfig
 from app.infrastructure.mediator.base import BaseMediator
-from app.presentation.deps import CurrentUserJWTData
+from app.presentation.deps import CurrentAdminJWTData, CurrentUserJWTData
 from app.presentation.routers.v1.subscription.requests import CreateSubscriptionRequests, RenewSubscriptionRequests
 from app.presentation.routers.v1.subscription.responses import PriceSubscriptionResponse
 from app.presentation.schemas.filters import ListParamsBuilder
@@ -86,10 +86,10 @@ async def create_subscription(
 
 @router.get(
     "/",
-    status_code=status.HTTP_307_TEMPORARY_REDIRECT
+    status_code=status.HTTP_200_OK
 )
 async def get_subscriptions(
-    user_jwt_data: CurrentUserJWTData,
+    user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
     params: Annotated[SubscriptionListParams, Depends(subscription_list_params_builder)],
 ) -> PaginatedResult[SubscriptionDTO]:

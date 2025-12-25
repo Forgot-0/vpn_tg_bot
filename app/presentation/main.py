@@ -40,7 +40,7 @@ def setup_middlewares(app: FastAPI) -> None:
     # )
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=["https://6fq0p29m-3000.euw.devtunnels.ms", "https://www.youtube.com"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

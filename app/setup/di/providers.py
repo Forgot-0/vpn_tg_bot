@@ -99,8 +99,8 @@ class ApplicationProvider(Provider):
 
     @provide(scope=Scope.APP)
     def payment_service(self) -> BasePaymentService:
-        return inti_yookass()
-        # return TestPaymentService()
+        # return inti_yookass()
+        return TestPaymentService()
 
     @provide(scope=Scope.APP)
     def event_mediator(self, container: AsyncContainer, event_maps: EventRegisty) -> BaseEventBus:

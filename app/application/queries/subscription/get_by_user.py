@@ -28,8 +28,8 @@ class GetSubscriptionsUserQueryHandler(BaseQueryHandler[GetSubscriptionsUserQuer
         subscriptions_dto = [SubscriptionDTO.from_entity(subscription) for subscription in subscriptions]
 
         logger.debug(
-            "Get subscription by tg id",
-            extra={"tg_id": query.user_jwt_data.id, "subscriptions": subscriptions_dto}
+            "Get subscription by id",
+            extra={"user_id": query.user_jwt_data.id, "subscriptions": subscriptions_dto}
         )
         return subscriptions_dto
 

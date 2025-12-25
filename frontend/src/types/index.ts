@@ -1,26 +1,30 @@
 export interface User {
   id: string;
-  telegram_id: number;
-  username?: string;
-  first_name?: string;
-  last_name?: string;
-  is_active: boolean;
+  telegram_id: number | null;
+  username?: string | null;
+  fullname?: string | null;
+  phone?: string | null;
+  is_premium: boolean;
   role: string;
+  referred_by?: string | null;
+  referrals_count: number;
   created_at: string;
-  updated_at: string;
+  subscriptions?: Subscription[];
 }
 
 export interface Subscription {
   id: string;
-  user_id: string;
-  server_id: string;
-  duration_days: number;
+  duration: number;
+  start_date: string;
   device_count: number;
+  flag: string;
+  name: string;
+  code: string;
   protocol_types: string[];
-  status: string;
-  expires_at: string;
-  created_at: string;
-  updated_at: string;
+  status?: string;
+  expires_at?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface VPNConfig {
@@ -71,6 +75,21 @@ export interface ApiError {
 }
 
 export type ApiType = '3X-UI';
+
+export interface Server {
+  id: string;
+  limit: number;
+  region_flag: string;
+  region_code: string;
+  region_name: string;
+  free: number;
+  api_type: string;
+  ip: string;
+  panel_port: number;
+  panel_path: string;
+  domain?: string | null;
+  protocol_configs: string[];
+}
 
 export interface CreateServerRequest {
   limit: number;

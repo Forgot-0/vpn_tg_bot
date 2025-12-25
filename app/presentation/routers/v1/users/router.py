@@ -11,7 +11,7 @@ from app.application.queries.subscription.get_by_user import GetSubscriptionsUse
 from app.application.queries.users.get_list import GetListUserQuery
 from app.application.queries.users.get_me import GetMeUserQuery
 from app.infrastructure.mediator.base import BaseMediator
-from app.presentation.deps import CurrentUserJWTData
+from app.presentation.deps import CurrentAdminJWTData, CurrentUserJWTData
 from app.presentation.schemas.filters import ListParamsBuilder
 
 
@@ -26,7 +26,7 @@ user_list_params_builder = ListParamsBuilder(UserSortParam, UserFilterParam, Use
     status_code=status.HTTP_200_OK
 )
 async def get_list_user(
-    user_jwt_data: CurrentUserJWTData,
+    user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
     params: Annotated[UserListParams, Depends(user_list_params_builder)],
 ) -> PaginatedResult[UserDTO]:
@@ -54,6 +54,7 @@ async def get_me(
 
 @router.get(
     "/{user_id}/subscriptions",
+    description="Пользователь может посмотреть свои подписки или админ.",
     status_code=status.HTTP_200_OK
 )
 async def get_user_subscriptions(

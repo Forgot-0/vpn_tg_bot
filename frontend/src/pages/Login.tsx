@@ -13,42 +13,49 @@ export const Login: React.FC = () => {
       setIsLoading(true);
       await login();
       navigate('/');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
-      showTelegramAlert(error);
+      const errorMessage =
+        typeof error === 'string' ? error : 'Ошибка входа. Пожалуйста, попробуйте еще раз.';
+      showTelegramAlert(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full border border-gray-200">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">VPN Subscription</h1>
-          <p className="text-gray-600">Войдите через Telegram</p>
+          <div className="text-6xl mb-4">🔐</div>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            VPN Subscription
+          </h1>
+          <p className="text-gray-600">Войдите через Telegram для продолжения</p>
         </div>
 
         <button
           onClick={handleLogin}
           disabled={isLoading}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg"
         >
           {isLoading ? (
             <>
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
               Вход...
             </>
           ) : (
-            'Войти через Telegram'
+            <>
+              <span className="mr-2">📱</span>
+              Войти через Telegram
+            </>
           )}
         </button>
 
-        <p className="text-sm text-gray-500 text-center mt-4">
-          Нажимая кнопку, вы соглашаетесь с условиями использования
+        <p className="text-sm text-gray-500 text-center mt-6">
+          Нажимая кнопку, вы соглашаетесь с условиями использования сервиса
         </p>
       </div>
     </div>
   );
 };
-

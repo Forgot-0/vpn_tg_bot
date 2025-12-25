@@ -85,7 +85,8 @@ export const SubscriptionDetail: React.FC = () => {
     return null;
   }
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Не указано';
     return new Date(dateString).toLocaleDateString('ru-RU', {
       year: 'numeric',
       month: 'long',
@@ -95,7 +96,8 @@ export const SubscriptionDetail: React.FC = () => {
     });
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status?: string) => {
+    if (!status) return 'bg-gray-100 text-gray-800';
     switch (status.toLowerCase()) {
       case 'active':
         return 'bg-green-100 text-green-800';
@@ -108,134 +110,199 @@ export const SubscriptionDetail: React.FC = () => {
     }
   };
 
+  // Вычисляем дату истечения на основе start_date и duration
+  const calculateExpiresAt = () => {
+    if (subscription.start_date && subscription.duration) {
+      const startDate = new Date(subscription.start_date);
+      const expiresDate = new Date(startDate);
+      expiresDate.setDate(expiresDate.getDate() + subscription.duration);
+      return expiresDate.toISOString();
+    }
+    return subscription.expires_at;
+  };
+
+  const expiresAt = calculateExpiresAt();
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto p-4">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-          <div className="flex justify-between items-start mb-4">
-            <h1 className="text-2xl font-bold text-gray-800">Подписка</h1>
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                subscription.status
-              )}`}
-            >
-              {subscription.status}
-            </span>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      <div className="max-w-3xl mx-auto p-4">
+        {/* Header */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/')}
+            className="mb-4 text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2"
+          >
+            <span>←</span> Назад к подпискам
+          </button>
+        </div>
+
+        {/* Main Card */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-4 border border-gray-100">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Детали подписки</h1>
+              <p className="text-gray-600">Управление VPN подпиской</p>
+            </div>
+            {subscription.status && (
+              <span
+                className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(
+                  subscription.status
+                )}`}
+              >
+                {subscription.status === 'active' ? '✅ Активна' : 
+                 subscription.status === 'expired' ? '⏰ Истекла' : 
+                 subscription.status === 'pending' ? '⏳ Ожидание' : subscription.status}
+              </span>
+            )}
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+          {/* Info Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
+              <label className="block text-xs font-medium text-blue-700 mb-1 uppercase tracking-wide">
                 ID подписки
               </label>
-              <div className="text-gray-900 font-mono text-sm">{subscription.id}</div>
+              <div className="text-gray-900 font-mono text-sm break-all">{subscription.id}</div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4">
+              <label className="block text-xs font-medium text-green-700 mb-1 uppercase tracking-wide">
+                Регион
+              </label>
+              <div className="text-gray-900 font-semibold">
+                {subscription.flag} {subscription.name} ({subscription.code})
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4">
+              <label className="block text-xs font-medium text-purple-700 mb-1 uppercase tracking-wide">
                 Длительность
               </label>
-              <div className="text-gray-900">{subscription.duration_days} дней</div>
+              <div className="text-gray-900 font-semibold text-lg">{subscription.duration} дней</div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Количество устройств
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4">
+              <label className="block text-xs font-medium text-orange-700 mb-1 uppercase tracking-wide">
+                Устройств
               </label>
-              <div className="text-gray-900">{subscription.device_count}</div>
+              <div className="text-gray-900 font-semibold text-lg">{subscription.device_count}</div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4 md:col-span-2">
+              <label className="block text-xs font-medium text-indigo-700 mb-2 uppercase tracking-wide">
                 Протоколы
               </label>
-              <div className="text-gray-900">{subscription.protocol_types.join(', ')}</div>
+              <div className="flex flex-wrap gap-2">
+                {subscription.protocol_types.map((protocol) => (
+                  <span
+                    key={protocol}
+                    className="px-3 py-1 bg-indigo-200 text-indigo-800 text-sm font-semibold rounded-lg"
+                  >
+                    {protocol}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Истекает
-              </label>
-              <div className="text-gray-900">{formatDate(subscription.expires_at)}</div>
-            </div>
+            {subscription.start_date && (
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4">
+                <label className="block text-xs font-medium text-gray-700 mb-1 uppercase tracking-wide">
+                  Начало подписки
+                </label>
+                <div className="text-gray-900">{formatDate(subscription.start_date)}</div>
+              </div>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Создана
-              </label>
-              <div className="text-gray-900">{formatDate(subscription.created_at)}</div>
-            </div>
+            {expiresAt && (
+              <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4">
+                <label className="block text-xs font-medium text-red-700 mb-1 uppercase tracking-wide">
+                  Истекает
+                </label>
+                <div className="text-gray-900 font-semibold">{formatDate(expiresAt)}</div>
+              </div>
+            )}
+
+            {subscription.created_at && (
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 md:col-span-2">
+                <label className="block text-xs font-medium text-gray-700 mb-1 uppercase tracking-wide">
+                  Создана
+                </label>
+                <div className="text-gray-900">{formatDate(subscription.created_at)}</div>
+              </div>
+            )}
           </div>
         </div>
 
+        {/* VPN Config Card */}
         {showConfig && config && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Конфигурация VPN</h2>
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-4 border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>🔐</span> Конфигурация VPN
+            </h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Протокол: {config.protocol}
+                  Протокол: <span className="font-semibold text-blue-600">{config.protocol}</span>
                 </label>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <pre className="text-xs text-gray-800 whitespace-pre-wrap break-all">
+                <div className="bg-gray-900 rounded-lg p-4 border-2 border-gray-700">
+                  <pre className="text-xs text-green-400 whitespace-pre-wrap break-all font-mono">
                     {config.config}
                   </pre>
                 </div>
                 <button
                   onClick={() => copyToClipboard(config.config)}
-                  className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                  className="mt-3 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
                 >
-                  Копировать конфигурацию
+                  📋 Копировать конфигурацию
                 </button>
               </div>
             </div>
           </div>
         )}
 
+        {/* Actions */}
         <div className="space-y-3">
           {!showConfig && (
             <button
               onClick={fetchConfig}
               disabled={isLoadingConfig}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg"
             >
               {isLoadingConfig ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Загрузка...
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                  Загрузка конфигурации...
                 </>
               ) : (
-                'Показать конфигурацию'
+                <>
+                  <span className="mr-2">🔓</span>
+                  Показать конфигурацию VPN
+                </>
               )}
             </button>
           )}
 
-          {subscription.status.toLowerCase() === 'active' && (
+          {subscription.status?.toLowerCase() === 'active' && (
             <button
               onClick={handleRenew}
               disabled={isRenewing}
-              className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-4 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-lg"
             >
               {isRenewing ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
                   Продление...
                 </>
               ) : (
-                'Продлить на 30 дней'
+                <>
+                  <span className="mr-2">⏰</span>
+                  Продлить на 30 дней
+                </>
               )}
             </button>
           )}
-
-          <button
-            onClick={() => navigate('/')}
-            className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-colors"
-          >
-            Назад
-          </button>
         </div>
       </div>
     </div>
   );
 };
-

@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from uuid import UUID
 
+from app.application.dtos.base import PaginatedResult
+from app.application.dtos.servers.base import ServerListParams
 from app.domain.entities.server import Server
 from app.domain.values.servers import ProtocolType
 
@@ -27,3 +29,9 @@ class BaseServerRepository(ABC):
 
     @abstractmethod
     async def set_free(self, server_id: UUID, new_free: int) -> None: ...
+
+    @abstractmethod
+    async def get_list(self, filter_params: ServerListParams) -> PaginatedResult[Server]: ...
+
+    @abstractmethod
+    async def delete_by_id(self, server_id: UUID) -> None: ...

@@ -13,6 +13,7 @@ import type {
   ApiError,
   ApiType,
   CreateServerRequest,
+  Server,
 } from '../types';
 
 class ApiClient {
@@ -36,7 +37,9 @@ class ApiClient {
           config.headers.Authorization = `Bearer ${this.accessToken}`;
         }
         // Для Mini App: если используется относительный URL, не добавляем базовый URL повторно
-        console.debug('API Request:', config.baseURL + config.url);
+        if (config.baseURL && config.url) {
+          console.debug('API Request:', config.baseURL + config.url);
+        }
         return config;
       },
       (error: AxiosError) => {
@@ -115,8 +118,13 @@ class ApiClient {
     return response.data;
   }
 
-  async getUserSubscriptions(userId: string): Promise<Subscription[]> {
-    const response = await this.client.get<Subscription[]>(`/users/${userId}/subscriptions`);
+  async getUserSubscriptions(userId?: string): Promise<Subscription[]> {
+    // Endpoint требует UUID в URL, но handler использует только JWT токен
+    // Если userId не указан, нужно получить его из текущего пользователя
+    // Для простоты используем '00000000-0000-0000-0000-000000000000' как placeholder
+    // или лучше получить user.id из getMe()
+    const targetUserId = userId || '00000000-0000-0000-0000-000000000000';
+    const response = await this.client.get<Subscription[]>(`/users/${targetUserId}/subscriptions`);
     return response.data;
   }
 
@@ -209,9 +217,80 @@ class ApiClient {
     return response.data.price;
   }
 
-  // Servers
+  // Servers (Admin only)
+  async getServers(
+    page = 1,
+    pageSize = 10,
+    filters?: { [key: string]: string },
+    sort?: string
+  ): Promise<PaginatedResult<Server>> {
+    const params: any = { page, page_size: pageSize };
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) {
+          params[`filter_${key}`] = value;
+        }
+      });
+    }
+    if (sort) {
+      params.sort = sort;
+    }
+    const response = await this.client.get<PaginatedResult<Server>>('/servers/', { params });
+    return response.data;
+  }
+
   async createServer(apiType: ApiType, data: CreateServerRequest): Promise<void> {
     await this.client.post(`/servers/${apiType}`, data);
+  }
+
+  async deleteServer(serverId: string): Promise<void> {
+    await this.client.delete(`/servers/${serverId}`);
+  }
+
+  // Users (Admin only)
+  async getUsers(
+    page = 1,
+    pageSize = 10,
+    filters?: { [key: string]: string },
+    sort?: string
+  ): Promise<PaginatedResult<User>> {
+    const params: any = { page, page_size: pageSize };
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) {
+          params[`filter_${key}`] = value;
+        }
+      });
+    }
+    if (sort) {
+      params.sort = sort;
+    }
+    const response = await this.client.get<PaginatedResult<User>>('/users/', { params });
+    return response.data;
+  }
+
+  // Subscriptions (Admin only) with filters
+  async getAllSubscriptions(
+    page = 1,
+    pageSize = 10,
+    filters?: { [key: string]: string },
+    sort?: string
+  ): Promise<PaginatedResult<Subscription>> {
+    const params: any = { page, page_size: pageSize };
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) {
+          params[`filter_${key}`] = value;
+        }
+      });
+    }
+    if (sort) {
+      params.sort = sort;
+    }
+    const response = await this.client.get<PaginatedResult<Subscription>>('/subscrtiption/', {
+      params,
+    });
+    return response.data;
   }
 }
 

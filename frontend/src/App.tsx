@@ -13,6 +13,7 @@ import { AdminUsers } from './pages/AdminUsers';
 import { AdminServers } from './pages/AdminServers';
 import { AdminPayments } from './pages/AdminPayments';
 import { AdminSubscriptions } from './pages/AdminSubscriptions';
+import { AdminRoute } from './components/AdminRoute';
 import { Loading } from './components/Loading';
 import './App.css';
 
@@ -80,7 +81,9 @@ const AppRoutes: React.FC = () => {
         path="/admin/users"
         element={
           <ProtectedRoute>
-            <AdminUsers />
+            <AdminRoute>
+              <AdminUsers />
+            </AdminRoute>
           </ProtectedRoute>
         }
       />
@@ -88,7 +91,9 @@ const AppRoutes: React.FC = () => {
         path="/admin/servers"
         element={
           <ProtectedRoute>
-            <AdminServers />
+            <AdminRoute>
+              <AdminServers />
+            </AdminRoute>
           </ProtectedRoute>
         }
       />
@@ -96,7 +101,9 @@ const AppRoutes: React.FC = () => {
         path="/admin/payments"
         element={
           <ProtectedRoute>
-            <AdminPayments />
+            <AdminRoute>
+              <AdminPayments />
+            </AdminRoute>
           </ProtectedRoute>
         }
       />
@@ -104,7 +111,9 @@ const AppRoutes: React.FC = () => {
         path="/admin/subscriptions"
         element={
           <ProtectedRoute>
-            <AdminSubscriptions />
+            <AdminRoute>
+              <AdminSubscriptions />
+            </AdminRoute>
           </ProtectedRoute>
         }
       />

@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from app.application.dtos.base import PaginatedResult, Pagination
+from app.application.dtos.servers.base import ServerListParams
 from app.domain.entities.server import Server
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.values.servers import ProtocolType
@@ -48,4 +50,17 @@ class ServerRepository(BaseMongoDBRepository, BaseServerRepository):
         await self._collection.update_one(
             {"_id": server_id},
             {"$set": {"free": new_free}}
+        )
+
+    async def get_list(self, filter_params: ServerListParams) -> PaginatedResult[Server]:
+        documents = await self.get_paginated_items(params=filter_params)
+        servers = [convert_server_document_to_entity(doc) for doc in documents['items']]
+        return PaginatedResult(
+            items=servers,
+            pagination=Pagination(**documents["pagination"])
+        )
+
+    async def delete_by_id(self, server_id: UUID) -> None:
+        await self._collection.delete_one(
+            {"_id": server_id}
         )

@@ -84,10 +84,17 @@ export const CreateServer: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto p-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Добавить сервер</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+      <div className="max-w-3xl mx-auto p-4">
+        <button
+          onClick={() => navigate('/')}
+          className="mb-4 text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2"
+        >
+          <span>←</span> Назад
+        </button>
+
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">🖥️ Добавить сервер</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -256,18 +263,18 @@ export const CreateServer: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 pt-4">
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="flex-1 bg-white hover:bg-gray-50 text-gray-800 font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg border border-gray-200"
               >
                 Отмена
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isLoading ? (
                   <>
@@ -275,7 +282,10 @@ export const CreateServer: React.FC = () => {
                     Создание...
                   </>
                 ) : (
-                  'Создать сервер'
+                  <>
+                    <span className="mr-2">✨</span>
+                    Создать сервер
+                  </>
                 )}
               </button>
             </div>
