@@ -31,16 +31,9 @@ async def lifespan(app: FastAPI):
     await app.state.dishka_container.close()
 
 def setup_middlewares(app: FastAPI) -> None:
-    # app.add_middleware(
-    #     CORSMiddleware,
-    #     allow_origins=[str(origin).strip("/") for origin in app_settings.BACKEND_CORS_ORIGINS],
-    #     allow_credentials=True,
-    #     allow_methods=["*"],
-    #     allow_headers=["*"],
-    # )
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["https://6fq0p29m-3000.euw.devtunnels.ms", "https://www.youtube.com"],
+        allow_origins=[str(origin).strip("/") for origin in app_settings.BACKEND_CORS_ORIGINS],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

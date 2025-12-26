@@ -21,39 +21,6 @@ services:
       --port ${WEBAPP_WEBHOOK_PORT} --no-access-log"
     ]
 
-  kafka:
-    image: apache/kafka:4.0.0
-    container_name: "kafka"
-    restart: unless-stopped
-    ports:
-      - "9092:9092"
-      - "9093:9093"
-    environment:
-      KAFKA_PROCESS_ROLES: "broker,controller"
-      KAFKA_NODE_ID: "1"
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
-
-      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
-      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
-
-      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
-
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
-    networks:
-      - app-network
-    volumes:
-      - kafka-data:/var/lib/kafka/data
-    healthcheck:
-      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/9092 2>/dev/null || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-
   mongo:
     image: mongo:8.0.15
     container_name: mongo
@@ -65,8 +32,8 @@ services:
     volumes:
       - dbdata6:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME:?}
-      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD:?}
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
 
   redis:
