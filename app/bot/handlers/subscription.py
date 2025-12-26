@@ -3,7 +3,6 @@ from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
 from dishka.integrations.aiogram import FromDishka
 
-from app.application.commands.payment.paid import PaidPaymentCommand
 from app.application.commands.subscriptions.create import CreateSubscriptionCommand
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
@@ -100,8 +99,6 @@ async def process_protocol(
     payment_response, *_ = await mediator.handle_command(command)
     await callback_query.message.edit_media(**BuySubscriptionMessage().build(payment_response))
 
-    payment_id = payment_response.url.split("=")[-1]
-    await mediator.handle_command(PaidPaymentCommand(UUID(payment_id)))
     await callback_query.answer()
     await state.clear()
 
@@ -172,8 +169,6 @@ async def renew(
     )
     await callback_query.message.edit_media(**BuySubscriptionMessage().build(payment_response))
 
-    payment_id = payment_response.url.split("=")[-1]
-    await mediator.handle_command(PaidPaymentCommand(UUID(payment_id)))
     await state.clear()
     await callback_query.answer()
 

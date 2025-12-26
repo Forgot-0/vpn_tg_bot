@@ -1,6 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from app.bot.messages.base import BaseMessageBuilder, BaseMediaBuilder
+from app.bot.messages.base import BaseMediaBuilder
+from app.configs.app import app_settings
 
 
 class VPNButton:
@@ -9,7 +10,7 @@ class VPNButton:
 
 class HelpButton:
     text = "🆘 Поддержка"
-    url = "https://t.me/VPNHE1P"
+    url = app_settings.VPN_HELP_ACCOUNT
     callback_data = "help"
 
 class RewardButton:

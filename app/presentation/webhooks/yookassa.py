@@ -5,6 +5,7 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Request, Response
 
 from app.application.commands.payment.paid import PaidPaymentCommand
+from app.application.exception import BadRequestException, ForbiddenException
 from app.infrastructure.mediator.base import BaseMediator
 
 
@@ -37,13 +38,12 @@ def check_ip_in_ranges(client_ip: str) -> bool:
 
 @router.post('/paid')
 async def paid(request: Request, mediator: FromDishka[BaseMediator]) -> Response:
-    from app.application.exception import BadRequestException, ForbiddenException
+    x_forwarded_for = request.headers.get("X-Forwarded-For")
 
-    if request.client is None:
+    if x_forwarded_for is None:
         raise BadRequestException()
 
-    client_ip = request.client.host
-    if not check_ip_in_ranges(client_ip):
+    if not check_ip_in_ranges(x_forwarded_for.split(",")[0]):
         raise ForbiddenException()
 
     data = (await request.json())

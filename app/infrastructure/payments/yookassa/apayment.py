@@ -3,6 +3,7 @@ from uuid import UUID, uuid4
 import aiohttp
 
 
+from app.configs.app import app_settings
 from app.domain.entities.payment import Payment
 from app.application.services.payment import BasePaymentService, PaymentAnswer
 from app.application.exception import PaymentException
@@ -27,7 +28,7 @@ class YooKassaPaymentService(BasePaymentService):
             },
             'confirmation': {
                 'type': 'redirect',
-                'return_url': 'https://t.me/forgot_vpn_bot'
+                'return_url': f'https://t.me/{app_settings.BOT_USERNAME}'
             },
             'capture': True,
             'metadata': {

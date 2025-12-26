@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import logging
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
+from app.application.exception import NotFoundException
 from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
@@ -29,7 +30,6 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
 
     async def handle(self, command: PaidPaymentCommand) -> None:
         payment = await self.payment_repository.get_by_payment_id(payment_id=command.payment_id)
-        from app.application.exception import NotFoundException
 
         if not payment:
             raise NotFoundException()

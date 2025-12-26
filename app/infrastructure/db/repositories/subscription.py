@@ -44,7 +44,7 @@ class SubscriptionRepository(BaseMongoDBRepository, BaseSubscriptionRepository):
 
     async def update(self, subscription: Subscription) -> None:
         doc = convert_subscription_entity_to_document(subscription)
-        await self._collection.update_one({"_id": subscription.id.value}, doc, upsert=True)
+        await self._collection.replace_one({"_id": subscription.id.value}, doc, upsert=True)
 
     async def get_list(self, filter_params: SubscriptionListParams) -> PaginatedResult[Subscription]:
         documents = await self.get_paginated_items(params=filter_params)

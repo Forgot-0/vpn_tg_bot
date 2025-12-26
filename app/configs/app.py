@@ -16,6 +16,8 @@ class AppConfig(BaseConfig):
 
     CHAT_TELEGRAM: int = 0
 
+    VPN_HELP_ACCOUNT: str = ""
+
     DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
 

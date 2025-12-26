@@ -32,7 +32,7 @@ class PaymentRepository(BaseMongoDBRepository, BasePaymentRepository):
     async def update(self, payment: Payment) -> None:
         doc = convert_order_entity_to_document(payment)
         await self._collection.replace_one({"_id": payment.id}, doc)
-    
+
     async def get_by_payment_id(self, payment_id: str) -> Payment | None:
         document = await self._collection.find_one({"payment_id": payment_id})
         return convert_order_document_to_entity(document) if document else None
