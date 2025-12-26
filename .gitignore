@@ -85,3 +85,4 @@ cython_debug/
 .logs/
 
 app/bot/static/images_fileid.json
+nginx/ssl/

@@ -119,36 +119,33 @@ class ApiClient {
   }
 
   async getUserSubscriptions(userId?: string): Promise<Subscription[]> {
-    // Endpoint требует UUID в URL, но handler использует только JWT токен
-    // Если userId не указан, нужно получить его из текущего пользователя
-    // Для простоты используем '00000000-0000-0000-0000-000000000000' как placeholder
-    // или лучше получить user.id из getMe()
-    const targetUserId = userId || '00000000-0000-0000-0000-000000000000';
+    // Если userId не передан, получаем текущего пользователя и используем его id
+    const targetUserId = userId || (await this.getMe()).id;
     const response = await this.client.get<Subscription[]>(`/users/${targetUserId}/subscriptions`);
     return response.data;
   }
 
   // Subscriptions
   async getSubscriptions(page = 1, pageSize = 10): Promise<PaginatedResult<Subscription>> {
-    const response = await this.client.get<PaginatedResult<Subscription>>('/subscrtiption/', {
+    const response = await this.client.get<PaginatedResult<Subscription>>('/subscription/', {
       params: { page, page_size: pageSize },
     });
     return response.data;
   }
 
   async getSubscription(subscriptionId: string): Promise<Subscription> {
-    const response = await this.client.get<Subscription>(`/subscrtiption/${subscriptionId}`);
+    const response = await this.client.get<Subscription>(`/subscription/${subscriptionId}`);
     return response.data;
   }
 
   async getSubscriptionConfig(subscriptionId: string): Promise<VPNConfig> {
-    const response = await this.client.get<VPNConfig>(`/subscrtiption/${subscriptionId}/config`);
+    const response = await this.client.get<VPNConfig>(`/subscription/${subscriptionId}/config`);
     return response.data;
   }
 
   async createSubscription(data: CreateSubscriptionRequest): Promise<string> {
     try {
-      const response = await this.client.post('/subscrtiption/', data, {
+      const response = await this.client.post('/subscription/', data, {
         maxRedirects: 0,
         validateStatus: (status: number) => status >= 200 && status < 400,
       });
@@ -181,7 +178,7 @@ class ApiClient {
   ): Promise<string> {
     try {
         const response = await this.client.post(
-        `/subscrtiption/${subscriptionId}/renew`,
+        `/subscription/${subscriptionId}/renew`,
         data,
         {
           maxRedirects: 0,
@@ -211,7 +208,7 @@ class ApiClient {
 
   async getPrice(data: CreateSubscriptionRequest): Promise<number> {
     const response = await this.client.post<PriceSubscriptionResponse>(
-      '/subscrtiption/get_price',
+      '/subscription/get_price',
       data
     );
     return response.data.price;
@@ -287,7 +284,7 @@ class ApiClient {
     if (sort) {
       params.sort = sort;
     }
-    const response = await this.client.get<PaginatedResult<Subscription>>('/subscrtiption/', {
+    const response = await this.client.get<PaginatedResult<Subscription>>('/subscription/', {
       params,
     });
     return response.data;

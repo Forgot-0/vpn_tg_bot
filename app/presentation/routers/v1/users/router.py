@@ -64,6 +64,7 @@ async def get_user_subscriptions(
 ) -> list[SubscriptionDTO]:
     return await mediator.handle_query(
         GetSubscriptionsUserQuery(
+            user_id=user_id,
             user_jwt_data=user_jwt_data
         )
     )

@@ -12,6 +12,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/ssl:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
+      - ./frontend/dist:/usr/share/nginx/html:ro
     networks:
       - app-network
 
