@@ -40,9 +40,11 @@ async def subscriptions(
     callback_query: types.CallbackQuery,
     mediator: FromDishka[BaseMediator],
 ) -> None:
+    jwt_data = await user_jwt_getter(mediator, callback_query)
     subscriptions: list[SubscriptionDTO] = await mediator.handle_query(
         GetSubscriptionsUserQuery(
-            user_jwt_data=await user_jwt_getter(mediator, callback_query)
+            user_jwt_data=jwt_data,
+            user_id=UUID(jwt_data.id)
         )
     )
     await callback_query.message.edit_media(**ListSubscriptionMessage().build(subscriptions))

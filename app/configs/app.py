@@ -19,7 +19,7 @@ class AppConfig(BaseConfig):
     DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
 
-    BACKEND_CORS_ORIGINS: ClassVar[Annotated[list[str] | str, BeforeValidator(BaseConfig.parse_list)]] = []
+    BACKEND_CORS_ORIGINS: Annotated[list[str] | str, BeforeValidator(BaseConfig.parse_list)] = []
 
     @computed_field
     @property
@@ -36,11 +36,12 @@ class AppConfig(BaseConfig):
     DATABASE_USERNAME: str = ""
     DATABASE_PASSWORD: str = ""
     DATABASE_PORT: int = 27017
+    DATABASE_HOST: str = "mongo"
 
     @computed_field
     @property
     def mongo_url(self) -> str:
-        return f"mongodb://{self.DATABASE_USERNAME}:{self.DATABASE_PASSWORD}@mongo:{self.DATABASE_PORT}/"
+        return f"mongodb://{self.DATABASE_USERNAME}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/"
 
     REDIS_HOST: str = 'redis'
     REDIS_PORT: int = 6379
@@ -49,8 +50,6 @@ class AppConfig(BaseConfig):
     @property
     def fsm_redis_url(self) -> str:
         return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1'
-
-    BROKER_URL: str = ""
 
     LOG_LEVEL: str = 'ERROR'
     JSON_LOG: bool = True

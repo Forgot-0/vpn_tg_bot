@@ -10,7 +10,7 @@ from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.values.users import UserRole
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.cookies import RefreshTokenCookieManager
-from app.application.exception import UnauthorizedException
+from app.application.exception import ForbiddenException, UnauthorizedException
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
@@ -38,7 +38,7 @@ class UserJWTDataGetter:
         if self.reqrequired_role:
             if not role_access_control.can_action(
             UserRole(user_jwt_data.role), target_role=self.reqrequired_role
-        ): raise
+        ): raise ForbiddenException()
 
         return user_jwt_data
 

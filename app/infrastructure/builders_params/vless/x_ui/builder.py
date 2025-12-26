@@ -45,7 +45,10 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
 
     def build_config(self, data: dict[str, Any]) -> dict[str, Any]:
         data['settings'] = json.loads(data['settings'])
+        data['settings']['clients'] = []
+
         data['streamSettings'] = (json.loads(data['streamSettings']))
         data['sniffing'] = json.loads(data['sniffing'])
+        data['clientStats'] = []
 
         return data

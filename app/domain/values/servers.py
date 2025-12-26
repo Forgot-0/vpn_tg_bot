@@ -3,30 +3,6 @@ from enum import Enum
 from typing import Any, ClassVar, Iterable
 
 
-class CountryCode(Enum):
-    RUSSIA = 'RU'
-    VIETNAM = 'VN'
-    THAILAND = 'TH'
-    PHILIPPINES = 'PH'
-    MALAYSIA = 'MY'
-    SINGAPORE = 'SG'
-    JAPAN = 'JP'
-    SOUTH_KOREA = 'KR'
-    HONG_KONG = 'HK'
-    TAIWAN = 'TW'
-    INDIA = 'IN'
-    INDONESIA = 'ID'
-    AMERICA = 'USA'
-    GERMANY = 'DE'
-    FRANCE = "FR"
-    POLAND = "PL"
-    ITALY = "IT"
-    CANADA = "CA"
-    BRAZIL = "BR"
-    AUSTRALIA = "AU"
-    SWITZERLAND = "CH"
-
-
 class ProtocolType(str, Enum):
     VLESS = "vless"
 
@@ -94,5 +70,21 @@ for r in (
     Region("🇳🇱", "Нидерланды", "NL"),
     Region("🇺🇸", "США", "US"),
     Region("🇬🇧", "Великобритания", "GB"),
+    Region("🇩🇪", "Германия", "DE"),
+    Region("🇮🇹", "Италия", "IT"),
+    Region("🇫🇷", "Франция", "FR"),
+    Region("🇯🇵", "Япония", "JP"),
+    Region("🇰🇷", "Южная Корея", "KR"),
+    Region("🇨🇦", "Канада", "CA"),
+    Region("🇮🇳", "Индия", "IN"),
+    Region("🇨🇭", "Швейцария", "CH"),
+    Region("🇦🇺", "Австралия", "AU"),
+    Region("🇪🇸", "Испания", "ES"),
+    Region("🇧🇷", "Бразилия", "BR"),
+    Region("🇷🇺", "Россия", "RU"),
+    Region("🇮🇱", "Израиль", "IL"),
+    Region("🇸🇪", "Швеция", "SE"),
+    Region("🇳🇿", "Новая Зеландия", "NZ"),
+    Region("🇲🇽", "Мексика", "MX"),
 ):
     Region.register(r)
