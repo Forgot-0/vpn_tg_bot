@@ -45,3 +45,7 @@ services:
 volumes:
   grafana.data:
   loki.data:
+
+networks:
+  monitoring-network:
+    driver: bridge
