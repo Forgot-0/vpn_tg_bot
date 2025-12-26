@@ -106,16 +106,20 @@ class DeviceMessage(BaseMediaBuilder):
 class ProtocolTypeMessage(BaseMediaBuilder):
     _photo = ('type_vpn')
     _caption = "Выберите протокол VPN"
-    _reply_markup = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(
-                text=protocol_type.value,
-                callback_data=ProtocolTypeCallbackData(protocol_type=protocol_type.value).pack()
-            )] 
-            for protocol_type in ProtocolType
-        ] + [[InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]]
-    )
+    _reply_markup = None
 
+    def build(self, protocols: list[str]) -> dict[str, Any]:
+        self._reply_markup = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [InlineKeyboardButton(
+                        text=protocol_type,
+                        callback_data=ProtocolTypeCallbackData(protocol_type=protocol_type).pack()
+                    )] 
+                    for protocol_type in protocols
+                ] + [[InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)]]
+            )
+        
+        return super().build()
 
 class BuySubscriptionMessage(BaseMediaBuilder):
     _photo = ('buy')

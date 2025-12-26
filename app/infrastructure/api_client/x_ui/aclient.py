@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from http.cookies import SimpleCookie
 
 from aiohttp import ClientSession
@@ -100,10 +100,9 @@ class A3xUiApiClient(BaseApiClient):
                         cookies=auth_cookies
                     )
                     resp = await resp.json()
-
                     if "Duplicate email:" in resp.get("msg", ""):
                         resp = await session.post(
-                            url=self.upgrade_url(server=server, id=str(subscription.id.value.hex)),
+                            url=self.upgrade_url(server=server, id=str(subscription.id.value)),
                             json=json,
                             cookies=auth_cookies
                         )
@@ -130,7 +129,7 @@ class A3xUiApiClient(BaseApiClient):
                         url=self.delete_client_url(
                             server=server,
                             inbound_id=server.protocol_configs[protocol_type].config['inbound_id'],
-                            id=str(subscription.id.value.hex)
+                            id=str(subscription.id.value)
                         ),
                         json=json,
                         cookies=auth_cookies

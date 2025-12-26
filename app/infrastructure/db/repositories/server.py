@@ -52,6 +52,17 @@ class ServerRepository(BaseMongoDBRepository, BaseServerRepository):
             {"$set": {"free": new_free}}
         )
 
+    async def get_all_protocols(self) -> list[str]:
+        pipeline = [
+            {"$project": {"protocol_entries": {"$objectToArray": "$protocol_configs"}}},
+            {"$unwind": "$protocol_entries"},
+            {"$group": {"_id": None, "protocols": {"$addToSet": "$protocol_entries.k"}}},
+            {"$project": {"_id": 0, "protocols": 1}}
+        ]
+        result = await self._collection.aggregate(pipeline).to_list(length=1)
+        return result[0]["protocols"] if result else []
+
+
     async def get_list(self, filter_params: ServerListParams) -> PaginatedResult[Server]:
         documents = await self.get_paginated_items(params=filter_params)
         servers = [convert_server_document_to_entity(doc) for doc in documents['items']]

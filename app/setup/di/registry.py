@@ -10,6 +10,7 @@ from app.application.commands.subscriptions.renew import RenewSubscriptionComman
 from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from app.application.events.server.decrement_free import DecrementFreeServerEventHandler
 from app.application.queries.servers.get_list import GetListServerQuery, GetListServerQueryHandler
+from app.application.queries.servers.get_protocols import GetListProtocolsQuery, GetListProtocolsQueryHandler
 from app.application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
 from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery, GetSubscriptionsUserQueryHandler
 from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
@@ -49,6 +50,7 @@ class MediatorProvider(Provider):
     create_server_handler = provide(CreateServerCommandHandler, scope=Scope.APP)
     delete_server_handler = provide(DeleteServerCommandHandler, scope=Scope.APP)
     get_list_server_handler = provide(GetListServerQueryHandler, scope=Scope.APP)
+    get_list_protocols = provide(GetListProtocolsQueryHandler, scope=Scope.APP)
 
     login_telegram_handler = provide(LoginTelegramUserCommandHandler, scope=Scope.APP)
     refresh_token_handler = provide(RefreshTokenCommandHandler, scope=Scope.APP)
@@ -127,6 +129,9 @@ class MediatorProvider(Provider):
 
         query_maps.register_query(
             GetListServerQuery, GetListServerQueryHandler
+        )
+        query_maps.register_query(
+            GetListProtocolsQuery, GetListProtocolsQueryHandler
         )
         return query_maps
 

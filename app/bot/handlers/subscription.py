@@ -6,6 +6,7 @@ from dishka.integrations.aiogram import FromDishka
 from app.application.commands.subscriptions.create import CreateSubscriptionCommand
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
+from app.application.queries.servers.get_protocols import GetListProtocolsQuery
 from app.application.queries.subscription.get_by_id import GetByIdQuery
 from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery
 from app.application.queries.subscription.get_config import GetConfigQuery
@@ -70,10 +71,12 @@ async def process_days(
 async def process_devices(
         callback_query: types.CallbackQuery,
         callback_data: DeviceCallbackData,
+        mediator: FromDishka[BaseMediator],
         state: FSMContext
     ) -> None:
     await state.update_data(devices=callback_data.device)
-    await callback_query.message.edit_media(**ProtocolTypeMessage().build())
+    protocols = await mediator.handle_query(GetListProtocolsQuery())
+    await callback_query.message.edit_media(**ProtocolTypeMessage().build(protocols=protocols))
     await state.set_state(CreateSubscriptionStates.waiting_for_protocol)
     await callback_query.answer()
 

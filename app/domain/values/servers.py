@@ -5,6 +5,8 @@ from typing import Any, ClassVar, Iterable
 
 class ProtocolType(str, Enum):
     VLESS = "vless"
+    # TROJAN = "trojan"
+    # SS = "shadowsocks"
 
 
 @dataclass(frozen=True)
