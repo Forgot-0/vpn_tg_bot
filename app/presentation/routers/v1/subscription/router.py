@@ -3,7 +3,6 @@ from uuid import UUID
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Depends, status
-from fastapi.responses import RedirectResponse
 
 from app.application.commands.subscriptions.create import CreateSubscriptionCommand
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
@@ -22,7 +21,7 @@ from app.domain.values.servers import VPNConfig
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.deps import CurrentAdminJWTData, CurrentUserJWTData
 from app.presentation.routers.v1.subscription.requests import CreateSubscriptionRequests, RenewSubscriptionRequests
-from app.presentation.routers.v1.subscription.responses import PriceSubscriptionResponse
+from app.presentation.routers.v1.subscription.responses import PaymentUrlResponse, PriceSubscriptionResponse
 from app.presentation.schemas.filters import ListParamsBuilder
 
 
@@ -73,7 +72,7 @@ async def create_subscription(
     subscription_request: CreateSubscriptionRequests,
     user_jwt_data: CurrentUserJWTData,
     mediator: FromDishka[BaseMediator],
-) -> RedirectResponse:
+) -> PaymentUrlResponse:
     result, *_ = await mediator.handle_command(
         CreateSubscriptionCommand(
             duration=subscription_request.duration_days,
@@ -82,7 +81,7 @@ async def create_subscription(
             user_jwt_data=user_jwt_data
         )
     )
-    return RedirectResponse(url=result.url)
+    return PaymentUrlResponse(url=result.url)
 
 @router.get(
     "/",
@@ -110,7 +109,7 @@ async def renew(
     subscription_request: RenewSubscriptionRequests,
     user_jwt_data: CurrentUserJWTData,
     mediator: FromDishka[BaseMediator],
-) -> RedirectResponse:
+) -> PaymentUrlResponse:
     result, *_ = await mediator.handle_command(
         RenewSubscriptionCommand(
             subscription_id=subscription_id,
@@ -118,7 +117,7 @@ async def renew(
             user_jwt_data=user_jwt_data
         )
     )
-    return RedirectResponse(url=result.url)
+    return PaymentUrlResponse(url=result.url)
 
 
 @router.post(

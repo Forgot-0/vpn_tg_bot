@@ -138,7 +138,7 @@ export const AdminUsers: React.FC = () => {
               placeholder="🔍 Поиск по username, имени, Telegram ID или ID..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+              className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 shadow-md bg-white text-gray-900 font-medium"
             />
           </div>
 
@@ -150,26 +150,26 @@ export const AdminUsers: React.FC = () => {
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-gray-100 to-gray-50">
+                <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">ID</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Username</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Имя</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Telegram ID</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Роль</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Создан</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">ID</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Username</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Имя</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Telegram ID</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Роль</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Создан</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
                     <tr
                       key={user.id}
-                      className="border-t hover:bg-blue-50 transition-colors cursor-pointer"
+                      className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors cursor-pointer"
                     >
-                      <td className="px-4 py-3 text-gray-800 font-mono text-xs">{user.id.slice(0, 8)}...</td>
-                      <td className="px-4 py-3 text-gray-800 font-medium">{user.username || '-'}</td>
-                      <td className="px-4 py-3 text-gray-800">{user.fullname || '-'}</td>
-                      <td className="px-4 py-3 text-gray-800">{user.telegram_id || '-'}</td>
+                      <td className="px-4 py-3 text-gray-900 font-mono text-xs font-semibold">{user.id.slice(0, 8)}...</td>
+                      <td className="px-4 py-3 text-gray-900 font-semibold">{user.username || '-'}</td>
+                      <td className="px-4 py-3 text-gray-900 font-medium">{user.fullname || '-'}</td>
+                      <td className="px-4 py-3 text-gray-900 font-medium">{user.telegram_id || '-'}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -185,7 +185,7 @@ export const AdminUsers: React.FC = () => {
                             : '👤 User'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-600 text-sm">{formatDate(user.created_at)}</td>
+                      <td className="px-4 py-3 text-gray-700 text-sm font-medium">{formatDate(user.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -217,28 +217,28 @@ export const AdminUsers: React.FC = () => {
           )}
 
           {/* Statistics */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">📊 Статистика</h2>
+          <div className="mt-8 pt-6 border-t-2 border-gray-300">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 Статистика</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
-                <p className="text-gray-600 text-sm mb-1">Всего пользователей</p>
-                <p className="text-3xl font-bold text-blue-600">{total}</p>
+              <div className="bg-white border-2 border-blue-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Всего пользователей</p>
+                <p className="text-4xl font-bold text-blue-700">{total}</p>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-                <p className="text-gray-600 text-sm mb-1">Обычных юзеров</p>
-                <p className="text-3xl font-bold text-green-600">
+              <div className="bg-white border-2 border-green-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Обычных юзеров</p>
+                <p className="text-4xl font-bold text-green-700">
                   {users.filter((u) => u.role === 'user').length}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200">
-                <p className="text-gray-600 text-sm mb-1">Администраторов</p>
-                <p className="text-3xl font-bold text-red-600">
+              <div className="bg-white border-2 border-red-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Администраторов</p>
+                <p className="text-4xl font-bold text-red-700">
                   {users.filter((u) => u.role === 'admin' || u.role === 'super_admin').length}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
-                <p className="text-gray-600 text-sm mb-1">Premium</p>
-                <p className="text-3xl font-bold text-purple-600">
+              <div className="bg-white border-2 border-purple-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Premium</p>
+                <p className="text-4xl font-bold text-purple-700">
                   {users.filter((u) => u.is_premium).length}
                 </p>
               </div>

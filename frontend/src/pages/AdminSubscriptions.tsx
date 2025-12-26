@@ -37,7 +37,7 @@ export const AdminSubscriptions: React.FC = () => {
       if (regionFilter !== 'all') {
         filters.region = regionFilter;
       }
-      const data: PaginatedResult<Subscription> = await apiClient.getSubscriptions(
+      const data: PaginatedResult<Subscription> = await apiClient.getAllSubscriptions(
         page,
         20,
         filters,
@@ -94,9 +94,9 @@ export const AdminSubscriptions: React.FC = () => {
 
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">🔐 Управление подписками</h1>
-            <div className="text-sm text-gray-600">
-              Всего: <span className="font-semibold text-blue-600">{total}</span>
+            <h1 className="text-3xl font-bold text-gray-900">🔐 Управление подписками</h1>
+            <div className="text-sm text-gray-800 font-semibold">
+              Всего: <span className="font-bold text-blue-700">{total}</span>
             </div>
           </div>
 
@@ -161,32 +161,32 @@ export const AdminSubscriptions: React.FC = () => {
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-gray-100 to-gray-50">
+                <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">ID</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Регион</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Длительность</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Устройств</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Протоколы</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Начало</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Статус</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">ID</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Регион</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Длительность</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Устройств</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Протоколы</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Начало</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Статус</th>
                   </tr>
                 </thead>
                 <tbody>
                   {subscriptions.map((sub) => (
                     <tr
                       key={sub.id}
-                      className="border-t hover:bg-blue-50 transition-colors cursor-pointer"
+                      className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors cursor-pointer"
                       onClick={() => navigate(`/subscriptions/${sub.id}`)}
                     >
-                      <td className="px-4 py-3 text-gray-800 font-mono text-xs">
+                      <td className="px-4 py-3 text-gray-900 font-mono text-xs font-semibold">
                         {sub.id.slice(0, 8)}...
                       </td>
-                      <td className="px-4 py-3 text-gray-800 font-medium">
+                      <td className="px-4 py-3 text-gray-900 font-semibold">
                         {sub.flag} {sub.name} ({sub.code})
                       </td>
-                      <td className="px-4 py-3 text-gray-800">{sub.duration} дней</td>
-                      <td className="px-4 py-3 text-gray-800">{sub.device_count}</td>
+                      <td className="px-4 py-3 text-gray-900 font-semibold">{sub.duration} дней</td>
+                      <td className="px-4 py-3 text-gray-900 font-semibold">{sub.device_count}</td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-1">
                           {sub.protocol_types.map((protocol) => (
@@ -199,7 +199,7 @@ export const AdminSubscriptions: React.FC = () => {
                           ))}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-600 text-sm">
+                      <td className="px-4 py-3 text-gray-700 text-sm font-medium">
                         {formatDate(sub.start_date)}
                       </td>
                       <td className="px-4 py-3">
@@ -252,28 +252,28 @@ export const AdminSubscriptions: React.FC = () => {
           )}
 
           {/* Statistics */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">📊 Статистика подписок</h2>
+          <div className="mt-8 pt-6 border-t-2 border-gray-300">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 Статистика подписок</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
-                <p className="text-gray-600 text-sm mb-1">Всего подписок</p>
-                <p className="text-3xl font-bold text-blue-600">{total}</p>
+              <div className="bg-white border-2 border-blue-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Всего подписок</p>
+                <p className="text-4xl font-bold text-blue-700">{total}</p>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-                <p className="text-gray-600 text-sm mb-1">Активных</p>
-                <p className="text-3xl font-bold text-green-600">
+              <div className="bg-white border-2 border-green-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Активных</p>
+                <p className="text-4xl font-bold text-green-700">
                   {subscriptions.filter((s) => s.status === 'active').length}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200">
-                <p className="text-gray-600 text-sm mb-1">Истекших</p>
-                <p className="text-3xl font-bold text-red-600">
+              <div className="bg-white border-2 border-red-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Истекших</p>
+                <p className="text-4xl font-bold text-red-700">
                   {subscriptions.filter((s) => s.status === 'expired').length}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-lg border border-yellow-200">
-                <p className="text-gray-600 text-sm mb-1">Ожидание</p>
-                <p className="text-3xl font-bold text-yellow-600">
+              <div className="bg-white border-2 border-yellow-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Ожидание</p>
+                <p className="text-4xl font-bold text-yellow-700">
                   {subscriptions.filter((s) => s.status === 'pending').length}
                 </p>
               </div>

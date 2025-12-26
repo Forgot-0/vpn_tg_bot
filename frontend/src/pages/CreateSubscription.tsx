@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '../services/api';
 import { showTelegramAlert } from '../utils/telegram';
-import { Loading } from '../components/Loading';
 
 const PROTOCOL_TYPES = ['vless', 'vmess', 'trojan'];
 const DURATION_OPTIONS = [7, 14, 30, 60, 90, 180, 365];
@@ -80,8 +79,8 @@ export const CreateSubscription: React.FC = () => {
           <span>←</span> Назад
         </button>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">✨ Создать подписку</h1>
+        <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-300">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">✨ Создать подписку</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Duration */}
@@ -98,10 +97,10 @@ export const CreateSubscription: React.FC = () => {
                       setFormData((prev) => ({ ...prev, duration_days: days }));
                       setPrice(null);
                     }}
-                    className={`py-3 px-4 rounded-lg border-2 font-semibold transition-all ${
+                    className={`py-3 px-4 rounded-lg border-2 font-bold transition-all ${
                       formData.duration_days === days
                         ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-blue-500 hover:bg-blue-50'
+                        : 'bg-white text-gray-900 border-gray-400 hover:border-blue-500 hover:bg-blue-50'
                     }`}
                   >
                     {days}
@@ -112,7 +111,7 @@ export const CreateSubscription: React.FC = () => {
 
             {/* Device Count */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-bold text-gray-900 mb-3">
                 📱 Количество устройств
               </label>
               <div className="grid grid-cols-5 gap-2">
@@ -124,10 +123,10 @@ export const CreateSubscription: React.FC = () => {
                       setFormData((prev) => ({ ...prev, device_count: count }));
                       setPrice(null);
                     }}
-                    className={`py-3 px-4 rounded-lg border-2 font-semibold transition-all ${
+                    className={`py-3 px-4 rounded-lg border-2 font-bold transition-all ${
                       formData.device_count === count
                         ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white border-purple-600 shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-purple-500 hover:bg-purple-50'
+                        : 'bg-white text-gray-900 border-gray-400 hover:border-purple-500 hover:bg-purple-50'
                     }`}
                   >
                     {count}
@@ -138,7 +137,7 @@ export const CreateSubscription: React.FC = () => {
 
             {/* Protocols */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-bold text-gray-900 mb-3">
                 🔐 Протоколы
               </label>
               <div className="space-y-2">
@@ -147,8 +146,8 @@ export const CreateSubscription: React.FC = () => {
                     key={protocol}
                     className={`flex items-center space-x-3 cursor-pointer p-4 rounded-lg border-2 transition-all ${
                       formData.protocol_types.includes(protocol)
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-300 hover:border-blue-300 bg-white'
+                        ? 'border-blue-600 bg-blue-100'
+                        : 'border-gray-400 hover:border-blue-400 bg-white'
                     }`}
                   >
                     <input
@@ -157,7 +156,9 @@ export const CreateSubscription: React.FC = () => {
                       onChange={() => toggleProtocol(protocol)}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className="text-gray-700 font-medium">{protocol}</span>
+                    <span className={`font-bold ${formData.protocol_types.includes(protocol) ? 'text-blue-900' : 'text-gray-900'}`}>
+                      {protocol.toUpperCase()}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -165,13 +166,13 @@ export const CreateSubscription: React.FC = () => {
 
             {/* Price Display */}
             {price !== null && (
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-6">
+              <div className="bg-white border-4 border-green-500 rounded-lg p-6 shadow-lg">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-green-700 font-medium mb-1">💰 Итоговая цена</p>
-                    <p className="text-3xl font-bold text-green-600">{price.toFixed(2)} ₽</p>
+                    <p className="text-sm text-green-800 font-bold mb-2 uppercase tracking-wide">💰 Итоговая цена</p>
+                    <p className="text-4xl font-bold text-green-700">{price.toFixed(2)} ₽</p>
                   </div>
-                  <div className="text-4xl">💳</div>
+                  <div className="text-5xl">💳</div>
                 </div>
               </div>
             )}

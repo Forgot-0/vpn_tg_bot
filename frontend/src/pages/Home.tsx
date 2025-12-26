@@ -99,10 +99,10 @@ export const Home: React.FC = () => {
 
         {/* Subscriptions List */}
         {subscriptions.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200">
+          <div className="bg-white rounded-xl shadow-lg p-12 text-center border-2 border-gray-300">
             <div className="text-6xl mb-4">🔐</div>
-            <p className="text-xl text-gray-700 mb-2 font-semibold">У вас пока нет подписок</p>
-            <p className="text-gray-500 mb-6">Создайте первую подписку для начала работы</p>
+            <p className="text-xl text-gray-900 mb-2 font-bold">У вас пока нет подписок</p>
+            <p className="text-gray-700 mb-6 font-medium">Создайте первую подписку для начала работы</p>
             <button
               onClick={() => navigate('/subscriptions/create')}
               className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-all shadow-md hover:shadow-lg"
@@ -117,22 +117,22 @@ export const Home: React.FC = () => {
               return (
                 <div
                   key={subscription.id}
-                  className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all cursor-pointer border border-gray-200 card-hover"
+                  className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all cursor-pointer border-2 border-gray-300 card-hover"
                   onClick={() => navigate(`/subscriptions/${subscription.id}`)}
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-800 mb-2">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">
                         {subscription.flag} {subscription.name}
                       </h3>
-                      <p className="text-sm text-gray-500 font-mono mb-3">
+                      <p className="text-sm text-gray-600 font-mono mb-3 font-semibold">
                         #{subscription.id.slice(0, 8)}...
                       </p>
                       <div className="flex flex-wrap gap-2 mb-3">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded font-medium">
+                        <span className="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg font-bold shadow-sm">
                           {subscription.device_count} устройств
                         </span>
-                        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded font-medium">
+                        <span className="px-3 py-1.5 bg-purple-600 text-white text-xs rounded-lg font-bold shadow-sm">
                           {subscription.duration} дней
                         </span>
                       </div>
@@ -140,7 +140,7 @@ export const Home: React.FC = () => {
                         {subscription.protocol_types.map((protocol) => (
                           <span
                             key={protocol}
-                            className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded font-medium"
+                            className="px-2.5 py-1 bg-indigo-600 text-white text-xs rounded-lg font-bold shadow-sm"
                           >
                             {protocol}
                           </span>
@@ -149,7 +149,7 @@ export const Home: React.FC = () => {
                     </div>
                     {subscription.status && (
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(
                           subscription.status
                         )}`}
                       >
@@ -162,8 +162,8 @@ export const Home: React.FC = () => {
                     )}
                   </div>
                   {expiresAt && (
-                    <div className="text-sm text-gray-600 border-t pt-3 mt-3">
-                      <span className="font-medium">Истекает:</span> {formatDate(expiresAt)}
+                    <div className="text-sm text-gray-800 border-t-2 border-gray-200 pt-3 mt-3 font-semibold">
+                      <span className="font-bold">Истекает:</span> {formatDate(expiresAt)}
                     </div>
                   )}
                 </div>

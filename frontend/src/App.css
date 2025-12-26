@@ -145,3 +145,84 @@ table tbody tr:last-child td {
   background-clip: text;
 }
 
+/* Improved text contrast */
+.text-readable {
+  color: #1f2937 !important; /* gray-800 */
+}
+
+.text-readable-light {
+  color: #374151 !important; /* gray-700 */
+}
+
+/* Ensure good contrast on light backgrounds */
+.bg-light-card {
+  background-color: #ffffff !important;
+  color: #111827 !important; /* gray-900 */
+}
+
+/* Better contrast for info cards */
+.info-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+}
+
+.info-card-label {
+  color: #4b5563; /* gray-600 */
+  font-weight: 600;
+}
+
+.info-card-value {
+  color: #111827; /* gray-900 */
+  font-weight: 700;
+}
+
+/* Table improvements */
+table tbody tr {
+  background-color: #ffffff;
+}
+
+table tbody tr:hover {
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+table tbody td {
+  color: #111827; /* gray-900 */
+}
+
+table thead th {
+  color: #111827; /* gray-900 */
+  font-weight: 700;
+  background-color: #f9fafb; /* gray-50 */
+}
+
+/* Input and select improvements */
+input, select, textarea {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #d1d5db !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #9ca3af !important; /* gray-400 */
+}
+
+/* Card text improvements */
+.card-text {
+  color: #111827 !important; /* gray-900 */
+}
+
+.card-text-secondary {
+  color: #4b5563 !important; /* gray-600 */
+}
+
+/* Gradient backgrounds with better text */
+.gradient-card {
+  position: relative;
+}
+
+.gradient-card-text {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+

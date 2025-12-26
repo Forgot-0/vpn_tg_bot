@@ -101,10 +101,10 @@ export const AdminServers: React.FC = () => {
 
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">🖥️ Управление серверами</h1>
+            <h1 className="text-3xl font-bold text-gray-900">🖥️ Управление серверами</h1>
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">
-                Всего: <span className="font-semibold text-blue-600">{total}</span>
+              <div className="text-sm text-gray-800 font-semibold">
+                Всего: <span className="font-bold text-blue-700">{total}</span>
               </div>
               <button
                 onClick={() => navigate('/servers/create')}
@@ -174,31 +174,31 @@ export const AdminServers: React.FC = () => {
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-gray-100 to-gray-50">
+                <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">ID</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Регион</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">IP</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Тип API</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Лимит/Свободно</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Протоколы</th>
-                    <th className="px-4 py-3 text-left text-gray-700 font-semibold">Действия</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">ID</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Регион</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">IP</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Тип API</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Лимит/Свободно</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Протоколы</th>
+                    <th className="px-4 py-3 text-left text-white font-bold">Действия</th>
                   </tr>
                 </thead>
                 <tbody>
                   {servers.map((server) => (
                     <tr
                       key={server.id}
-                      className="border-t hover:bg-blue-50 transition-colors"
+                      className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors"
                     >
-                      <td className="px-4 py-3 text-gray-800 font-mono text-xs">
+                      <td className="px-4 py-3 text-gray-900 font-mono text-xs font-semibold">
                         {server.id.slice(0, 8)}...
                       </td>
-                      <td className="px-4 py-3 text-gray-800 font-medium">
+                      <td className="px-4 py-3 text-gray-900 font-semibold">
                         {server.region_flag} {server.region_name} ({server.region_code})
                       </td>
-                      <td className="px-4 py-3 text-gray-800 font-mono">{server.ip}</td>
-                      <td className="px-4 py-3 text-gray-800">{server.api_type}</td>
+                      <td className="px-4 py-3 text-gray-900 font-mono font-semibold">{server.ip}</td>
+                      <td className="px-4 py-3 text-gray-900 font-semibold">{server.api_type}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`font-semibold ${
@@ -263,22 +263,22 @@ export const AdminServers: React.FC = () => {
           )}
 
           {/* Statistics */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">📊 Статистика</h2>
+          <div className="mt-8 pt-6 border-t-2 border-gray-300">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 Статистика</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
-                <p className="text-gray-600 text-sm mb-1">Всего серверов</p>
-                <p className="text-3xl font-bold text-blue-600">{total}</p>
+              <div className="bg-white border-2 border-blue-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Всего серверов</p>
+                <p className="text-4xl font-bold text-blue-700">{total}</p>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-                <p className="text-gray-600 text-sm mb-1">Свободных слотов</p>
-                <p className="text-3xl font-bold text-green-600">
+              <div className="bg-white border-2 border-green-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Свободных слотов</p>
+                <p className="text-4xl font-bold text-green-700">
                   {servers.reduce((sum, s) => sum + s.free, 0)}
                 </p>
               </div>
-              <div className="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200">
-                <p className="text-gray-600 text-sm mb-1">Занятых слотов</p>
-                <p className="text-3xl font-bold text-red-600">
+              <div className="bg-white border-2 border-red-400 p-5 rounded-lg shadow-md">
+                <p className="text-gray-700 text-sm mb-2 font-semibold">Занятых слотов</p>
+                <p className="text-4xl font-bold text-red-700">
                   {servers.reduce((sum, s) => sum + (s.limit - s.free), 0)}
                 </p>
               </div>

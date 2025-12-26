@@ -98,14 +98,14 @@ export const CreateServer: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Тип API *
               </label>
               <select
                 name="api_type"
                 value={apiType}
                 onChange={(e) => setApiType(e.target.value as ApiType)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
                 required
               >
                 {API_TYPES.map((type) => (
@@ -117,7 +117,7 @@ export const CreateServer: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Лимит подключений *
               </label>
               <input
@@ -126,13 +126,13 @@ export const CreateServer: React.FC = () => {
                 value={formData.limit}
                 onChange={handleChange}
                 min="1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Код региона *
               </label>
               <input
@@ -142,16 +142,16 @@ export const CreateServer: React.FC = () => {
                 onChange={handleChange}
                 placeholder="NL"
                 maxLength={10}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-medium"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-700 mt-1 font-medium">
                 Например: NL, US, RU и т.д.
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 IP адрес *
               </label>
               <input
@@ -160,13 +160,13 @@ export const CreateServer: React.FC = () => {
                 value={formData.ip}
                 onChange={handleChange}
                 placeholder="192.168.1.1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-medium"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Порт панели *
               </label>
               <input
@@ -176,13 +176,13 @@ export const CreateServer: React.FC = () => {
                 onChange={handleChange}
                 min="1"
                 max="65535"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Путь панели *
               </label>
               <input
@@ -191,16 +191,16 @@ export const CreateServer: React.FC = () => {
                 value={formData.panel_path}
                 onChange={handleChange}
                 placeholder="panel"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-700 mt-1 font-medium">
                 Путь к панели управления (например: panel, xui, admin)
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Домен (опционально)
               </label>
               <input
@@ -209,15 +209,15 @@ export const CreateServer: React.FC = () => {
                 value={formData.domain || ''}
                 onChange={handleChange}
                 placeholder="example.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-700 mt-1 font-medium">
                 Если указан, будет использоваться HTTPS
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Имя пользователя *
               </label>
               <input
@@ -226,13 +226,13 @@ export const CreateServer: React.FC = () => {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="admin"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Пароль *
               </label>
               <input
@@ -241,13 +241,13 @@ export const CreateServer: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Двухфакторная аутентификация (опционально)
               </label>
               <input
@@ -256,9 +256,9 @@ export const CreateServer: React.FC = () => {
                 value={formData.twoFactorCode || ''}
                 onChange={handleChange}
                 placeholder="000000"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2.5 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 bg-white text-gray-900 font-semibold"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-700 mt-1 font-medium">
                 Код из приложения аутентификатора (если требуется)
               </p>
             </div>

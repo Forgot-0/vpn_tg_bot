@@ -41,41 +41,41 @@ export const Profile: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-              <label className="block text-xs font-medium text-blue-700 mb-1 uppercase tracking-wide">
+            <div className="bg-white border-2 border-blue-300 rounded-lg p-5 shadow-md">
+              <label className="block text-xs font-bold text-blue-900 mb-2 uppercase tracking-wide">
                 Telegram ID
               </label>
-              <div className="text-gray-900 font-semibold">{user?.telegram_id || 'Не указано'}</div>
+              <div className="text-gray-900 font-bold text-base">{user?.telegram_id || 'Не указано'}</div>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
-              <label className="block text-xs font-medium text-green-700 mb-1 uppercase tracking-wide">
+            <div className="bg-white border-2 border-green-300 rounded-lg p-5 shadow-md">
+              <label className="block text-xs font-bold text-green-900 mb-2 uppercase tracking-wide">
                 Username
               </label>
-              <div className="text-gray-900 font-semibold">
+              <div className="text-gray-900 font-bold text-base">
                 {user?.username || user?.fullname || 'Не указано'}
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-              <label className="block text-xs font-medium text-purple-700 mb-1 uppercase tracking-wide">
+            <div className="bg-white border-2 border-purple-300 rounded-lg p-5 shadow-md">
+              <label className="block text-xs font-bold text-purple-900 mb-2 uppercase tracking-wide">
                 Полное имя
               </label>
-              <div className="text-gray-900 font-semibold">{user?.fullname || 'Не указано'}</div>
+              <div className="text-gray-900 font-bold text-base">{user?.fullname || 'Не указано'}</div>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 border border-orange-200">
-              <label className="block text-xs font-medium text-orange-700 mb-1 uppercase tracking-wide">
+            <div className="bg-white border-2 border-orange-300 rounded-lg p-5 shadow-md">
+              <label className="block text-xs font-bold text-orange-900 mb-2 uppercase tracking-wide">
                 Телефон
               </label>
-              <div className="text-gray-900 font-semibold">{user?.phone || 'Не указано'}</div>
+              <div className="text-gray-900 font-bold text-base">{user?.phone || 'Не указано'}</div>
             </div>
 
-            <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-lg p-4 border border-indigo-200">
-              <label className="block text-xs font-medium text-indigo-700 mb-1 uppercase tracking-wide">
+            <div className="bg-white border-2 border-indigo-300 rounded-lg p-5 shadow-md">
+              <label className="block text-xs font-bold text-indigo-900 mb-2 uppercase tracking-wide">
                 Роль
               </label>
-              <div className="text-gray-900 font-semibold">
+              <div className="text-gray-900 font-bold text-base">
                 {user?.role === 'super_admin'
                   ? '🔴 Super Admin'
                   : user?.role === 'admin'
@@ -84,30 +84,30 @@ export const Profile: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-4 border border-pink-200">
-              <label className="block text-xs font-medium text-pink-700 mb-1 uppercase tracking-wide">
+            <div className="bg-white border-2 border-pink-300 rounded-lg p-5 shadow-md">
+              <label className="block text-xs font-bold text-pink-900 mb-2 uppercase tracking-wide">
                 Premium
               </label>
-              <div className="text-gray-900 font-semibold">
+              <div className="text-gray-900 font-bold text-base">
                 {user?.is_premium ? '✅ Да' : '❌ Нет'}
               </div>
             </div>
 
             {user?.created_at && (
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200 md:col-span-2">
-                <label className="block text-xs font-medium text-gray-700 mb-1 uppercase tracking-wide">
+              <div className="bg-white border-2 border-gray-300 rounded-lg p-5 shadow-md md:col-span-2">
+                <label className="block text-xs font-bold text-gray-800 mb-2 uppercase tracking-wide">
                   Дата регистрации
                 </label>
-                <div className="text-gray-900 font-semibold">{formatDate(user.created_at)}</div>
+                <div className="text-gray-900 font-bold text-base">{formatDate(user.created_at)}</div>
               </div>
             )}
 
             {user?.referrals_count !== undefined && user.referrals_count > 0 && (
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-4 border border-yellow-200 md:col-span-2">
-                <label className="block text-xs font-medium text-yellow-700 mb-1 uppercase tracking-wide">
+              <div className="bg-white border-2 border-yellow-300 rounded-lg p-5 shadow-md md:col-span-2">
+                <label className="block text-xs font-bold text-yellow-900 mb-2 uppercase tracking-wide">
                   Рефералов
                 </label>
-                <div className="text-gray-900 font-semibold text-2xl">{user.referrals_count}</div>
+                <div className="text-gray-900 font-bold text-3xl">{user.referrals_count}</div>
               </div>
             )}
           </div>
