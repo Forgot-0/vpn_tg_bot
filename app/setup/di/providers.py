@@ -1,8 +1,10 @@
+from aiogram import Bot
 from cryptography.fernet import Fernet
 from dishka import AsyncContainer, Provider, Scope, provide
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.application.services.jwt_manager import JWTManager
+from app.application.services.notifications import NotificationSevice
 from app.application.services.role_hierarchy import RoleAccessControl
 from app.configs.app import app_settings
 from app.domain.repositories.payment import BasePaymentRepository
@@ -22,6 +24,7 @@ from app.infrastructure.mediator.event import BaseEventBus, EventRegisty, Mediat
 from app.infrastructure.mediator.mediator import DishkaMediator
 from app.infrastructure.mediator.queries import QueryRegistry
 from app.application.services.payment import BasePaymentService
+from app.infrastructure.notifications.telegram import TelegramNotificationSevice
 from app.infrastructure.payments.test import TestPaymentService
 from app.setup.di.init_payment import inti_yookass
 from app.setup.di.init_repositories import (
@@ -123,3 +126,11 @@ class ApplicationProvider(Provider):
         )
 
         return mediator
+
+    @provide(scope=Scope.APP)
+    def create_bot(self) -> Bot:
+        return Bot(app_settings.BOT_TOKEN)
+
+    @provide(scope=Scope.APP)
+    def notification_service(self, bot: Bot) -> NotificationSevice:
+        return TelegramNotificationSevice(bot)

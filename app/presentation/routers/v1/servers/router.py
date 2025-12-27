@@ -31,6 +31,13 @@ async def create_server(
     user_jwt_data: CurrentAdminJWTData
 ) -> None:
 
+    panel_path = server_request.panel_path
+    if panel_path.startswith("/"):
+        panel_path = panel_path[1:]
+
+    if panel_path.endswith("/"):
+        panel_path = panel_path[:-1]
+
     await mediator.handle_command(
         CreateServerCommand(
             limit=server_request.limit,
@@ -40,7 +47,7 @@ async def create_server(
             password=server_request.password,
             twoFactorCode=server_request.twoFactorCode,
             ip=server_request.ip,
-            panel_path=server_request.panel_path,
+            panel_path=panel_path,
             panel_port=server_request.panel_port,
             domain=server_request.domain,
             user_jwt_data=user_jwt_data

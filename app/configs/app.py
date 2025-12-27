@@ -21,7 +21,7 @@ class AppConfig(BaseConfig):
     DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
 
-    BACKEND_CORS_ORIGINS: Annotated[list[str] | str, BeforeValidator(BaseConfig.parse_list)] = []
+    WEB_APP_URL: str = ""
 
     @computed_field
     @property
@@ -31,8 +31,8 @@ class AppConfig(BaseConfig):
     PAYMENT_SECRET: str = ""
     PAYMENT_ID: int = 0
 
-    WEBAPP_WEBHOOK_PORT: int = 8080
-    WEBAPP_WEBHOOK_HOST: str = "0.0.0.0"
+    APP_PORT: int = 8080
+    APP_HOST: str = "0.0.0.0"
 
     DATABASE_DB: str = ""
     DATABASE_USERNAME: str = ""

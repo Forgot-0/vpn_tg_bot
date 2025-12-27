@@ -34,3 +34,4 @@ class RewardUser(AggregateRoot):
 
     def __eq__(self, other):
         return isinstance(other, RewardUser) and self.reward_id == other.reward_id and self.user_id == other.user_id
+

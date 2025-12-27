@@ -40,10 +40,10 @@ def add_middlewares(dp: Dispatcher):
 
 async def handle_exception(event: ErrorEvent):
     logger.error("Handle error", exc_info=event.exception, extra={"error": event.exception.message}) # type: ignore
-    if event.update.message:
-        await event.update.message.answer(text=event.exception.message) # type: ignore
-    else:
-        await event.update.callback_query.message.answer(event.exception.message) # type: ignore
+    # if event.update.message:
+    #     await event.update.message.answer(text=event.exception.message) # type: ignore
+    # else:
+    #     await event.update.callback_query.message.answer(event.exception.message) # type: ignore
 
 def init_dispatch() -> Dispatcher:
     dp = Dispatcher(storage=RedisStorage(Redis.from_url(app_settings.fsm_redis_url)))
