@@ -25,9 +25,7 @@ services:
       # - ./nginx/start.conf:/etc/nginx/nginx.conf
       - ./nginx/ssl:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
-      - frontend_dist:/usr/share/nginx/html:ro
-    depends_on:
-      - frontend
+      - frontend_dist:/var/www/frontend
     networks:
       - app-network
 
