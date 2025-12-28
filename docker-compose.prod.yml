@@ -5,9 +5,11 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-    image: vpn-frontend:latest
-    container_name: vpn_frontend
-    
+    container_name: frontend
+    expose:
+      - "80"
+    restart: unless-stopped
+
   nginx:
     image: nginx:latest
     container_name: nginx_proxy
