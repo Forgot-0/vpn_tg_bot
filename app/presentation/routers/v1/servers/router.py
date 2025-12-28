@@ -6,12 +6,13 @@ from fastapi import APIRouter, Depends, status
 
 from app.application.commands.servers.create import CreateServerCommand
 from app.application.commands.servers.delete import DeleteServerCommand
+from app.application.commands.servers.reload_config import ReloadServerConfigCommand
 from app.application.dtos.base import PaginatedResult
 from app.application.dtos.servers.base import ServerDTO, ServerFilterParam, ServerListParams, ServerSortParam
 from app.application.queries.servers.get_list import GetListServerQuery
 from app.domain.values.servers import ApiType
 from app.infrastructure.mediator.base import BaseMediator
-from app.presentation.deps import CurrentAdminJWTData, CurrentUserJWTData
+from app.presentation.deps import CurrentAdminJWTData
 from app.presentation.routers.v1.servers.requests import CreateServerRequest
 from app.presentation.schemas.filters import ListParamsBuilder
 
@@ -80,9 +81,25 @@ async def delete(
     server_id: UUID,
     user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
-)  -> None:
+) -> None:
     await mediator.handle_command(
         DeleteServerCommand(
+            server_id=server_id,
+            user_jwt_data=user_jwt_data
+        )
+    )
+
+
+@router.post(
+    "/{server_id}/reload_config"
+)
+async def realod_config_server(
+    server_id: UUID,
+    user_jwt_data: CurrentAdminJWTData,
+    mediator: FromDishka[BaseMediator],
+) -> None:
+    await mediator.handle_command(
+        ReloadServerConfigCommand(
             server_id=server_id,
             user_jwt_data=user_jwt_data
         )

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Cookie, Response, status
 from app.application.commands.auth.login import LoginTelegramUserCommand
 from app.application.commands.auth.refresh import RefreshTokenCommand
 from app.infrastructure.mediator.base import BaseMediator
-from app.presentation.deps import CookieManager, CurrentUserJWTData
+from app.presentation.deps import CookieManager
 from app.presentation.routers.v1.auth.requests import LoginTelegram
 from app.presentation.routers.v1.auth.response import AccessTokenResponse
 

@@ -5,6 +5,7 @@ from app.application.commands.auth.refresh import RefreshTokenCommand, RefreshTo
 from app.application.commands.payment.paid import PaidPaymentCommand, PaidPaymentCommandHandler
 from app.application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
 from app.application.commands.servers.delete import DeleteServerCommand, DeleteServerCommandHandler
+from app.application.commands.servers.reload_config import ReloadServerConfigCommand, ReloadServerConfigCommandHandler
 from app.application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
 from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
@@ -51,6 +52,7 @@ class MediatorProvider(Provider):
     delete_server_handler = provide(DeleteServerCommandHandler, scope=Scope.APP)
     get_list_server_handler = provide(GetListServerQueryHandler, scope=Scope.APP)
     get_list_protocols = provide(GetListProtocolsQueryHandler, scope=Scope.APP)
+    reload_config_server_handler = provide(ReloadServerConfigCommandHandler, scope=Scope.APP)
 
     login_telegram_handler = provide(LoginTelegramUserCommandHandler, scope=Scope.APP)
     refresh_token_handler = provide(RefreshTokenCommandHandler, scope=Scope.APP)
@@ -81,6 +83,9 @@ class MediatorProvider(Provider):
         )
         command_maps.register_command(
             DeleteServerCommand, [DeleteServerCommandHandler]
+        )
+        command_maps.register_command(
+            ReloadServerConfigCommand, [ReloadServerConfigCommandHandler]
         )
 
         command_maps.register_command(
