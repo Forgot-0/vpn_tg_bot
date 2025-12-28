@@ -1,18 +1,28 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+    image: vpn-frontend:latest
+    container_name: vpn_frontend
+    
   nginx:
     image: nginx:latest
     container_name: nginx_proxy
     restart: always
     depends_on:
       - certbot
+      - frontend
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      # - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/start.conf:/etc/nginx/nginx.conf
       - ./nginx/ssl:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
-      - ./frontend/dist:/usr/share/nginx/html:ro
     networks:
       - app-network
 
