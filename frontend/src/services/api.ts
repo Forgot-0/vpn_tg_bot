@@ -22,7 +22,7 @@ class ApiClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: API_BASE_URL,
+      baseURL: "/api",
       headers: {
         'Content-Type': 'application/json',
       },

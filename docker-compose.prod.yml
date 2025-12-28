@@ -5,10 +5,10 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-    container_name: frontend
-    expose:
-      - "80"
-    restart: unless-stopped
+    container_name: frontend_builder
+    volumes:
+      - frontend_dist:/dist
+    command: sh -c "cp -r /app/dist/* /dist"
 
   nginx:
     image: nginx:latest
@@ -21,10 +21,13 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      # - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/start.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      # - ./nginx/start.conf:/etc/nginx/nginx.conf
       - ./nginx/ssl:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
+      - frontend_dist:/usr/share/nginx/html:ro
+    depends_on:
+      - frontend
     networks:
       - app-network
 
@@ -36,6 +39,9 @@ services:
       - ./nginx/www:/var/www/certbot
     networks:
       - app-network
+
+volumes:
+  frontend_dist:
 
 networks:
   app-network:
