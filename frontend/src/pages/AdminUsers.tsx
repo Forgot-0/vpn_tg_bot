@@ -12,12 +12,21 @@ export const AdminUsers: React.FC = () => {
   const { isAdmin } = useAdmin();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+
+  // Filters
   const [roleFilter, setRoleFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('created_at');
+  const [isPremiumFilter, setIsPremiumFilter] = useState<boolean | undefined>(undefined);
+  const [hasSubscriptionsFilter, setHasSubscriptionsFilter] = useState<boolean | undefined>(undefined);
+  const [minReferralsFilter, setMinReferralsFilter] = useState<number | undefined>(undefined);
+  const [usernameFilter, setUsernameFilter] = useState('');
+  const [fullnameFilter, setFullnameFilter] = useState('');
+  const [phoneFilter, setPhoneFilter] = useState('');
+  const [createdAfterFilter, setCreatedAfterFilter] = useState<string | undefined>(undefined);
+  const [createdBeforeFilter, setCreatedBeforeFilter] = useState<string | undefined>(undefined);
+  const [sortBy, setSortBy] = useState('created_at:desc');
 
   useEffect(() => {
     if (!isAdmin) {
@@ -25,18 +34,67 @@ export const AdminUsers: React.FC = () => {
       return;
     }
     loadUsers();
-  }, [isAdmin, page, roleFilter, sortBy]);
+  }, [
+    isAdmin,
+    page,
+    roleFilter,
+    isPremiumFilter,
+    hasSubscriptionsFilter,
+    minReferralsFilter,
+    usernameFilter,
+    fullnameFilter,
+    phoneFilter,
+    createdAfterFilter,
+    createdBeforeFilter,
+    sortBy,
+  ]);
 
   const loadUsers = async () => {
     try {
       setIsLoading(true);
-      const filters: { [key: string]: string } = {};
+      const filters: {
+        role?: string;
+        is_premium?: boolean;
+        has_subscriptions?: boolean;
+        min_referrals_count?: number;
+        username?: string;
+        fullname?: string;
+        phone?: string;
+        created_after?: string;
+        created_before?: string;
+      } = {};
+
       if (roleFilter !== 'all') {
         filters.role = roleFilter;
       }
+      if (isPremiumFilter !== undefined) {
+        filters.is_premium = isPremiumFilter;
+      }
+      if (hasSubscriptionsFilter !== undefined) {
+        filters.has_subscriptions = hasSubscriptionsFilter;
+      }
+      if (minReferralsFilter !== undefined && minReferralsFilter > 0) {
+        filters.min_referrals_count = minReferralsFilter;
+      }
+      if (usernameFilter.trim()) {
+        filters.username = usernameFilter.trim();
+      }
+      if (fullnameFilter.trim()) {
+        filters.fullname = fullnameFilter.trim();
+      }
+      if (phoneFilter.trim()) {
+        filters.phone = phoneFilter.trim();
+      }
+      if (createdAfterFilter) {
+        filters.created_after = createdAfterFilter;
+      }
+      if (createdBeforeFilter) {
+        filters.created_before = createdBeforeFilter;
+      }
+
       const data: PaginatedResult<User> = await apiClient.getUsers(page, 20, filters, sortBy);
       setUsers(data.items);
-      setTotalPages(data.pages);
+      setTotalPages(data.total_pages);
       setTotal(data.total);
     } catch (error: any) {
       console.error('Failed to load users:', error);
@@ -52,14 +110,6 @@ export const AdminUsers: React.FC = () => {
     }
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.fullname?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.telegram_id?.toString().includes(searchQuery) ||
-      user.id.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ru-RU', {
       year: 'numeric',
@@ -70,8 +120,15 @@ export const AdminUsers: React.FC = () => {
 
   const resetFilters = () => {
     setRoleFilter('all');
-    setSortBy('created_at');
-    setSearchQuery('');
+    setIsPremiumFilter(undefined);
+    setHasSubscriptionsFilter(undefined);
+    setMinReferralsFilter(undefined);
+    setUsernameFilter('');
+    setFullnameFilter('');
+    setPhoneFilter('');
+    setCreatedAfterFilter(undefined);
+    setCreatedBeforeFilter(undefined);
+    setSortBy('created_at:desc');
     setPage(1);
   };
 
@@ -84,16 +141,16 @@ export const AdminUsers: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <button
           onClick={() => navigate('/')}
-          className="mb-4 text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-2"
+          className="mb-4 text-blue-600 hover:text-blue-800 font-semibold text-lg flex items-center gap-2 transition-colors"
         >
           <span>←</span> Назад
         </button>
 
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">👥 Управление пользователями</h1>
-            <div className="text-sm text-gray-600">
-              Всего: <span className="font-semibold text-blue-600">{total}</span>
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">👥 Управление пользователями</h1>
+            <div className="text-base text-gray-700 font-semibold">
+              Всего: <span className="font-bold text-blue-700 text-lg">{total}</span>
             </div>
           </div>
 
@@ -101,6 +158,7 @@ export const AdminUsers: React.FC = () => {
           <FilterBar
             filters={{
               role: {
+                type: 'select',
                 label: 'Роль',
                 options: [
                   { value: 'all', label: 'Все роли' },
@@ -114,12 +172,93 @@ export const AdminUsers: React.FC = () => {
                   setPage(1);
                 },
               },
+              is_premium: {
+                type: 'checkbox',
+                label: 'Premium пользователи',
+                value: isPremiumFilter,
+                onChange: (value) => {
+                  setIsPremiumFilter(value);
+                  setPage(1);
+                },
+              },
+              has_subscriptions: {
+                type: 'checkbox',
+                label: 'С подписками',
+                value: hasSubscriptionsFilter,
+                onChange: (value) => {
+                  setHasSubscriptionsFilter(value);
+                  setPage(1);
+                },
+              },
+              min_referrals: {
+                type: 'number',
+                label: 'Мин. рефералов',
+                value: minReferralsFilter,
+                onChange: (value) => {
+                  setMinReferralsFilter(value);
+                  setPage(1);
+                },
+                min: 0,
+                placeholder: '0',
+              },
+              username: {
+                type: 'text',
+                label: 'Username',
+                value: usernameFilter,
+                onChange: (value) => {
+                  setUsernameFilter(value);
+                  setPage(1);
+                },
+                placeholder: 'Поиск по username',
+              },
+              fullname: {
+                type: 'text',
+                label: 'Полное имя',
+                value: fullnameFilter,
+                onChange: (value) => {
+                  setFullnameFilter(value);
+                  setPage(1);
+                },
+                placeholder: 'Поиск по имени',
+              },
+              phone: {
+                type: 'text',
+                label: 'Телефон',
+                value: phoneFilter,
+                onChange: (value) => {
+                  setPhoneFilter(value);
+                  setPage(1);
+                },
+                placeholder: 'Поиск по телефону',
+              },
+              created_after: {
+                type: 'date',
+                label: 'Создан после',
+                value: createdAfterFilter,
+                onChange: (value) => {
+                  setCreatedAfterFilter(value);
+                  setPage(1);
+                },
+              },
+              created_before: {
+                type: 'date',
+                label: 'Создан до',
+                value: createdBeforeFilter,
+                onChange: (value) => {
+                  setCreatedBeforeFilter(value);
+                  setPage(1);
+                },
+              },
               sort: {
+                type: 'select',
                 label: 'Сортировка',
                 options: [
-                  { value: 'created_at', label: 'По дате создания' },
-                  { value: 'username', label: 'По username' },
-                  { value: 'referrals_count', label: 'По рефералам' },
+                  { value: 'created_at:desc', label: 'По дате создания (новые)' },
+                  { value: 'created_at:asc', label: 'По дате создания (старые)' },
+                  { value: 'username:asc', label: 'По username (А-Я)' },
+                  { value: 'username:desc', label: 'По username (Я-А)' },
+                  { value: 'referrals_count:desc', label: 'По рефералам (больше)' },
+                  { value: 'referrals_count:asc', label: 'По рефералам (меньше)' },
                 ],
                 value: sortBy,
                 onChange: (value) => {
@@ -131,46 +270,37 @@ export const AdminUsers: React.FC = () => {
             onReset={resetFilters}
           />
 
-          {/* Search */}
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="🔍 Поиск по username, имени, Telegram ID или ID..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-600 shadow-md bg-white text-gray-900 font-medium"
-            />
-          </div>
-
           {/* Table */}
-          {filteredUsers.length === 0 && users.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <p className="text-lg">Пользователей не найдено</p>
+          {users.length === 0 ? (
+            <div className="text-center py-12 text-gray-600">
+              <p className="text-xl font-semibold">Пользователей не найдено</p>
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
               <table className="w-full">
                 <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-white font-bold">ID</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Username</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Имя</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Telegram ID</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Роль</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Создан</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">ID</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Username</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Имя</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Telegram ID</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Роль</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Premium</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Рефералов</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Создан</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user) => (
+                  {users.map((user) => (
                     <tr
                       key={user.id}
                       className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors cursor-pointer"
                     >
-                      <td className="px-4 py-3 text-gray-900 font-mono text-xs font-semibold">{user.id.slice(0, 8)}...</td>
-                      <td className="px-4 py-3 text-gray-900 font-semibold">{user.username || '-'}</td>
-                      <td className="px-4 py-3 text-gray-900 font-medium">{user.fullname || '-'}</td>
-                      <td className="px-4 py-3 text-gray-900 font-medium">{user.telegram_id || '-'}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-4 text-gray-900 font-mono text-sm font-semibold">{user.id.slice(0, 8)}...</td>
+                      <td className="px-4 py-4 text-gray-900 font-semibold text-base">{user.username || '-'}</td>
+                      <td className="px-4 py-4 text-gray-900 font-medium text-base">{user.fullname || '-'}</td>
+                      <td className="px-4 py-4 text-gray-900 font-medium text-base">{user.telegram_id || '-'}</td>
+                      <td className="px-4 py-4">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${
                             user.role === 'admin' || user.role === 'super_admin'
@@ -185,7 +315,13 @@ export const AdminUsers: React.FC = () => {
                             : '👤 User'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-700 text-sm font-medium">{formatDate(user.created_at)}</td>
+                      <td className="px-4 py-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${user.is_premium ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
+                          {user.is_premium ? '✅ Да' : '❌ Нет'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-gray-900 font-semibold text-base">{user.referrals_count || 0}</td>
+                      <td className="px-4 py-4 text-gray-700 text-base font-medium">{formatDate(user.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -199,17 +335,17 @@ export const AdminUsers: React.FC = () => {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
               >
                 ← Назад
               </button>
-              <span className="text-gray-600 font-medium">
+              <span className="text-gray-700 font-semibold text-base">
                 Страница {page} из {totalPages} (всего: {total})
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
               >
                 Вперед →
               </button>
@@ -218,7 +354,7 @@ export const AdminUsers: React.FC = () => {
 
           {/* Statistics */}
           <div className="mt-8 pt-6 border-t-2 border-gray-300">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 Статистика</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">📊 Статистика</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white border-2 border-blue-400 p-5 rounded-lg shadow-md">
                 <p className="text-gray-700 text-sm mb-2 font-semibold">Всего пользователей</p>

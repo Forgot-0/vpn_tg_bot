@@ -14,6 +14,8 @@ import type {
   ApiType,
   CreateServerRequest,
   Server,
+  Payment,
+  PaymentUrlResponse,
 } from '../types';
 
 class ApiClient {
@@ -28,6 +30,9 @@ class ApiClient {
       },
       withCredentials: true, // Для работы с cookies (refresh token)
       timeout: 15000, // 15 секунд timeout
+      paramsSerializer: {
+        indexes: null, // Сериализация массивов как повторяющиеся параметры (protocol_types=vless&protocol_types=vmess)
+      },
     });
 
     // Interceptor для добавления токена
@@ -144,66 +149,19 @@ class ApiClient {
   }
 
   async createSubscription(data: CreateSubscriptionRequest): Promise<string> {
-    try {
-      const response = await this.client.post('/subscription/', data, {
-        maxRedirects: 0,
-        validateStatus: (status: number) => status >= 200 && status < 400,
-      });
-      // Возвращаем URL для редиректа
-      if (response.status === 307 || response.status === 200) {
-        const location = response.headers.location;
-        if (location) {
-          return location;
-        }
-        // Если location в заголовках нет, проверяем data
-        if (typeof response.data === 'string' && response.data.startsWith('http')) {
-          return response.data;
-        }
-      }
-      throw new Error('Failed to get payment URL');
-    } catch (error: any) {
-      if (error.response?.status === 307 || error.response?.status === 200) {
-        const location = error.response?.headers?.location;
-        if (location) {
-          return location;
-        }
-      }
-      throw error;
-    }
+    const response = await this.client.post<PaymentUrlResponse>('/subscription/', data);
+    return response.data.url;
   }
 
   async renewSubscription(
     subscriptionId: string,
     data: RenewSubscriptionRequest
   ): Promise<string> {
-    try {
-        const response = await this.client.post(
-        `/subscription/${subscriptionId}/renew`,
-        data,
-        {
-          maxRedirects: 0,
-          validateStatus: (status: number) => status >= 200 && status < 400,
-        }
-      );
-      if (response.status === 307 || response.status === 200) {
-        const location = response.headers.location;
-        if (location) {
-          return location;
-        }
-        if (typeof response.data === 'string' && response.data.startsWith('http')) {
-          return response.data;
-        }
-      }
-      throw new Error('Failed to get payment URL');
-    } catch (error: any) {
-      if (error.response?.status === 307 || error.response?.status === 200) {
-        const location = error.response?.headers?.location;
-        if (location) {
-          return location;
-        }
-      }
-      throw error;
-    }
+    const response = await this.client.post<PaymentUrlResponse>(
+      `/subscription/${subscriptionId}/renew`,
+      data
+    );
+    return response.data.url;
   }
 
   async getPrice(data: CreateSubscriptionRequest): Promise<number> {
@@ -218,14 +176,21 @@ class ApiClient {
   async getServers(
     page = 1,
     pageSize = 10,
-    filters?: { [key: string]: string },
+    filters?: {
+      region_code?: string;
+      api_type?: string;
+      min_free_slots?: number;
+      max_free_slots?: number;
+      protocol_types?: string[];
+      has_domain?: boolean;
+    },
     sort?: string
   ): Promise<PaginatedResult<Server>> {
     const params: any = { page, page_size: pageSize };
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
-          params[`filter_${key}`] = value;
+        if (value !== undefined && value !== null) {
+          params[key] = value;
         }
       });
     }
@@ -244,18 +209,34 @@ class ApiClient {
     await this.client.delete(`/servers/${serverId}`);
   }
 
+  async reloadServerConfig(serverId: string): Promise<void> {
+    await this.client.post(`/servers/${serverId}/reload_config`);
+  }
+
   // Users (Admin only)
   async getUsers(
     page = 1,
     pageSize = 10,
-    filters?: { [key: string]: string },
+    filters?: {
+      telegram_id?: number;
+      role?: string;
+      is_premium?: boolean;
+      username?: string;
+      fullname?: string;
+      phone?: string;
+      referred_by_id?: string;
+      created_after?: string; // ISO datetime string
+      created_before?: string; // ISO datetime string
+      has_subscriptions?: boolean;
+      min_referrals_count?: number;
+    },
     sort?: string
   ): Promise<PaginatedResult<User>> {
     const params: any = { page, page_size: pageSize };
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
-          params[`filter_${key}`] = value;
+        if (value !== undefined && value !== null) {
+          params[key] = value;
         }
       });
     }
@@ -270,14 +251,26 @@ class ApiClient {
   async getAllSubscriptions(
     page = 1,
     pageSize = 10,
-    filters?: { [key: string]: string },
+    filters?: {
+      user_id?: string;
+      server_id?: string;
+      region_code?: string;
+      status?: string;
+      protocol_types?: string[];
+      min_duration?: number;
+      max_duration?: number;
+      start_date_after?: string; // ISO datetime string
+      start_date_before?: string; // ISO datetime string
+      min_device_count?: number;
+      max_device_count?: number;
+    },
     sort?: string
   ): Promise<PaginatedResult<Subscription>> {
     const params: any = { page, page_size: pageSize };
     if (filters) {
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
-          params[`filter_${key}`] = value;
+        if (value !== undefined && value !== null) {
+          params[key] = value;
         }
       });
     }
@@ -287,6 +280,39 @@ class ApiClient {
     const response = await this.client.get<PaginatedResult<Subscription>>('/subscription/', {
       params,
     });
+    return response.data;
+  }
+
+  // Payments (Admin only)
+  async getPayments(
+    page = 1,
+    pageSize = 10,
+    filters?: {
+      user_id?: string;
+      subscription_id?: string;
+      status?: string;
+      min_price?: number;
+      max_price?: number;
+      payment_date_after?: string; // ISO datetime string
+      payment_date_before?: string; // ISO datetime string
+      created_after?: string; // ISO datetime string
+      created_before?: string; // ISO datetime string
+      has_payment_id?: boolean;
+    },
+    sort?: string
+  ): Promise<PaginatedResult<Payment>> {
+    const params: any = { page, page_size: pageSize };
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params[key] = value;
+        }
+      });
+    }
+    if (sort) {
+      params.sort = sort;
+    }
+    const response = await this.client.get<PaginatedResult<Payment>>('/payments/', { params });
     return response.data;
   }
 }

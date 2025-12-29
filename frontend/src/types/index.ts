@@ -17,11 +17,13 @@ export interface Subscription {
   duration: number;
   start_date: string;
   device_count: number;
+  user_id: string;
+  server_id: string;
   flag: string;
   name: string;
   code: string;
   protocol_types: string[];
-  status?: string;
+  status: string;
   expires_at?: string;
   created_at?: string;
   updated_at?: string;
@@ -60,7 +62,11 @@ export interface PaginatedResult<T> {
   total: number;
   page: number;
   page_size: number;
-  pages: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
+  next_page: number | null;
+  previous_page: number | null;
 }
 
 export interface ApiError {
@@ -101,5 +107,20 @@ export interface CreateServerRequest {
   username: string;
   password: string;
   twoFactorCode?: string | null;
+}
+
+export interface Payment {
+  id: string;
+  subscription: Subscription;
+  user_id: string;
+  total_price: number;
+  status: string;
+  payment_id?: string | null;
+  payment_date?: string | null;
+  created_at: string;
+}
+
+export interface PaymentUrlResponse {
+  url: string;
 }
 

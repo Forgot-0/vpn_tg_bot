@@ -17,7 +17,14 @@ export const AdminSubscriptions: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('start_date');
+  const [userIdFilter, setUserIdFilter] = useState('');
+  const [serverIdFilter, setServerIdFilter] = useState('');
+  const [protocolTypesFilter, setProtocolTypesFilter] = useState<string[]>([]);
+  const [durationRange, setDurationRange] = useState<{ min?: number; max?: number }>({});
+  const [deviceCountRange, setDeviceCountRange] = useState<{ min?: number; max?: number }>({});
+  const [startDateAfterFilter, setStartDateAfterFilter] = useState<string | undefined>(undefined);
+  const [startDateBeforeFilter, setStartDateBeforeFilter] = useState<string | undefined>(undefined);
+  const [sortBy, setSortBy] = useState('start_date:desc');
 
   useEffect(() => {
     if (!isAdmin) {
@@ -25,17 +32,69 @@ export const AdminSubscriptions: React.FC = () => {
       return;
     }
     loadSubscriptions();
-  }, [isAdmin, page, statusFilter, regionFilter, sortBy]);
+  }, [
+    isAdmin,
+    page,
+    statusFilter,
+    regionFilter,
+    userIdFilter,
+    serverIdFilter,
+    protocolTypesFilter,
+    durationRange,
+    deviceCountRange,
+    startDateAfterFilter,
+    startDateBeforeFilter,
+    sortBy,
+  ]);
 
   const loadSubscriptions = async () => {
     try {
       setIsLoading(true);
-      const filters: { [key: string]: string } = {};
+      const filters: {
+        status?: string;
+        region_code?: string;
+        user_id?: string;
+        server_id?: string;
+        protocol_types?: string[];
+        min_duration?: number;
+        max_duration?: number;
+        min_device_count?: number;
+        max_device_count?: number;
+        start_date_after?: string;
+        start_date_before?: string;
+      } = {};
       if (statusFilter !== 'all') {
         filters.status = statusFilter;
       }
       if (regionFilter !== 'all') {
-        filters.region = regionFilter;
+        filters.region_code = regionFilter;
+      }
+      if (userIdFilter.trim()) {
+        filters.user_id = userIdFilter.trim();
+      }
+      if (serverIdFilter.trim()) {
+        filters.server_id = serverIdFilter.trim();
+      }
+      if (protocolTypesFilter.length > 0) {
+        filters.protocol_types = protocolTypesFilter;
+      }
+      if (durationRange.min !== undefined) {
+        filters.min_duration = durationRange.min;
+      }
+      if (durationRange.max !== undefined) {
+        filters.max_duration = durationRange.max;
+      }
+      if (deviceCountRange.min !== undefined) {
+        filters.min_device_count = deviceCountRange.min;
+      }
+      if (deviceCountRange.max !== undefined) {
+        filters.max_device_count = deviceCountRange.max;
+      }
+      if (startDateAfterFilter) {
+        filters.start_date_after = startDateAfterFilter;
+      }
+      if (startDateBeforeFilter) {
+        filters.start_date_before = startDateBeforeFilter;
       }
       const data: PaginatedResult<Subscription> = await apiClient.getAllSubscriptions(
         page,
@@ -44,7 +103,7 @@ export const AdminSubscriptions: React.FC = () => {
         sortBy
       );
       setSubscriptions(data.items);
-      setTotalPages(data.pages);
+      setTotalPages(data.total_pages);
       setTotal(data.total);
     } catch (error: any) {
       console.error('Failed to load subscriptions:', error);
@@ -71,12 +130,22 @@ export const AdminSubscriptions: React.FC = () => {
   const resetFilters = () => {
     setStatusFilter('all');
     setRegionFilter('all');
-    setSortBy('start_date');
+    setUserIdFilter('');
+    setServerIdFilter('');
+    setProtocolTypesFilter([]);
+    setDurationRange({});
+    setDeviceCountRange({});
+    setStartDateAfterFilter(undefined);
+    setStartDateBeforeFilter(undefined);
+    setSortBy('start_date:desc');
     setPage(1);
   };
 
-  // Получаем уникальные регионы
+  // Получаем уникальные регионы и протоколы
   const uniqueRegions = Array.from(new Set(subscriptions.map((s) => s.code))).sort();
+  const allProtocols = Array.from(
+    new Set(subscriptions.flatMap((s) => s.protocol_types))
+  ).sort();
 
   if (isLoading) {
     return <Loading />;
@@ -94,9 +163,9 @@ export const AdminSubscriptions: React.FC = () => {
 
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">🔐 Управление подписками</h1>
-            <div className="text-sm text-gray-800 font-semibold">
-              Всего: <span className="font-bold text-blue-700">{total}</span>
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">🔐 Управление подписками</h1>
+            <div className="text-base text-gray-800 font-semibold">
+              Всего: <span className="font-bold text-blue-700 text-lg">{total}</span>
             </div>
           </div>
 
@@ -104,6 +173,7 @@ export const AdminSubscriptions: React.FC = () => {
           <FilterBar
             filters={{
               status: {
+                type: 'select',
                 label: 'Статус',
                 options: [
                   { value: 'all', label: 'Все статусы' },
@@ -117,7 +187,8 @@ export const AdminSubscriptions: React.FC = () => {
                   setPage(1);
                 },
               },
-              region: {
+              region_code: {
+                type: 'select',
                 label: 'Регион',
                 options: [
                   { value: 'all', label: 'Все регионы' },
@@ -135,13 +206,80 @@ export const AdminSubscriptions: React.FC = () => {
                   setPage(1);
                 },
               },
+              user_id: {
+                type: 'text',
+                label: 'User ID',
+                value: userIdFilter,
+                onChange: (value) => {
+                  setUserIdFilter(value);
+                  setPage(1);
+                },
+                placeholder: 'UUID пользователя',
+              },
+              server_id: {
+                type: 'text',
+                label: 'Server ID',
+                value: serverIdFilter,
+                onChange: (value) => {
+                  setServerIdFilter(value);
+                  setPage(1);
+                },
+                placeholder: 'UUID сервера',
+              },
+              duration: {
+                type: 'range',
+                label: 'Длительность (дней)',
+                value: durationRange,
+                onChange: (value) => {
+                  setDurationRange(value);
+                  setPage(1);
+                },
+                min: 1,
+                minLabel: 'Мин',
+                maxLabel: 'Макс',
+              },
+              device_count: {
+                type: 'range',
+                label: 'Количество устройств',
+                value: deviceCountRange,
+                onChange: (value) => {
+                  setDeviceCountRange(value);
+                  setPage(1);
+                },
+                min: 1,
+                minLabel: 'Мин',
+                maxLabel: 'Макс',
+              },
+              start_date_after: {
+                type: 'date',
+                label: 'Начало после',
+                value: startDateAfterFilter,
+                onChange: (value) => {
+                  setStartDateAfterFilter(value);
+                  setPage(1);
+                },
+              },
+              start_date_before: {
+                type: 'date',
+                label: 'Начало до',
+                value: startDateBeforeFilter,
+                onChange: (value) => {
+                  setStartDateBeforeFilter(value);
+                  setPage(1);
+                },
+              },
               sort: {
+                type: 'select',
                 label: 'Сортировка',
                 options: [
-                  { value: 'start_date', label: 'По дате начала' },
-                  { value: 'duration', label: 'По длительности' },
-                  { value: 'device_count', label: 'По количеству устройств' },
-                  { value: 'id', label: 'По ID' },
+                  { value: 'start_date:desc', label: 'По дате начала (новые)' },
+                  { value: 'start_date:asc', label: 'По дате начала (старые)' },
+                  { value: 'duration:desc', label: 'По длительности (больше)' },
+                  { value: 'duration:asc', label: 'По длительности (меньше)' },
+                  { value: 'device_count:desc', label: 'По устройствам (больше)' },
+                  { value: 'device_count:asc', label: 'По устройствам (меньше)' },
+                  { value: 'created_at:desc', label: 'По дате создания (новые)' },
+                  { value: 'created_at:asc', label: 'По дате создания (старые)' },
                 ],
                 value: sortBy,
                 onChange: (value) => {
@@ -153,23 +291,63 @@ export const AdminSubscriptions: React.FC = () => {
             onReset={resetFilters}
           />
 
+          {/* Protocol Types Filter */}
+          {allProtocols.length > 0 && (
+            <div className="mb-6 bg-white rounded-lg shadow-md p-4 border-2 border-gray-300">
+              <label className="block text-sm font-bold text-gray-900 mb-3">
+                🔐 Протоколы
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {allProtocols.map((protocol) => (
+                  <label
+                    key={protocol}
+                    className={`flex items-center space-x-2 cursor-pointer px-3 py-2 rounded-lg border-2 transition-all ${
+                      protocolTypesFilter.includes(protocol)
+                        ? 'border-blue-600 bg-blue-100'
+                        : 'border-gray-300 bg-white hover:border-blue-400'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={protocolTypesFilter.includes(protocol)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setProtocolTypesFilter([...protocolTypesFilter, protocol]);
+                        } else {
+                          setProtocolTypesFilter(
+                            protocolTypesFilter.filter((p) => p !== protocol)
+                          );
+                        }
+                        setPage(1);
+                      }}
+                      className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className={`font-semibold text-sm ${protocolTypesFilter.includes(protocol) ? 'text-blue-900' : 'text-gray-900'}`}>
+                      {protocol}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Table */}
           {subscriptions.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <p className="text-lg">📭 Подписок не найдено</p>
+            <div className="text-center py-12 text-gray-600">
+              <p className="text-xl font-semibold">📭 Подписок не найдено</p>
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
               <table className="w-full">
                 <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-white font-bold">ID</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Регион</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Длительность</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Устройств</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Протоколы</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Начало</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Статус</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">ID</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Регион</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Длительность</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Устройств</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Протоколы</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Начало</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Статус</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -179,14 +357,14 @@ export const AdminSubscriptions: React.FC = () => {
                       className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors cursor-pointer"
                       onClick={() => navigate(`/subscriptions/${sub.id}`)}
                     >
-                      <td className="px-4 py-3 text-gray-900 font-mono text-xs font-semibold">
+                      <td className="px-4 py-4 text-gray-900 font-mono text-sm font-semibold">
                         {sub.id.slice(0, 8)}...
                       </td>
-                      <td className="px-4 py-3 text-gray-900 font-semibold">
+                      <td className="px-4 py-4 text-gray-900 font-semibold text-base">
                         {sub.flag} {sub.name} ({sub.code})
                       </td>
-                      <td className="px-4 py-3 text-gray-900 font-semibold">{sub.duration} дней</td>
-                      <td className="px-4 py-3 text-gray-900 font-semibold">{sub.device_count}</td>
+                      <td className="px-4 py-4 text-gray-900 font-semibold text-base">{sub.duration} дней</td>
+                      <td className="px-4 py-4 text-gray-900 font-semibold text-base">{sub.device_count}</td>
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-1">
                           {sub.protocol_types.map((protocol) => (
@@ -199,7 +377,7 @@ export const AdminSubscriptions: React.FC = () => {
                           ))}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-700 text-sm font-medium">
+                      <td className="px-4 py-4 text-gray-700 text-base font-medium">
                         {formatDate(sub.start_date)}
                       </td>
                       <td className="px-4 py-3">
@@ -238,7 +416,7 @@ export const AdminSubscriptions: React.FC = () => {
               >
                 ← Назад
               </button>
-              <span className="text-gray-600 font-medium">
+              <span className="text-gray-700 font-semibold text-base">
                 Страница {page} из {totalPages} (всего: {total})
               </span>
               <button
@@ -253,7 +431,7 @@ export const AdminSubscriptions: React.FC = () => {
 
           {/* Statistics */}
           <div className="mt-8 pt-6 border-t-2 border-gray-300">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 Статистика подписок</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">📊 Статистика подписок</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="bg-white border-2 border-blue-400 p-5 rounded-lg shadow-md">
                 <p className="text-gray-700 text-sm mb-2 font-semibold">Всего подписок</p>

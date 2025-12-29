@@ -28,10 +28,10 @@ export const Login: React.FC = () => {
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full border border-gray-200">
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">🔐</div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
             VPN Subscription
           </h1>
-          <p className="text-gray-600">Войдите через Telegram для продолжения</p>
+          <p className="text-gray-700 text-lg font-medium">Войдите через Telegram для продолжения</p>
         </div>
 
         <button
@@ -52,7 +52,7 @@ export const Login: React.FC = () => {
           )}
         </button>
 
-        <p className="text-sm text-gray-500 text-center mt-6">
+        <p className="text-sm text-gray-600 text-center mt-6 font-medium">
           Нажимая кнопку, вы соглашаетесь с условиями использования сервиса
         </p>
       </div>

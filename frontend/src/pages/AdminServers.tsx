@@ -17,7 +17,10 @@ export const AdminServers: React.FC = () => {
   const [total, setTotal] = useState(0);
   const [regionFilter, setRegionFilter] = useState('all');
   const [apiTypeFilter, setApiTypeFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('free');
+  const [freeSlotsRange, setFreeSlotsRange] = useState<{ min?: number; max?: number }>({});
+  const [hasDomainFilter, setHasDomainFilter] = useState<boolean | undefined>(undefined);
+  const [protocolTypesFilter, setProtocolTypesFilter] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState('free:desc');
 
   useEffect(() => {
     if (!isAdmin) {
@@ -25,21 +28,40 @@ export const AdminServers: React.FC = () => {
       return;
     }
     loadServers();
-  }, [isAdmin, page, regionFilter, apiTypeFilter, sortBy]);
+  }, [isAdmin, page, regionFilter, apiTypeFilter, freeSlotsRange, hasDomainFilter, protocolTypesFilter, sortBy]);
 
   const loadServers = async () => {
     try {
       setIsLoading(true);
-      const filters: { [key: string]: string } = {};
+      const filters: {
+        region_code?: string;
+        api_type?: string;
+        min_free_slots?: number;
+        max_free_slots?: number;
+        protocol_types?: string[];
+        has_domain?: boolean;
+      } = {};
       if (regionFilter !== 'all') {
-        filters.region = regionFilter;
+        filters.region_code = regionFilter;
       }
       if (apiTypeFilter !== 'all') {
         filters.api_type = apiTypeFilter;
       }
+      if (freeSlotsRange.min !== undefined) {
+        filters.min_free_slots = freeSlotsRange.min;
+      }
+      if (freeSlotsRange.max !== undefined) {
+        filters.max_free_slots = freeSlotsRange.max;
+      }
+      if (protocolTypesFilter.length > 0) {
+        filters.protocol_types = protocolTypesFilter;
+      }
+      if (hasDomainFilter !== undefined) {
+        filters.has_domain = hasDomainFilter;
+      }
       const data: PaginatedResult<Server> = await apiClient.getServers(page, 20, filters, sortBy);
       setServers(data.items);
-      setTotalPages(data.pages);
+      setTotalPages(data.total_pages);
       setTotal(data.total);
     } catch (error: any) {
       console.error('Failed to load servers:', error);
@@ -77,13 +99,19 @@ export const AdminServers: React.FC = () => {
   const resetFilters = () => {
     setRegionFilter('all');
     setApiTypeFilter('all');
-    setSortBy('free');
+    setFreeSlotsRange({});
+    setHasDomainFilter(undefined);
+    setProtocolTypesFilter([]);
+    setSortBy('free:desc');
     setPage(1);
   };
 
-  // Получаем уникальные регионы и типы API
+  // Получаем уникальные регионы, типы API и протоколы
   const uniqueRegions = Array.from(new Set(servers.map((s) => s.region_code))).sort();
   const uniqueApiTypes = Array.from(new Set(servers.map((s) => s.api_type))).sort();
+  const allProtocols = Array.from(
+    new Set(servers.flatMap((s) => s.protocol_configs))
+  ).sort();
 
   if (isLoading) {
     return <Loading />;
@@ -101,10 +129,10 @@ export const AdminServers: React.FC = () => {
 
         <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">🖥️ Управление серверами</h1>
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">🖥️ Управление серверами</h1>
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-800 font-semibold">
-                Всего: <span className="font-bold text-blue-700">{total}</span>
+              <div className="text-base text-gray-800 font-semibold">
+                Всего: <span className="font-bold text-blue-700 text-lg">{total}</span>
               </div>
               <button
                 onClick={() => navigate('/servers/create')}
@@ -118,7 +146,8 @@ export const AdminServers: React.FC = () => {
           {/* Filters */}
           <FilterBar
             filters={{
-              region: {
+              region_code: {
+                type: 'select',
                 label: 'Регион',
                 options: [
                   { value: 'all', label: 'Все регионы' },
@@ -136,7 +165,8 @@ export const AdminServers: React.FC = () => {
                   setPage(1);
                 },
               },
-              apiType: {
+              api_type: {
+                type: 'select',
                 label: 'Тип API',
                 options: [
                   { value: 'all', label: 'Все типы' },
@@ -148,12 +178,37 @@ export const AdminServers: React.FC = () => {
                   setPage(1);
                 },
               },
+              free_slots: {
+                type: 'range',
+                label: 'Свободные слоты',
+                value: freeSlotsRange,
+                onChange: (value) => {
+                  setFreeSlotsRange(value);
+                  setPage(1);
+                },
+                min: 0,
+                minLabel: 'Мин',
+                maxLabel: 'Макс',
+              },
+              has_domain: {
+                type: 'checkbox',
+                label: 'С доменом',
+                value: hasDomainFilter,
+                onChange: (value) => {
+                  setHasDomainFilter(value);
+                  setPage(1);
+                },
+              },
               sort: {
+                type: 'select',
                 label: 'Сортировка',
                 options: [
-                  { value: 'free', label: 'По свободным слотам' },
-                  { value: 'limit', label: 'По лимиту' },
-                  { value: 'id', label: 'По ID' },
+                  { value: 'free:desc', label: 'По свободным слотам (больше)' },
+                  { value: 'free:asc', label: 'По свободным слотам (меньше)' },
+                  { value: 'limit:desc', label: 'По лимиту (больше)' },
+                  { value: 'limit:asc', label: 'По лимиту (меньше)' },
+                  { value: 'created_at:desc', label: 'По дате создания (новые)' },
+                  { value: 'created_at:asc', label: 'По дате создания (старые)' },
                 ],
                 value: sortBy,
                 onChange: (value) => {
@@ -165,24 +220,64 @@ export const AdminServers: React.FC = () => {
             onReset={resetFilters}
           />
 
+          {/* Protocol Types Filter */}
+          {allProtocols.length > 0 && (
+            <div className="mb-6 bg-white rounded-lg shadow-md p-4 border-2 border-gray-300">
+              <label className="block text-sm font-bold text-gray-900 mb-3">
+                🔐 Протоколы
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {allProtocols.map((protocol) => (
+                  <label
+                    key={protocol}
+                    className={`flex items-center space-x-2 cursor-pointer px-3 py-2 rounded-lg border-2 transition-all ${
+                      protocolTypesFilter.includes(protocol)
+                        ? 'border-blue-600 bg-blue-100'
+                        : 'border-gray-300 bg-white hover:border-blue-400'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={protocolTypesFilter.includes(protocol)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setProtocolTypesFilter([...protocolTypesFilter, protocol]);
+                        } else {
+                          setProtocolTypesFilter(
+                            protocolTypesFilter.filter((p) => p !== protocol)
+                          );
+                        }
+                        setPage(1);
+                      }}
+                      className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    />
+                    <span className={`font-semibold text-sm ${protocolTypesFilter.includes(protocol) ? 'text-blue-900' : 'text-gray-900'}`}>
+                      {protocol}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Table */}
           {servers.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <p className="text-lg">📭 Серверов не добавлено</p>
-              <p className="text-sm mt-2">Нажмите кнопку выше, чтобы добавить первый сервер</p>
+            <div className="text-center py-12 text-gray-600">
+              <p className="text-xl font-semibold mb-2">📭 Серверов не добавлено</p>
+              <p className="text-base mt-2 font-medium">Нажмите кнопку выше, чтобы добавить первый сервер</p>
             </div>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200">
               <table className="w-full">
                 <thead className="bg-gray-800">
                   <tr>
-                    <th className="px-4 py-3 text-left text-white font-bold">ID</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Регион</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">IP</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Тип API</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Лимит/Свободно</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Протоколы</th>
-                    <th className="px-4 py-3 text-left text-white font-bold">Действия</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">ID</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Регион</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">IP</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Тип API</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Лимит/Свободно</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Протоколы</th>
+                    <th className="px-4 py-4 text-left text-white font-bold text-base">Действия</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -191,14 +286,14 @@ export const AdminServers: React.FC = () => {
                       key={server.id}
                       className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors"
                     >
-                      <td className="px-4 py-3 text-gray-900 font-mono text-xs font-semibold">
+                      <td className="px-4 py-4 text-gray-900 font-mono text-sm font-semibold">
                         {server.id.slice(0, 8)}...
                       </td>
-                      <td className="px-4 py-3 text-gray-900 font-semibold">
+                      <td className="px-4 py-4 text-gray-900 font-semibold text-base">
                         {server.region_flag} {server.region_name} ({server.region_code})
                       </td>
-                      <td className="px-4 py-3 text-gray-900 font-mono font-semibold">{server.ip}</td>
-                      <td className="px-4 py-3 text-gray-900 font-semibold">{server.api_type}</td>
+                      <td className="px-4 py-4 text-gray-900 font-mono font-semibold text-base">{server.ip}</td>
+                      <td className="px-4 py-4 text-gray-900 font-semibold text-base">{server.api_type}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`font-semibold ${
@@ -249,7 +344,7 @@ export const AdminServers: React.FC = () => {
               >
                 ← Назад
               </button>
-              <span className="text-gray-600 font-medium">
+              <span className="text-gray-700 font-semibold text-base">
                 Страница {page} из {totalPages} (всего: {total})
               </span>
               <button
@@ -264,7 +359,7 @@ export const AdminServers: React.FC = () => {
 
           {/* Statistics */}
           <div className="mt-8 pt-6 border-t-2 border-gray-300">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">📊 Статистика</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">📊 Статистика</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white border-2 border-blue-400 p-5 rounded-lg shadow-md">
                 <p className="text-gray-700 text-sm mb-2 font-semibold">Всего серверов</p>

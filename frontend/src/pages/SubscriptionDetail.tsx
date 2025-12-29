@@ -140,8 +140,8 @@ export const SubscriptionDetail: React.FC = () => {
         <div className="bg-white rounded-xl shadow-lg p-6 mb-4 border-2 border-gray-300">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Детали подписки</h1>
-              <p className="text-gray-700 font-medium">Управление VPN подпиской</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2 leading-tight">Детали подписки</h1>
+              <p className="text-gray-700 font-medium text-lg">Управление VPN подпиской</p>
             </div>
             {subscription.status && (
               <span
@@ -159,37 +159,37 @@ export const SubscriptionDetail: React.FC = () => {
           {/* Info Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white border-2 border-blue-200 rounded-lg p-4 shadow-sm">
-              <label className="block text-xs font-semibold text-blue-800 mb-2 uppercase tracking-wide">
+              <label className="block text-sm font-bold text-blue-800 mb-2 uppercase tracking-wide">
                 ID подписки
               </label>
-              <div className="text-gray-900 font-mono text-sm break-all font-bold">{subscription.id}</div>
+              <div className="text-gray-900 font-mono text-sm break-all font-semibold">{subscription.id}</div>
             </div>
 
             <div className="bg-white border-2 border-green-200 rounded-lg p-4 shadow-sm">
-              <label className="block text-xs font-semibold text-green-800 mb-2 uppercase tracking-wide">
+              <label className="block text-sm font-bold text-green-800 mb-2 uppercase tracking-wide">
                 Регион
               </label>
-              <div className="text-gray-900 font-bold text-base">
+              <div className="text-gray-900 font-bold text-lg">
                 {subscription.flag} {subscription.name} ({subscription.code})
               </div>
             </div>
 
             <div className="bg-white border-2 border-purple-200 rounded-lg p-4 shadow-sm">
-              <label className="block text-xs font-semibold text-purple-800 mb-2 uppercase tracking-wide">
+              <label className="block text-sm font-bold text-purple-800 mb-2 uppercase tracking-wide">
                 Длительность
               </label>
-              <div className="text-gray-900 font-bold text-xl">{subscription.duration} дней</div>
+              <div className="text-gray-900 font-bold text-2xl">{subscription.duration} дней</div>
             </div>
 
             <div className="bg-white border-2 border-orange-200 rounded-lg p-4 shadow-sm">
-              <label className="block text-xs font-semibold text-orange-800 mb-2 uppercase tracking-wide">
+              <label className="block text-sm font-bold text-orange-800 mb-2 uppercase tracking-wide">
                 Устройств
               </label>
-              <div className="text-gray-900 font-bold text-xl">{subscription.device_count}</div>
+              <div className="text-gray-900 font-bold text-2xl">{subscription.device_count}</div>
             </div>
 
             <div className="bg-white border-2 border-indigo-200 rounded-lg p-4 md:col-span-2 shadow-sm">
-              <label className="block text-xs font-semibold text-indigo-800 mb-2 uppercase tracking-wide">
+              <label className="block text-sm font-bold text-indigo-800 mb-2 uppercase tracking-wide">
                 Протоколы
               </label>
               <div className="flex flex-wrap gap-2">
@@ -206,28 +206,28 @@ export const SubscriptionDetail: React.FC = () => {
 
             {subscription.start_date && (
               <div className="bg-white border-2 border-gray-200 rounded-lg p-4 shadow-sm">
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
                   Начало подписки
                 </label>
-                <div className="text-gray-900 font-semibold">{formatDate(subscription.start_date)}</div>
+                <div className="text-gray-900 font-semibold text-base">{formatDate(subscription.start_date)}</div>
               </div>
             )}
 
             {expiresAt && (
               <div className="bg-white border-2 border-red-200 rounded-lg p-4 shadow-sm">
-                <label className="block text-xs font-semibold text-red-800 mb-2 uppercase tracking-wide">
+                <label className="block text-sm font-bold text-red-800 mb-2 uppercase tracking-wide">
                   Истекает
                 </label>
-                <div className="text-gray-900 font-bold text-base">{formatDate(expiresAt)}</div>
+                <div className="text-gray-900 font-bold text-lg">{formatDate(expiresAt)}</div>
               </div>
             )}
 
             {subscription.created_at && (
               <div className="bg-white border-2 border-gray-200 rounded-lg p-4 md:col-span-2 shadow-sm">
-                <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
+                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
                   Создана
                 </label>
-                <div className="text-gray-900 font-semibold">{formatDate(subscription.created_at)}</div>
+                <div className="text-gray-900 font-semibold text-base">{formatDate(subscription.created_at)}</div>
               </div>
             )}
           </div>
@@ -236,12 +236,12 @@ export const SubscriptionDetail: React.FC = () => {
         {/* VPN Config Card */}
         {showConfig && config && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-4 border-2 border-gray-300">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2 leading-tight">
               <span>🔐</span> Конфигурация VPN
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">
+                <label className="block text-base font-bold text-gray-900 mb-2">
                   Протокол: <span className="font-bold text-blue-700">{config.protocol}</span>
                 </label>
                 <div className="bg-gray-900 rounded-lg p-4 border-2 border-gray-700">

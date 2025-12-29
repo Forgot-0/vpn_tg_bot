@@ -80,18 +80,18 @@ export const Home: React.FC = () => {
 
         {/* Welcome Card */}
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-6 text-white">
-          <h1 className="text-3xl font-bold mb-2">
+          <h1 className="text-3xl font-bold mb-3 leading-tight">
             Добро пожаловать, {user?.fullname || user?.username || 'Пользователь'}! 👋
           </h1>
-          <p className="text-blue-100">Управляйте своими VPN подписками</p>
+          <p className="text-blue-100 text-lg font-medium">Управляйте своими VPN подписками</p>
         </div>
 
         {/* Actions Bar */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Мои подписки</h2>
+          <h2 className="text-2xl font-bold text-gray-900 leading-tight">Мои подписки</h2>
           <button
             onClick={() => navigate('/subscriptions/create')}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-base"
           >
             <span>+</span> Создать подписку
           </button>
@@ -101,11 +101,11 @@ export const Home: React.FC = () => {
         {subscriptions.length === 0 ? (
           <div className="bg-white rounded-xl shadow-lg p-12 text-center border-2 border-gray-300">
             <div className="text-6xl mb-4">🔐</div>
-            <p className="text-xl text-gray-900 mb-2 font-bold">У вас пока нет подписок</p>
-            <p className="text-gray-700 mb-6 font-medium">Создайте первую подписку для начала работы</p>
+            <p className="text-2xl text-gray-900 mb-3 font-bold leading-tight">У вас пока нет подписок</p>
+            <p className="text-gray-700 mb-6 font-medium text-lg">Создайте первую подписку для начала работы</p>
             <button
               onClick={() => navigate('/subscriptions/create')}
-              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-all shadow-md hover:shadow-lg"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-all shadow-md hover:shadow-lg text-base"
             >
               Создать первую подписку
             </button>
@@ -122,10 +122,10 @@ export const Home: React.FC = () => {
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2 leading-tight">
                         {subscription.flag} {subscription.name}
                       </h3>
-                      <p className="text-sm text-gray-600 font-mono mb-3 font-semibold">
+                      <p className="text-sm text-gray-700 font-mono mb-3 font-semibold">
                         #{subscription.id.slice(0, 8)}...
                       </p>
                       <div className="flex flex-wrap gap-2 mb-3">
@@ -162,7 +162,7 @@ export const Home: React.FC = () => {
                     )}
                   </div>
                   {expiresAt && (
-                    <div className="text-sm text-gray-800 border-t-2 border-gray-200 pt-3 mt-3 font-semibold">
+                    <div className="text-base text-gray-900 border-t-2 border-gray-200 pt-3 mt-3 font-semibold">
                       <span className="font-bold">Истекает:</span> {formatDate(expiresAt)}
                     </div>
                   )}

@@ -80,12 +80,12 @@ export const CreateSubscription: React.FC = () => {
         </button>
 
         <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-300">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">✨ Создать подписку</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6 leading-tight">✨ Создать подписку</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Duration */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-base font-bold text-gray-900 mb-3">
                 📅 Длительность (дней)
               </label>
               <div className="grid grid-cols-4 md:grid-cols-7 gap-2">
@@ -111,7 +111,7 @@ export const CreateSubscription: React.FC = () => {
 
             {/* Device Count */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-3">
+              <label className="block text-base font-bold text-gray-900 mb-3">
                 📱 Количество устройств
               </label>
               <div className="grid grid-cols-5 gap-2">
@@ -137,7 +137,7 @@ export const CreateSubscription: React.FC = () => {
 
             {/* Protocols */}
             <div>
-              <label className="block text-sm font-bold text-gray-900 mb-3">
+              <label className="block text-base font-bold text-gray-900 mb-3">
                 🔐 Протоколы
               </label>
               <div className="space-y-2">
@@ -156,7 +156,7 @@ export const CreateSubscription: React.FC = () => {
                       onChange={() => toggleProtocol(protocol)}
                       className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <span className={`font-bold ${formData.protocol_types.includes(protocol) ? 'text-blue-900' : 'text-gray-900'}`}>
+                    <span className={`font-bold text-base ${formData.protocol_types.includes(protocol) ? 'text-blue-900' : 'text-gray-900'}`}>
                       {protocol.toUpperCase()}
                     </span>
                   </label>
@@ -169,8 +169,8 @@ export const CreateSubscription: React.FC = () => {
               <div className="bg-white border-4 border-green-500 rounded-lg p-6 shadow-lg">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-green-800 font-bold mb-2 uppercase tracking-wide">💰 Итоговая цена</p>
-                    <p className="text-4xl font-bold text-green-700">{price.toFixed(2)} ₽</p>
+                    <p className="text-base text-green-800 font-bold mb-2 uppercase tracking-wide">💰 Итоговая цена</p>
+                    <p className="text-5xl font-bold text-green-700">{price.toFixed(2)} ₽</p>
                   </div>
                   <div className="text-5xl">💳</div>
                 </div>
