@@ -7,7 +7,7 @@ from fastapi import APIRouter, Query, status
 from app.application.commands.servers.create import CreateServerCommand
 from app.application.commands.servers.delete import DeleteServerCommand
 from app.application.commands.servers.reload_config import ReloadServerConfigCommand
-from app.application.dtos.base import PaginatedResponseDto
+from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.servers.base import ServerDTO
 from app.application.queries.servers.get_list import GetListServerQuery
 from app.domain.values.servers import ApiType
@@ -60,7 +60,7 @@ async def get_list_server(
     user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
     server_request: Annotated[GetServersRequest, Query()]
-) -> PaginatedResponseDto[ServerDTO]:
+) -> PaginatedResponseDTO[ServerDTO]:
     return await mediator.handle_query(
         GetListServerQuery(
             server_query=server_request.to_server_filter(),

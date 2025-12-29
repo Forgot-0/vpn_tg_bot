@@ -4,7 +4,7 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Query, status
 
-from app.application.dtos.base import PaginatedResponseDto
+from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.dtos.users.base import UserDTO
 from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery
@@ -28,9 +28,9 @@ async def get_list_user(
     user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
     users_request: Annotated[GetUsersRequest, Query()],
-) -> PaginatedResponseDto[UserDTO]:
+) -> PaginatedResponseDTO[UserDTO]:
 
-    list_user: PaginatedResponseDto[UserDTO]
+    list_user: PaginatedResponseDTO[UserDTO]
 
     list_user = await mediator.handle_query(
         GetListUserQuery(

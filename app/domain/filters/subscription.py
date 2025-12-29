@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from uuid import UUID
 
 from app.domain.filters.base import BaseFilter
 from app.domain.filters.operators import FilterOperator
@@ -7,8 +8,8 @@ from app.domain.filters.operators import FilterOperator
 
 @dataclass
 class SubscriptionFilter(BaseFilter):
-    user_id: str| None = None
-    server_id: str| None = None
+    user_id: UUID | None = None
+    server_id: UUID | None = None
     region_code: str| None = None
     status: str| None = None
     protocol_types: list[str] | None = None

@@ -1,35 +1,35 @@
 from dataclasses import dataclass
 
 from app.application.dtos.base import PaginatedResponseDTO
-from app.application.dtos.users.base import UserDTO
+from app.application.dtos.payments.base import PaymentDTO
 from app.application.dtos.users.jwt import UserJWTData
 from app.application.queries.base import BaseQuery, BaseQueryHandler
 from app.application.services.role_hierarchy import RoleAccessControl
-from app.domain.filters.user import UserFilter
-from app.domain.repositories.users import BaseUserRepository
+from app.domain.filters.payment import PaymentFilter
+from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.values.users import UserRole
 
 
 @dataclass(frozen=True)
-class GetListUserQuery(BaseQuery):
-    user_query: UserFilter
+class GetListPaymentQuery(BaseQuery):
+    payment_query: PaymentFilter
     user_jwt_data: UserJWTData
 
 
 @dataclass(frozen=True)
-class GetListUserQueryHandler(BaseQueryHandler[GetListUserQuery, PaginatedResponseDTO[UserDTO]]):
-    user_repository: BaseUserRepository
+class GetListPaymentQueryHandler(BaseQueryHandler[GetListPaymentQuery, PaginatedResponseDTO[PaymentDTO]]):
+    payment_repository: BasePaymentRepository
     role_access_control: RoleAccessControl
 
-    async def handle(self, query: GetListUserQuery) -> PaginatedResponseDTO[UserDTO]:
+    async def handle(self, query: GetListPaymentQuery) -> PaginatedResponseDTO[PaymentDTO]:
         if not self.role_access_control.can_action(
             UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
         ): raise
 
-        result = await self.user_repository.find_by_filter(query.user_query)
+        result = await self.payment_repository.find_by_filter(query.payment_query)
 
         return PaginatedResponseDTO(
-            items=[UserDTO.from_entity(user) for user in result.items],
+            items=[PaymentDTO.from_entity(user) for user in result.items],
             total=result.total,
             page=result.page,
             page_size=result.page_size,

@@ -1,4 +1,5 @@
 from typing import Any
+from uuid import UUID
 
 from app.domain.filters.base import BaseFilter
 from app.domain.filters.condition import FilterCondition

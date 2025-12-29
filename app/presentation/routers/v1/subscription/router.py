@@ -6,9 +6,9 @@ from fastapi import APIRouter, Query, status
 
 from app.application.commands.subscriptions.create import CreateSubscriptionCommand
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
-from app.application.dtos.base import PaginatedResponseDto
+from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
-from app.application.queries.subscription.get_by_id import GetByIdQuery
+from app.application.queries.subscription.get_by_id import GetSubscriptionByIdQuery
 from app.application.queries.subscription.get_config import GetConfigQuery
 from app.application.queries.subscription.get_list import GetListSubscriptionsQuery
 from app.application.queries.subscription.get_price import GetPriceSubscriptionQuery
@@ -36,7 +36,7 @@ async def get_subscription(
     mediator: FromDishka[BaseMediator],
 ) -> SubscriptionDTO:
     return await mediator.handle_query(
-        GetByIdQuery(
+        GetSubscriptionByIdQuery(
             subscription_id=subscription_id,
             user_jwt_data=user_jwt_data
         )
@@ -77,6 +77,7 @@ async def create_subscription(
     )
     return PaymentUrlResponse(url=result.url)
 
+
 @router.get(
     "/",
     status_code=status.HTTP_200_OK
@@ -85,7 +86,7 @@ async def get_subscriptions(
     user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
     subscription_request: Annotated[GetSubscriptionsRequest, Query()],
-) -> PaginatedResponseDto[SubscriptionDTO]:
+) -> PaginatedResponseDTO[SubscriptionDTO]:
     return await mediator.handle_query(
         GetListSubscriptionsQuery(
             subscription_query=subscription_request.to_subscription_filter(),

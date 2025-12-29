@@ -23,7 +23,7 @@ TDTO = TypeVar('TDTO')
 
 
 @dataclass(frozen=True)
-class PaginatedResponseDto(Generic[TDTO]):
+class PaginatedResponseDTO(Generic[TDTO]):
     items: list[TDTO]
     total: int
     page: int

@@ -3,7 +3,7 @@ import logging
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
-from app.application.dtos.payments.url import PaymentDTO
+from app.application.dtos.payments.url import PaymentData
 from app.application.dtos.users.jwt import UserJWTData
 from app.domain.entities.payment import Payment
 from app.domain.entities.subscription import Subscription
@@ -31,7 +31,7 @@ class CreateSubscriptionCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, PaymentDTO]):
+class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, PaymentData]):
     payment_repository: BasePaymentRepository
     server_repository: BaseServerRepository
     subscription_repository: BaseSubscriptionRepository
@@ -39,7 +39,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
     payment_service: BasePaymentService
     event_bus: BaseEventBus
 
-    async def handle(self, command: CreateSubscriptionCommand) -> PaymentDTO:
+    async def handle(self, command: CreateSubscriptionCommand) -> PaymentData:
         protocol_types=[ProtocolType(t) for t in command.protocol_types]
         server = await self.server_repository.get_by_max_free(protocol_types)
 
@@ -76,4 +76,4 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         logger.info("Create subscription", extra={"subscription": subscription})
 
-        return PaymentDTO(payment_data.url, payment.total_price)
+        return PaymentData(payment_data.url, payment.total_price)

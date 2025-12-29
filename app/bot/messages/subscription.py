@@ -4,7 +4,7 @@ from uuid import UUID
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 
-from app.application.dtos.payments.url import PaymentDTO
+from app.application.dtos.payments.url import PaymentData
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.bot.messages.base import BaseMediaBuilder
 from app.bot.messages.menu import BackButton, VPNButton
@@ -126,7 +126,7 @@ class BuySubscriptionMessage(BaseMediaBuilder):
     _caption = ""
     _reply_markup = None
 
-    def build(self, payment_data: PaymentDTO) -> dict[str, Any]:
+    def build(self, payment_data: PaymentData) -> dict[str, Any]:
         content = super().build()
         content['media'].caption = f"Стоимость подписки {payment_data.price}"
         content["reply_markup"] = InlineKeyboardMarkup(

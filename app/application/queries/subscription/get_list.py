@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from app.application.dtos.base import PaginatedResponseDto
+from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.dtos.users.jwt import UserJWTData
 from app.application.queries.base import BaseQuery, BaseQueryHandler
@@ -17,17 +17,17 @@ class GetListSubscriptionsQuery(BaseQuery):
 
 
 @dataclass(frozen=True)
-class GetListSubscriptionsQueryHandler(BaseQueryHandler[GetListSubscriptionsQuery, PaginatedResponseDto[SubscriptionDTO]]):
+class GetListSubscriptionsQueryHandler(BaseQueryHandler[GetListSubscriptionsQuery, PaginatedResponseDTO[SubscriptionDTO]]):
     subscription_repository: BaseSubscriptionRepository
     role_access_control: RoleAccessControl
 
-    async def handle(self, query: GetListSubscriptionsQuery) -> PaginatedResponseDto[SubscriptionDTO]:
+    async def handle(self, query: GetListSubscriptionsQuery) -> PaginatedResponseDTO[SubscriptionDTO]:
         if not self.role_access_control.can_action(
             UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
         ): raise
 
         result = await self.subscription_repository.find_by_filter(query.subscription_query)
-        return PaginatedResponseDto(
+        return PaginatedResponseDTO(
             items=[SubscriptionDTO.from_entity(user) for user in result.items],
             total=result.total,
             page=result.page,

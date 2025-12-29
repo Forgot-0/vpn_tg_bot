@@ -16,17 +16,17 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class GetByIdQuery(BaseQuery):
+class GetSubscriptionByIdQuery(BaseQuery):
     subscription_id: UUID
     user_jwt_data: UserJWTData
 
 
 @dataclass(frozen=True)
-class GetByIdQueryHandler(BaseQueryHandler[GetByIdQuery, SubscriptionDTO]):
+class GetSubscriptionByIdQueryHandler(BaseQueryHandler[GetSubscriptionByIdQuery, SubscriptionDTO]):
     subscription_repository: BaseSubscriptionRepository
     role_access_control: RoleAccessControl
 
-    async def handle(self, query: GetByIdQuery) -> SubscriptionDTO:
+    async def handle(self, query: GetSubscriptionByIdQuery) -> SubscriptionDTO:
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
 
         if not subscription:

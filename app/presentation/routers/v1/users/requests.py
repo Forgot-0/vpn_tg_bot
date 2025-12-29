@@ -3,7 +3,6 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 from app.domain.filters.pagination import Pagination
-from app.domain.filters.sort import SortDirection
 from app.domain.filters.user import UserFilter
 from app.presentation.schemas.filters import FilterMapper
 

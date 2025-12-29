@@ -10,9 +10,10 @@ from app.application.commands.subscriptions.create import CreateSubscriptionComm
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
 from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from app.application.events.server.decrement_free import DecrementFreeServerEventHandler
+from app.application.queries.payments.get_list import GetListPaymentQuery, GetListPaymentQueryHandler
 from app.application.queries.servers.get_list import GetListServerQuery, GetListServerQueryHandler
 from app.application.queries.servers.get_protocols import GetListProtocolsQuery, GetListProtocolsQueryHandler
-from app.application.queries.subscription.get_by_id import GetByIdQuery, GetByIdQueryHandler
+from app.application.queries.subscription.get_by_id import GetSubscriptionByIdQuery, GetSubscriptionByIdQueryHandler
 from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery, GetSubscriptionsUserQueryHandler
 from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
 from app.application.queries.subscription.get_list import GetListSubscriptionsQuery, GetListSubscriptionsQueryHandler
@@ -38,14 +39,15 @@ class MediatorProvider(Provider):
     get_me_user_handler = provide(GetMeUserQueryHandler, scope=Scope.APP)
 
     paid_payment_handler = provide(PaidPaymentCommandHandler, scope=Scope.APP)
+    get_payments_handler = provide(GetListPaymentQueryHandler, scope=Scope.APP)
+
     create_subscription_handler = provide(CreateSubscriptionCommandHandler, scope=Scope.APP)
     renew_subscription_handler = provide(RenewSubscriptionCommandHandler, scope=Scope.APP)
     get_list_subscription_handler= provide(GetListSubscriptionsQueryHandler, scope=Scope.APP)
     get_price_subs_handler = provide(GetPriceSubscriptionQueryHandler, scope=Scope.APP)
-
-    tg_id_handler = provide(GetSubscriptionsUserQueryHandler, scope=Scope.APP)
-    user_id_handler = provide(GetByIdQueryHandler, scope=Scope.APP)
-    config_handler = provide(GetConfigQueryHandler, scope=Scope.APP)
+    get_subscription_user_handler = provide(GetSubscriptionsUserQueryHandler, scope=Scope.APP)
+    get_subscription_by_id_hanler = provide(GetSubscriptionByIdQueryHandler, scope=Scope.APP)
+    get_config_handler = provide(GetConfigQueryHandler, scope=Scope.APP)
 
     decrement_server_handler = provide(DecrementFreeServerEventHandler, scope=Scope.APP)
     create_server_handler = provide(CreateServerCommandHandler, scope=Scope.APP)
@@ -105,11 +107,15 @@ class MediatorProvider(Provider):
         )
 
         query_maps.register_query(
-            GetByIdQuery, GetByIdQueryHandler
+            GetSubscriptionByIdQuery, GetSubscriptionByIdQueryHandler
         )
 
         query_maps.register_query(
             GetConfigQuery, GetConfigQueryHandler
+        )
+
+        query_maps.register_query(
+            GetListPaymentQuery, GetListPaymentQueryHandler
         )
 
         query_maps.register_query(

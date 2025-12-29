@@ -1,6 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Literal
+from typing import Any
 from uuid import UUID
 
 from app.application.dtos.base import BaseDTO
@@ -14,6 +14,8 @@ class SubscriptionDTO(BaseDTO):
     duration: int
     start_date: datetime
     device_count: int
+    user_id: UUID
+    server_id: UUID
     flag: str
     name: str
     code: str
@@ -27,6 +29,8 @@ class SubscriptionDTO(BaseDTO):
             duration=data['duration'],
             start_date=data['start_date'],
             device_count=data['device_count'],
+            user_id=data['user_id'],
+            server_id=data['server_id'],
             flag=data['flag'],
             name=data['name'],
             code=data['code'],
@@ -41,6 +45,8 @@ class SubscriptionDTO(BaseDTO):
             duration=entity.duration,
             start_date=entity.start_date,
             device_count=entity.device_count,
+            user_id=entity.user_id.value,
+            server_id=entity.server_id,
             flag=entity.region.flag,
             name=entity.region.name,
             code=entity.region.code,

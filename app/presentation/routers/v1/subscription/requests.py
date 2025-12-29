@@ -1,8 +1,8 @@
 from datetime import datetime
+from uuid import UUID
 from pydantic import BaseModel, Field
 
 from app.domain.filters.pagination import Pagination
-from app.domain.filters.sort import SortDirection
 from app.domain.filters.subscription import SubscriptionFilter
 from app.presentation.schemas.filters import FilterMapper
 
@@ -19,8 +19,8 @@ class RenewSubscriptionRequests(BaseModel):
 
 
 class GetSubscriptionsRequest(BaseModel):
-    user_id: str | None = None
-    server_id: str | None = None
+    user_id: UUID | None = None
+    server_id: UUID | None = None
     region_code: str | None = None
     status: str | None = None
     protocol_types: list[str] | None = None

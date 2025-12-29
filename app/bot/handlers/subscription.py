@@ -7,7 +7,7 @@ from app.application.commands.subscriptions.create import CreateSubscriptionComm
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.queries.servers.get_protocols import GetListProtocolsQuery
-from app.application.queries.subscription.get_by_id import GetByIdQuery
+from app.application.queries.subscription.get_by_id import GetSubscriptionByIdQuery
 from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery
 from app.application.queries.subscription.get_config import GetConfigQuery
 from app.bot.deps import user_jwt_getter
@@ -113,7 +113,7 @@ async def subscription(
         mediator: FromDishka[BaseMediator],
 ) -> None:
     subscription: SubscriptionDTO = await mediator.handle_query(
-        GetByIdQuery(
+        GetSubscriptionByIdQuery(
             callback_data.subscription_id,
             user_jwt_data=await user_jwt_getter(mediator, callback_query)
         )

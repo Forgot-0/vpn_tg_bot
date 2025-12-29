@@ -58,7 +58,8 @@ class SubscriptionRepository(BaseMongoDBRepository, BaseSubscriptionRepository):
         total = await self._collection.count_documents(query)
 
         cursor = self._collection.find(query)
-        cursor = cursor.sort(sort)
+        if sort:
+            cursor = cursor.sort(sort)
         cursor = cursor.skip(filters.pagination.offset)
         cursor = cursor.limit(filters.pagination.limit)
 

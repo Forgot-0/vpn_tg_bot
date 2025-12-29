@@ -1,9 +1,7 @@
-from typing import Literal
 from pydantic import BaseModel, Field
 
 from app.domain.filters.pagination import Pagination
 from app.domain.filters.server import ServerFilter
-from app.domain.filters.sort import SortDirection
 from app.presentation.schemas.filters import FilterMapper
 
 

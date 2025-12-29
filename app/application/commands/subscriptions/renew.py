@@ -3,7 +3,7 @@ import logging
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
-from app.application.dtos.payments.url import PaymentDTO
+from app.application.dtos.payments.url import PaymentData
 from app.application.dtos.users.jwt import UserJWTData
 from app.domain.entities.payment import Payment
 from app.domain.repositories.payment import BasePaymentRepository
@@ -26,13 +26,13 @@ class RenewSubscriptionCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionCommand, PaymentDTO]):
+class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionCommand, PaymentData]):
     payment_repository: BasePaymentRepository
     subscription_repository: BaseSubscriptionRepository
     subs_price_service: SubscriptionPricingService
     payment_service: BasePaymentService
 
-    async def handle(self, command: RenewSubscriptionCommand) -> PaymentDTO:
+    async def handle(self, command: RenewSubscriptionCommand) -> PaymentData:
         subscription = await self.subscription_repository.get_by_id(id=SubscriptionId(command.subscription_id))
         if not subscription:
             raise NotFoundException()
@@ -56,4 +56,4 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
         await self.payment_repository.create(payment=payment)
         logger.info("Renew subscription", extra={"subscription": subscription})
 
-        return PaymentDTO(url=payment_data.url, price=new_price)
+        return PaymentData(url=payment_data.url, price=new_price)

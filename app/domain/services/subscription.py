@@ -22,7 +22,7 @@ class SubscriptionPricingService:
         region_cost = base_cost * (region_coef - 1)
 
         protocols_cost = sum(
-            base_cost * self.protocol_multipliers.get(protocol, 0)
+            base_cost * self.protocol_multipliers.get(protocol, 0.15)
             for protocol in subscription.protocol_types
         )
 
