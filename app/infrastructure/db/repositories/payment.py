@@ -1,4 +1,3 @@
-from datetime import datetime
 from uuid import UUID
 from app.domain.entities.payment import Payment, PaymentStatus
 from app.domain.repositories.payment import BasePaymentRepository

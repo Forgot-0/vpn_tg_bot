@@ -1,10 +1,11 @@
 from uuid import UUID
 
-from app.application.dtos.base import PaginatedResult, Pagination
-from app.application.dtos.servers.base import ServerListParams
 from app.domain.entities.server import Server
+from app.domain.filters.server import ServerFilter
+from app.domain.repositories.base import PageResult
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.values.servers import ProtocolType
+from app.infrastructure.db.convertors.filter_converter import MongoFilterConverter
 from app.infrastructure.db.convertors.server import (
     convert_server_document_to_entity,
     convert_server_entity_to_document
@@ -62,16 +63,36 @@ class ServerRepository(BaseMongoDBRepository, BaseServerRepository):
         result = await self._collection.aggregate(pipeline).to_list(length=1)
         return result[0]["protocols"] if result else []
 
-
-    async def get_list(self, filter_params: ServerListParams) -> PaginatedResult[Server]:
-        documents = await self.get_paginated_items(params=filter_params)
-        servers = [convert_server_document_to_entity(doc) for doc in documents['items']]
-        return PaginatedResult(
-            items=servers,
-            pagination=Pagination(**documents["pagination"])
-        )
-
     async def delete_by_id(self, server_id: UUID) -> None:
         await self._collection.delete_one(
             {"_id": server_id}
         )
+
+    async def find_by_filter(self, filters: ServerFilter) -> PageResult[Server]:
+        query = MongoFilterConverter.filter_to_mongo_query(filters)
+
+        sort = (
+            MongoFilterConverter.sort_to_mongo(filters.sort_fields)
+        )
+
+        total = await self._collection.count_documents(query)
+
+        cursor = self._collection.find(query)
+        cursor = cursor.sort(sort)
+        cursor = cursor.skip(filters.pagination.offset)
+        cursor = cursor.limit(filters.pagination.limit)
+
+        documents = await cursor.to_list(length=filters.pagination.limit)
+
+        servers = tuple(convert_server_document_to_entity(doc) for doc in documents)
+
+        return PageResult(
+            items=servers,
+            total=total,
+            page=filters.pagination.page,
+            page_size=filters.pagination.page_size
+        )
+
+    async def count_by_filter(self, filters: ServerFilter) -> int:
+        query = MongoFilterConverter.filter_to_mongo_query(filters)
+        return await self._collection.count_documents(query)

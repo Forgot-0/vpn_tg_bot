@@ -3,10 +3,9 @@ from datetime import datetime
 from typing import Any, Literal
 from uuid import UUID
 
-from app.application.dtos.base import BaseDTO, FilterParam, ListParams, SortParam
+from app.application.dtos.base import BaseDTO
 from app.domain.entities.subscription import Subscription
 from app.domain.values.servers import ProtocolType
-from app.domain.values.subscriptions import SubscriptionId
 
 
 @dataclass
@@ -48,22 +47,5 @@ class SubscriptionDTO(BaseDTO):
             status=entity.status.value,
             protocol_types=entity.protocol_types
         )
-
-
-@dataclass
-class SubscriptionSortParam(SortParam):
-    field: Literal["id", "duration", "created_at", "start_date", "device_count", "status"]
-
-
-@dataclass
-class SubscriptionFilterParam(FilterParam):
-    field: Literal["id", "duration", "server_id", "region", "user_id", "status", "protocol_types"]
-
-
-@dataclass
-class SubscriptionListParams(ListParams):
-    sort: list[SubscriptionSortParam] | None = field(default=None)
-    filters: list[SubscriptionFilterParam] | None = field(default=None)
-
 
 

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from enum import Enum
+from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
 
@@ -20,48 +19,18 @@ class BaseDTO(ABC, Generic[T]):
     def from_entity(cls, entity: AggregateRoot) -> T: ...
 
 
-
-class SortOrder(str, Enum):
-    ASC = "asc"
-    DESC = "desc"
+TDTO = TypeVar('TDTO')
 
 
-@dataclass
-class SortParam:
-    field: str
-    order: SortOrder = SortOrder.ASC
-
-
-@dataclass
-class FilterParam:
-    field: str
-    value: int | str | list
-
-
-@dataclass
-class ListParams:
-    sort: list[SortParam] | None = field(default=None)
-    filters: list[FilterParam] | None = field(default=None)
-    page: int = field(default=1)
-    page_size: int = field(default=10)
-
-
-@dataclass
-class ListParamsWithoutPagination:
-    sort: list[SortParam] | None = field(default=None)
-    filters: list[FilterParam] | None = field(default=None)
-
-
-@dataclass
-class Pagination:
+@dataclass(frozen=True)
+class PaginatedResponseDto(Generic[TDTO]):
+    items: list[TDTO]
     total: int
     page: int
     page_size: int
+    total_pages: int
+    has_next: bool
+    has_previous: bool
+    next_page: int | None
+    previous_page: int | None
 
-
-T = TypeVar("T")
-
-@dataclass
-class PaginatedResult(Generic[T]):
-    items: list[T]
-    pagination: Pagination

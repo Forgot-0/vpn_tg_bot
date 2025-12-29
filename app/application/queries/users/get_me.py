@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from app.application.dtos.base import PaginatedResult
 from app.application.dtos.users.base import UserDTO
 from app.application.dtos.users.jwt import UserJWTData
 from app.application.exception import NotFoundException
@@ -16,7 +15,7 @@ class GetMeUserQuery(BaseQuery):
 
 
 @dataclass(frozen=True)
-class GetMeUserQueryHandler(BaseQueryHandler[GetMeUserQuery, PaginatedResult[UserDTO]]):
+class GetMeUserQueryHandler(BaseQueryHandler[GetMeUserQuery, UserDTO]):
     user_repository: BaseUserRepository
 
     async def handle(self, query: GetMeUserQuery) -> UserDTO:

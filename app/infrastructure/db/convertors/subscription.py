@@ -13,11 +13,7 @@ def convert_subscription_entity_to_document(subscription: Subscription) -> dict[
             "start_date": subscription.start_date,
             "device_count": subscription.device_count,
             "server_id": str(subscription.server_id),
-            "region": {
-                "flag": subscription.region.flag,
-                "name": subscription.region.name,
-                "code": subscription.region.code
-            },
+            "region": subscription.region.code,
             "user_id":subscription.user_id.value,
             "status": subscription.status.value,
             "protocol_types": [pt.value for pt in subscription.protocol_types],
@@ -30,7 +26,7 @@ def convert_subscription_document_to_entity(data: dict[str, Any]) -> Subscriptio
             start_date=data["start_date"],
             device_count=data["device_count"],
             server_id=UUID(data["server_id"]),
-            region=Region(**data["region"]),
+            region=Region.region_by_code(**data["region"]),
             user_id=UserId(data['user_id']),
             status=SubscriptionStatus(data['status']),
             protocol_types=[ProtocolType(pt) for pt in data["protocol_types"]]

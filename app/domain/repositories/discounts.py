@@ -3,10 +3,11 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.domain.entities.discount import Discount, DiscountUser
+from app.domain.repositories.base import BaseRepository
 
 
 @dataclass
-class BaseDiscountRepository(ABC):
+class BaseDiscountRepository(BaseRepository[Discount]):
     @abstractmethod
     async def create(self, discount: Discount) -> None: ...
 

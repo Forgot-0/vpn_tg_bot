@@ -1,9 +1,11 @@
-from app.application.dtos.base import PaginatedResult, Pagination
-from app.application.dtos.subscriptions.subscription import SubscriptionListParams
-from app.domain.entities.subscription import Subscription, SubscriptionStatus
+from app.domain.entities.server import Server
+from app.domain.entities.subscription import Subscription
+from app.domain.filters.subscription import SubscriptionFilter
+from app.domain.repositories.base import PageResult
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.values.subscriptions import SubscriptionId
 from app.domain.values.users import UserId
+from app.infrastructure.db.convertors.filter_converter import MongoFilterConverter
 from app.infrastructure.db.convertors.subscription import (
     convert_subscription_document_to_entity,
     convert_subscription_entity_to_document
@@ -46,11 +48,31 @@ class SubscriptionRepository(BaseMongoDBRepository, BaseSubscriptionRepository):
         doc = convert_subscription_entity_to_document(subscription)
         await self._collection.replace_one({"_id": subscription.id.value}, doc, upsert=True)
 
-    async def get_list(self, filter_params: SubscriptionListParams) -> PaginatedResult[Subscription]:
-        documents = await self.get_paginated_items(params=filter_params)
-        users = [convert_subscription_document_to_entity(doc) for doc in documents['items']]
-        return PaginatedResult(
-            items=users,
-            pagination=Pagination(**documents["pagination"])
+    async def find_by_filter(self, filters: SubscriptionFilter) -> PageResult[Subscription]:
+        query = MongoFilterConverter.filter_to_mongo_query(filters)
+
+        sort = (
+            MongoFilterConverter.sort_to_mongo(filters.sort_fields)
         )
 
+        total = await self._collection.count_documents(query)
+
+        cursor = self._collection.find(query)
+        cursor = cursor.sort(sort)
+        cursor = cursor.skip(filters.pagination.offset)
+        cursor = cursor.limit(filters.pagination.limit)
+
+        documents = await cursor.to_list(length=filters.pagination.limit)
+
+        servers = tuple(convert_subscription_document_to_entity(doc) for doc in documents)
+
+        return PageResult(
+            items=servers,
+            total=total,
+            page=filters.pagination.page,
+            page_size=filters.pagination.page_size
+        )
+
+    async def count_by_filter(self, filters: SubscriptionFilter) -> int:
+        query = MongoFilterConverter.filter_to_mongo_query(filters)
+        return await self._collection.count_documents(query)

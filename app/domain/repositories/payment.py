@@ -1,13 +1,14 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass
 from uuid import UUID
 
 from app.domain.entities.payment import Payment
+from app.domain.repositories.base import BaseRepository
 
 
 
 @dataclass
-class BasePaymentRepository(ABC):
+class BasePaymentRepository(BaseRepository[Payment]):
     @abstractmethod
     async def create(self, payment: Payment)-> None: ...
  

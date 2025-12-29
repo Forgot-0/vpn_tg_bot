@@ -1,9 +1,9 @@
 
-from dataclasses import dataclass, field
-from typing import Any, Literal
+from dataclasses import dataclass
+from typing import Any
 from uuid import UUID
 
-from app.application.dtos.base import BaseDTO, FilterParam, ListParams, SortParam
+from app.application.dtos.base import BaseDTO
 from app.domain.entities.server import Server
 
 
@@ -51,21 +51,4 @@ class ServerDTO(BaseDTO):
             domain=entity.api_config.domain,
             protocol_configs=[protocol.value for protocol in entity.protocol_configs]
         )
-
-
-@dataclass
-class ServerSortParam(SortParam):
-    field: Literal["id", "limit", "free"]
-
-
-@dataclass
-class ServerFilterParam(FilterParam):
-    field: Literal["id", "region", "api_type", "protocol_configs"]
-
-
-@dataclass
-class ServerListParams(ListParams):
-    sort: list[ServerSortParam] | None = field(default=None)
-    filters: list[ServerFilterParam] | None = field(default=None)
-
 

@@ -2,26 +2,22 @@ from typing import Annotated
 from uuid import UUID
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Query, status
 
 from app.application.commands.servers.create import CreateServerCommand
 from app.application.commands.servers.delete import DeleteServerCommand
 from app.application.commands.servers.reload_config import ReloadServerConfigCommand
-from app.application.dtos.base import PaginatedResult
-from app.application.dtos.servers.base import ServerDTO, ServerFilterParam, ServerListParams, ServerSortParam
+from app.application.dtos.base import PaginatedResponseDto
+from app.application.dtos.servers.base import ServerDTO
 from app.application.queries.servers.get_list import GetListServerQuery
 from app.domain.values.servers import ApiType
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.deps import CurrentAdminJWTData
-from app.presentation.routers.v1.servers.requests import CreateServerRequest
-from app.presentation.schemas.filters import ListParamsBuilder
+from app.presentation.routers.v1.servers.requests import CreateServerRequest, GetServersRequest
 
 
 
 router = APIRouter(route_class=DishkaRoute)
-
-server_list_params_builder = ListParamsBuilder(ServerSortParam, ServerFilterParam, ServerListParams)
-
 
 
 @router.post("/{api_type}")
@@ -63,11 +59,11 @@ async def create_server(
 async def get_list_server(
     user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
-    params: Annotated[ServerListParams, Depends(server_list_params_builder)]
-) -> PaginatedResult[ServerDTO]:
+    server_request: Annotated[GetServersRequest, Query()]
+) -> PaginatedResponseDto[ServerDTO]:
     return await mediator.handle_query(
         GetListServerQuery(
-            server_query=params,
+            server_query=server_request.to_server_filter(),
             user_jwt_data=user_jwt_data
         )
     )

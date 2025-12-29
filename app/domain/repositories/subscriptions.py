@@ -1,15 +1,14 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass
 
-from app.application.dtos.base import PaginatedResult
-from app.application.dtos.subscriptions.subscription import SubscriptionListParams
 from app.domain.entities.subscription import Subscription
+from app.domain.repositories.base import BaseRepository
 from app.domain.values.subscriptions import SubscriptionId
 from app.domain.values.users import UserId
 
 
 @dataclass
-class BaseSubscriptionRepository(ABC):
+class BaseSubscriptionRepository(BaseRepository[Subscription]):
 
     @abstractmethod
     async def create(self, subscription: Subscription) -> None: ...
@@ -32,5 +31,3 @@ class BaseSubscriptionRepository(ABC):
     @abstractmethod
     async def update(self, subscription: Subscription) -> None: ...
 
-    @abstractmethod
-    async def get_list(self, filter_params: SubscriptionListParams) -> PaginatedResult[Subscription]: ...

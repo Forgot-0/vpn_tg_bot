@@ -2,17 +2,12 @@ from typing import Annotated
 from uuid import UUID
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Query, status
 
 from app.application.commands.subscriptions.create import CreateSubscriptionCommand
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand
-from app.application.dtos.base import PaginatedResult
-from app.application.dtos.subscriptions.subscription import (
-    SubscriptionDTO,
-    SubscriptionFilterParam,
-    SubscriptionListParams,
-    SubscriptionSortParam
-)
+from app.application.dtos.base import PaginatedResponseDto
+from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.queries.subscription.get_by_id import GetByIdQuery
 from app.application.queries.subscription.get_config import GetConfigQuery
 from app.application.queries.subscription.get_list import GetListSubscriptionsQuery
@@ -20,16 +15,15 @@ from app.application.queries.subscription.get_price import GetPriceSubscriptionQ
 from app.domain.values.servers import VPNConfig
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.deps import CurrentAdminJWTData, CurrentUserJWTData
-from app.presentation.routers.v1.subscription.requests import CreateSubscriptionRequests, RenewSubscriptionRequests
+from app.presentation.routers.v1.subscription.requests import (
+    CreateSubscriptionRequests,
+    GetSubscriptionsRequest,
+    RenewSubscriptionRequests
+)
 from app.presentation.routers.v1.subscription.responses import PaymentUrlResponse, PriceSubscriptionResponse
-from app.presentation.schemas.filters import ListParamsBuilder
 
 
 router = APIRouter(route_class=DishkaRoute)
-
-subscription_list_params_builder = ListParamsBuilder(
-    SubscriptionSortParam, SubscriptionFilterParam, SubscriptionListParams
-)
 
 
 @router.get(
@@ -90,11 +84,11 @@ async def create_subscription(
 async def get_subscriptions(
     user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
-    params: Annotated[SubscriptionListParams, Depends(subscription_list_params_builder)],
-) -> PaginatedResult[SubscriptionDTO]:
+    subscription_request: Annotated[GetSubscriptionsRequest, Query()],
+) -> PaginatedResponseDto[SubscriptionDTO]:
     return await mediator.handle_query(
         GetListSubscriptionsQuery(
-            subscription_query=params,
+            subscription_query=subscription_request.to_subscription_filter(),
             user_jwt_data=user_jwt_data
         )
     )
@@ -102,7 +96,7 @@ async def get_subscriptions(
 
 @router.post(
     "/{subscription_id}/renew",
-    status_code=status.HTTP_307_TEMPORARY_REDIRECT
+    status_code=status.HTTP_200_OK
 )
 async def renew(
     subscription_id: UUID,

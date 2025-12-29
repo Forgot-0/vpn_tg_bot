@@ -9,7 +9,6 @@ from app.application.dtos.base import BaseDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.domain.entities.user import User
 from app.domain.services.utils import now_utc
-from app.presentation.schemas.filters import FilterParam, ListParams, SortParam
 
 
 
@@ -64,21 +63,3 @@ class UserDTO(BaseDTO):
             role=entity.role.value,
             subscriptions=[SubscriptionDTO.from_entity(subscription) for subscription in entity.subscriptions],
         )
-
-
-@dataclass
-class UserSortParam(SortParam):
-    field: Literal["id", "username", "created_at", "referrals_count", "telegram_id"]
-
-
-@dataclass
-class UserFilterParam(FilterParam):
-    field: Literal["id", "username", "telegram_id", "referred_by", "fullname"]
-
-
-@dataclass
-class UserListParams(ListParams):
-    sort: list[UserSortParam] | None = field(default=None)
-    filters: list[UserFilterParam] | None = field(default=None)
-
-

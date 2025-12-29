@@ -4,10 +4,11 @@ from typing import Any
 from uuid import UUID
 
 from app.domain.entities.reward import Reward, RewardUser
+from app.domain.repositories.base import BaseRepository
 
 
 @dataclass
-class BaseRewardRepository(ABC):
+class BaseRewardRepository(BaseRepository[Reward]):
 
     @abstractmethod
     async def create(self, reward: Reward) -> None: ...
