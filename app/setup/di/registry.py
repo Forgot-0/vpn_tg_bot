@@ -10,7 +10,9 @@ from app.application.commands.subscriptions.create import CreateSubscriptionComm
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
 from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from app.application.events.server.decrement_free import DecrementFreeServerEventHandler
+from app.application.queries.payments.get_by_id import GetByIDPaymentQuery, GetByIDPaymentQueryHandler
 from app.application.queries.payments.get_list import GetListPaymentQuery, GetListPaymentQueryHandler
+from app.application.queries.servers.get_by_id import GetByIdServerQuery, GetByIdServerQueryHandler
 from app.application.queries.servers.get_list import GetListServerQuery, GetListServerQueryHandler
 from app.application.queries.servers.get_protocols import GetListProtocolsQuery, GetListProtocolsQueryHandler
 from app.application.queries.subscription.get_by_id import GetSubscriptionByIdQuery, GetSubscriptionByIdQueryHandler
@@ -19,6 +21,7 @@ from app.application.queries.subscription.get_config import GetConfigQuery, GetC
 from app.application.queries.subscription.get_list import GetListSubscriptionsQuery, GetListSubscriptionsQueryHandler
 from app.application.queries.subscription.get_price import GetPriceSubscriptionQuery, GetPriceSubscriptionQueryHandler
 from app.application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
+from app.application.queries.users.get_by_id import GetByIdUserQuery, GetByIdUserQueryHandler
 from app.application.queries.users.get_by_tg_id import GetUserByTgIdQuery, GetUserByTgIdQueryHandler
 from app.application.queries.users.get_list import GetListUserQuery, GetListUserQueryHandler
 from app.application.queries.users.get_me import GetMeUserQuery, GetMeUserQueryHandler
@@ -37,9 +40,11 @@ class MediatorProvider(Provider):
     create_user_handler = provide(CreateUserCommandHandler, scope=Scope.APP)
     get_user_list_handler = provide(GetListUserQueryHandler, scope=Scope.APP)
     get_me_user_handler = provide(GetMeUserQueryHandler, scope=Scope.APP)
+    get_by_id_user_handler = provide(GetByIdUserQueryHandler, scope=Scope.APP)
 
     paid_payment_handler = provide(PaidPaymentCommandHandler, scope=Scope.APP)
     get_payments_handler = provide(GetListPaymentQueryHandler, scope=Scope.APP)
+    get_by_id_payment_handler = provide(GetByIDPaymentQueryHandler, scope=Scope.APP)
 
     create_subscription_handler = provide(CreateSubscriptionCommandHandler, scope=Scope.APP)
     renew_subscription_handler = provide(RenewSubscriptionCommandHandler, scope=Scope.APP)
@@ -54,6 +59,7 @@ class MediatorProvider(Provider):
     delete_server_handler = provide(DeleteServerCommandHandler, scope=Scope.APP)
     get_list_server_handler = provide(GetListServerQueryHandler, scope=Scope.APP)
     get_list_protocols = provide(GetListProtocolsQueryHandler, scope=Scope.APP)
+    get_by_id_server_handler = provide(GetByIdServerQueryHandler, scope=Scope.APP)
     reload_config_server_handler = provide(ReloadServerConfigCommandHandler, scope=Scope.APP)
 
     login_telegram_handler = provide(LoginTelegramUserCommandHandler, scope=Scope.APP)
@@ -117,12 +123,18 @@ class MediatorProvider(Provider):
         query_maps.register_query(
             GetListPaymentQuery, GetListPaymentQueryHandler
         )
+        query_maps.register_query(
+            GetByIDPaymentQuery, GetByIDPaymentQueryHandler
+        )
 
         query_maps.register_query(
             VerifyTokenQuery, VerifyTokenQueryHandler
         )
         query_maps.register_query(
             GetUserByTgIdQuery, GetUserByTgIdQueryHandler
+        )
+        query_maps.register_query(
+            GetByIdUserQuery, GetByIdUserQueryHandler
         )
 
         query_maps.register_query(
@@ -143,6 +155,9 @@ class MediatorProvider(Provider):
         )
         query_maps.register_query(
             GetListProtocolsQuery, GetListProtocolsQueryHandler
+        )
+        query_maps.register_query(
+            GetByIdServerQuery, GetByIdServerQueryHandler
         )
         return query_maps
 

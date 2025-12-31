@@ -8,7 +8,8 @@ from app.application.commands.servers.create import CreateServerCommand
 from app.application.commands.servers.delete import DeleteServerCommand
 from app.application.commands.servers.reload_config import ReloadServerConfigCommand
 from app.application.dtos.base import PaginatedResponseDTO
-from app.application.dtos.servers.base import ServerDTO
+from app.application.dtos.servers.base import ServerDTO, ServerDetailDTO
+from app.application.queries.servers.get_by_id import GetByIdServerQuery
 from app.application.queries.servers.get_list import GetListServerQuery
 from app.domain.values.servers import ApiType
 from app.infrastructure.mediator.base import BaseMediator
@@ -51,7 +52,6 @@ async def create_server(
         )
     )
 
-
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
@@ -68,6 +68,21 @@ async def get_list_server(
         )
     )
 
+@router.get(
+    "/{server_id}",
+    status_code=status.HTTP_200_OK
+)
+async def get_server(
+    server_id: UUID,
+    user_jwt_data: CurrentAdminJWTData,
+    mediator: FromDishka[BaseMediator],
+) -> ServerDetailDTO:
+    return await mediator.handle_query(
+        GetByIdServerQuery(
+            server_id=server_id,
+            user_jwt_data=user_jwt_data
+        )
+    )
 
 @router.delete(
     "/{server_id}",
@@ -84,7 +99,6 @@ async def delete(
             user_jwt_data=user_jwt_data
         )
     )
-
 
 @router.post(
     "/{server_id}/reload_config"

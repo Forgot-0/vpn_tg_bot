@@ -8,6 +8,7 @@ from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.dtos.users.base import UserDTO
 from app.application.queries.subscription.get_by_user import GetSubscriptionsUserQuery
+from app.application.queries.users.get_by_id import GetByIdUserQuery
 from app.application.queries.users.get_list import GetListUserQuery
 from app.application.queries.users.get_me import GetMeUserQuery
 from app.infrastructure.mediator.base import BaseMediator
@@ -55,8 +56,25 @@ async def get_me(
 
 
 @router.get(
+    "/{user_id}",
+    status_code=status.HTTP_200_OK
+)
+async def get_user(
+    user_id: UUID,
+    user_jwt_data: CurrentUserJWTData,
+    mediator: FromDishka[BaseMediator],
+) -> UserDTO:
+    return await mediator.handle_query(
+        GetByIdUserQuery(
+            user_id=user_id,
+            user_jwt_data=user_jwt_data
+        )
+    )
+
+
+@router.get(
     "/{user_id}/subscriptions",
-    description="Пользователь может посмотреть свои подписки или админ.",
+    description="Пользователь может посмотреть свои подписки или любые если админ.",
     status_code=status.HTTP_200_OK
 )
 async def get_user_subscriptions(

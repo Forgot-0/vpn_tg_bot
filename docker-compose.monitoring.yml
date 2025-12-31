@@ -26,6 +26,8 @@ services:
     volumes:
       - ./monitoring/loki/config.yaml:/etc/loki/config.yaml:ro
       - loki.data:/tmp/:rw
+    networks:
+      - monitoring-network
     command: -config.file=/etc/loki/config.yaml
 
   vector:
@@ -37,6 +39,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./monitoring/vector/vector.toml:/etc/vector/vector.toml:ro
+    networks:
+      - monitoring-network
     logging:
       driver: "json-file"
       options:

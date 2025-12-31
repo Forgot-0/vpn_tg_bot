@@ -4,7 +4,6 @@ from enum import Enum
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.entities.discount import Discount
 from app.domain.exception.base import InvalidEntityStateException
 from app.domain.services.utils import now_utc, replace
 from app.domain.values.servers import ProtocolType, Region
@@ -63,6 +62,7 @@ class Subscription(AggregateRoot):
 
     def activate(self) -> None:
         self.status = SubscriptionStatus.ACTIVE
+        self.start_date = now_utc()
 
     def upgrade_devices(self, new_device_count: int):
         if self.status in (SubscriptionStatus.EXPIRED, SubscriptionStatus.PENDING):

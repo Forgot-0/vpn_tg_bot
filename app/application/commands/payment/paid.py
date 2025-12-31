@@ -26,7 +26,7 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
     subscription_repository: BaseSubscriptionRepository
     server_repository: BaseServerRepository
     api_panel_factory: ApiClientFactory
-    event_bus: BaseEventBus 
+    event_bus: BaseEventBus
 
     async def handle(self, command: PaidPaymentCommand) -> None:
         payment = await self.payment_repository.get_by_payment_id(payment_id=command.payment_id)

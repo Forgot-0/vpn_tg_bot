@@ -1,10 +1,12 @@
 from typing import Annotated
+from uuid import UUID
 from dishka import FromDishka
 from fastapi import APIRouter, Query, status
 from dishka.integrations.fastapi import DishkaRoute
 
 from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.payments.base import PaymentDTO
+from app.application.queries.payments.get_by_id import GetByIDPaymentQuery
 from app.application.queries.payments.get_list import GetListPaymentQuery
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.deps import CurrentAdminJWTData
@@ -27,6 +29,23 @@ async def get_list_payments(
     return await mediator.handle_query(
         GetListPaymentQuery(
             payment_query=payment_request.to_payment_filter(),
+            user_jwt_data=user_jwt_data
+        )
+    )
+
+
+@router.get(
+    "/{id}",
+    status_code=status.HTTP_200_OK
+)
+async def get_payment(
+    id: UUID,
+    user_jwt_data: CurrentAdminJWTData,
+    mediator: FromDishka[BaseMediator],
+) -> PaymentDTO:
+    return await mediator.handle_query(
+        GetByIDPaymentQuery(
+            id=id,
             user_jwt_data=user_jwt_data
         )
     )
