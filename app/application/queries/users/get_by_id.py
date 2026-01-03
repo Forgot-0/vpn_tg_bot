@@ -24,7 +24,7 @@ class GetByIdUserQueryHandler(BaseQueryHandler[GetByIdUserQuery, UserDTO]):
     async def handle(self, query: GetByIdUserQuery) -> UserDTO:
         if not self.role_access_control.can_action(
             UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
-        ) or UUID(query.user_jwt_data.id) != query.user_id: raise
+        ) and UUID(query.user_jwt_data.id) != query.user_id: raise
 
         user = await self.user_repository.get_by_id(
             UserId(query.user_id)
