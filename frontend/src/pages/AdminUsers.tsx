@@ -295,6 +295,7 @@ export const AdminUsers: React.FC = () => {
                     <tr
                       key={user.id}
                       className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/admin/users/${user.id}`)}
                     >
                       <td className="px-4 py-4 text-gray-900 font-mono text-sm font-semibold">{user.id.slice(0, 8)}...</td>
                       <td className="px-4 py-4 text-gray-900 font-semibold text-base">{user.username || '-'}</td>

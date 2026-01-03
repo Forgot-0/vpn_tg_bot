@@ -14,6 +14,7 @@ import type {
   ApiType,
   CreateServerRequest,
   Server,
+  ServerDetail,
   Payment,
   PaymentUrlResponse,
 } from '../types';
@@ -201,6 +202,11 @@ class ApiClient {
     return response.data;
   }
 
+  async getServer(serverId: string): Promise<ServerDetail> {
+    const response = await this.client.get<ServerDetail>(`/servers/${serverId}`);
+    return response.data;
+  }
+
   async createServer(apiType: ApiType, data: CreateServerRequest): Promise<void> {
     await this.client.post(`/servers/${apiType}`, data);
   }
@@ -214,6 +220,11 @@ class ApiClient {
   }
 
   // Users (Admin only)
+  async getUser(userId: string): Promise<User> {
+    const response = await this.client.get<User>(`/users/${userId}`);
+    return response.data;
+  }
+
   async getUsers(
     page = 1,
     pageSize = 10,
@@ -284,6 +295,11 @@ class ApiClient {
   }
 
   // Payments (Admin only)
+  async getPayment(paymentId: string): Promise<Payment> {
+    const response = await this.client.get<Payment>(`/payments/${paymentId}`);
+    return response.data;
+  }
+
   async getPayments(
     page = 1,
     pageSize = 10,

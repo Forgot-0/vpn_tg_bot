@@ -97,6 +97,21 @@ export interface Server {
   protocol_configs: string[];
 }
 
+export interface ServerDetail {
+  id: string;
+  limit: number;
+  region_flag: string;
+  region_code: string;
+  region_name: string;
+  free: number;
+  api_type: string;
+  ip: string;
+  panel_port: number;
+  panel_path: string;
+  domain?: string | null;
+  protocol_configs: Record<string, Record<string, any>>;
+}
+
 export interface CreateServerRequest {
   limit: number;
   region_code: string;

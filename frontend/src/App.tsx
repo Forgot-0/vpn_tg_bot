@@ -13,6 +13,9 @@ import { AdminUsers } from './pages/AdminUsers';
 import { AdminServers } from './pages/AdminServers';
 import { AdminPayments } from './pages/AdminPayments';
 import { AdminSubscriptions } from './pages/AdminSubscriptions';
+import { ServerDetailPage } from './pages/ServerDetail';
+import { UserDetailPage } from './pages/UserDetail';
+import { PaymentDetailPage } from './pages/PaymentDetail';
 import { AdminRoute } from './components/AdminRoute';
 import { Loading } from './components/Loading';
 import './App.css';
@@ -98,11 +101,41 @@ const AppRoutes: React.FC = () => {
         }
       />
       <Route
+        path="/admin/servers/:id"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <ServerDetailPage />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users/:id"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <UserDetailPage />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/payments"
         element={
           <ProtectedRoute>
             <AdminRoute>
               <AdminPayments />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/payments/:id"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <PaymentDetailPage />
             </AdminRoute>
           </ProtectedRoute>
         }

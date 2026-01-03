@@ -284,7 +284,8 @@ export const AdminServers: React.FC = () => {
                   {servers.map((server) => (
                     <tr
                       key={server.id}
-                      className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors"
+                      className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/admin/servers/${server.id}`)}
                     >
                       <td className="px-4 py-4 text-gray-900 font-mono text-sm font-semibold">
                         {server.id.slice(0, 8)}...
@@ -320,12 +321,26 @@ export const AdminServers: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <button
-                          onClick={() => handleDelete(server.id)}
-                          className="text-red-600 hover:text-red-800 font-semibold text-sm hover:underline"
-                        >
-                          Удалить
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/admin/servers/${server.id}`);
+                            }}
+                            className="text-blue-600 hover:text-blue-800 font-semibold text-sm hover:underline"
+                          >
+                            Просмотр
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(server.id);
+                            }}
+                            className="text-red-600 hover:text-red-800 font-semibold text-sm hover:underline"
+                          >
+                            Удалить
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

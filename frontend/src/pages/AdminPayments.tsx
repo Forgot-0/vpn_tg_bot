@@ -344,7 +344,8 @@ export const AdminPayments: React.FC = () => {
                   {payments.map((payment) => (
                     <tr
                       key={payment.id}
-                      className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors"
+                      className="border-t border-gray-200 bg-white hover:bg-blue-50 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/admin/payments/${payment.id}`)}
                     >
                       <td className="px-4 py-4 text-gray-900 font-mono text-sm font-semibold">
                         {payment.id.slice(0, 8)}...
