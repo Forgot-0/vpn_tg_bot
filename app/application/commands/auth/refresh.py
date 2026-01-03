@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
@@ -8,6 +9,9 @@ from app.application.exception import BadRequestException
 from app.application.services.jwt_manager import JWTManager
 from app.domain.repositories.users import BaseUserRepository
 from app.domain.values.users import UserId
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -31,5 +35,9 @@ class RefreshTokenCommandHandler(BaseCommandHandler[RefreshTokenCommand, TokenGr
             raise
 
         user_jwt_data = UserJWTData.create_from_user(user)
+
+        logger.info(
+            "Refresh token", extra={"user_id": user.id}
+        )
 
         return self.jwt_manager.create_token_pair(security_user=user_jwt_data)

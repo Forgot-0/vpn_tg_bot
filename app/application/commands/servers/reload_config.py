@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
@@ -8,6 +9,9 @@ from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.values.users import UserRole
 from app.infrastructure.api_client.factory import ApiClientFactory
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -38,3 +42,11 @@ class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigComm
         server.protocol_configs.clear()
         for cnf in protocol_configs:
             server.add_protocol_config(cnf)
+
+        logger.info(
+            "Reload config server",
+            extra={
+                "server_id": command.server_id,
+                "user_id": command.user_jwt_data.id
+            }
+        )

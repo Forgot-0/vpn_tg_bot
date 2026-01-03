@@ -1,5 +1,6 @@
 
 from dataclasses import dataclass
+import logging
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
@@ -8,6 +9,9 @@ from app.application.exception import ForbiddenException
 from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.values.users import UserRole
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -28,3 +32,11 @@ class DeleteServerCommandHandler(BaseCommandHandler[DeleteServerCommand, None]):
             raise ForbiddenException()
 
         await self.server_repository.delete_by_id(command.server_id)
+
+        logger.info(
+            "Delete server",
+            extra={
+                "server_id": command.server_id,
+                "user_id": command.user_jwt_data.id
+            }
+        )

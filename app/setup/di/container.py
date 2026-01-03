@@ -10,5 +10,6 @@ from app.setup.di.registry import MediatorProvider
 
 def create_container(*providers) -> AsyncContainer:
     return make_async_container(
-        MediatorProvider(), ApplicationProvider(), AiogramProvider(), FastapiProvider()
+        *providers,
+        MediatorProvider(), ApplicationProvider(), AiogramProvider(), FastapiProvider(),
     )

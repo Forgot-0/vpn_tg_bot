@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import logging
 from typing import Any
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
@@ -11,6 +12,9 @@ from app.domain.values.servers import APIConfig, APICredits, ApiType, Region
 from app.domain.values.users import UserRole
 from app.infrastructure.api_client.factory import ApiClientFactory
 from app.application.exception import ForbiddenException
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -71,3 +75,11 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
             server.add_protocol_config(cnf)
 
         await self.server_repository.create(server=server)
+        logger.info(
+            "Create Server", extra={
+                "server_id": server.id,
+                "region_code": server.region.code,
+                "protocols": [protocol.value for  protocol in server.protocol_configs.keys()],
+                "user_id": command.user_jwt_data.id
+                }
+        )

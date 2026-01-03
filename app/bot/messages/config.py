@@ -2,6 +2,7 @@ from typing import Any
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+from app.application.exception import BadRequestException
 from app.bot.messages.base import BaseMediaBuilder
 from app.bot.messages.menu import BackButton
 from app.domain.values.servers import ProtocolType, VPNConfig
@@ -31,7 +32,6 @@ def get_reply_markup_config_builder(protocol_type: ProtocolType) -> InlineKeyboa
     match protocol_type:
         case ProtocolType.VLESS:
             return vless_reply_markup_config_builder()
-    from app.application.exception import BadRequestException
     raise BadRequestException()
 
 

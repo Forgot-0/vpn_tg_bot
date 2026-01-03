@@ -4,7 +4,7 @@ from app.infrastructure.payments.yookassa.apayment import YooKassaPaymentService
 from app.configs.app import app_settings
 
 
-def inti_yookass():
+def inti_yookass() -> YooKassaPaymentService:
     return YooKassaPaymentService(
         base64.b64encode(
             f'{app_settings.PAYMENT_ID}:{app_settings.PAYMENT_SECRET}'.encode('utf-8')

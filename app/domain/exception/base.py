@@ -26,36 +26,74 @@ class NotEmptyException(DomainException):
     def message(self) -> str:
         return "The field cannot be empty"
 
-
-@dataclass(kw_only=True)
-class EntityNotFoundException(DomainException):
-    entity: str | None = None
-    code: str = "ENTITY_NOT_FOUND"
-    status: int = 404
-
     @property
-    def message(self) -> str:
-        return f'{self.entity or "Entity"} not found'
+    def detail(self) -> dict:
+        return {"field_name": self.field_name}
 
 
 @dataclass(kw_only=True)
-class EntityConflictException(DomainException):
-    entity: str | None = None
-    code: str = "ENTITY_CONFLICT"
-    status: int = 409
-
-    @property
-    def message(self) -> str:
-        return f'{self.entity or "Entity"} conflict'
-
-
-@dataclass(kw_only=True)
-class InvalidEntityStateException(DomainException):
-    text: str | None = None
-    code: str = "INVALID_ENTITY_STATE"
+class CanNotReferalYourselfException(DomainException):
+    referral_id: str
+    code: str = "REFERRAL_CONFLICT"
     status: int = 400
 
     @property
     def message(self) -> str:
-        return self.text or 'Invalid entity state'
+        return "User cannot refer themself"
+
+    @property
+    def detail(self) -> dict:
+        return {
+            "referral_id": self.referral_id
+        }
+
+
+@dataclass(kw_only=True)
+class SubscriptionPendingException(DomainException):
+    subscription_id: str
+    code: str = "SUBSCRIPTION_CONFLICT"
+    status: int = 400
+
+    @property
+    def message(self) -> str:
+        return "Cannot renew a pending subscription"
+
+    @property
+    def detail(self) -> dict:
+        return {
+            "subscription_id": self.subscription_id
+        }
+
+
+@dataclass(kw_only=True)
+class NotFoundProtocolException(DomainException):
+    protocol_type: str
+    code: str = "NOT_FOUND"
+    status: int = 404
+
+    @property
+    def message(self) -> str:
+        return ""
+
+    @property
+    def detail(self) -> dict:
+        return {
+            "protocol": self.protocol_type
+        }
+
+@dataclass(kw_only=True)
+class AlreadyExistProtocolException(DomainException):
+    protocol_type: str
+    code: str = "ALREADY_EXIST"
+    status: int = 400
+
+    @property
+    def message(self) -> str:
+        return ""
+
+    @property
+    def detail(self) -> dict:
+        return {
+            "protocol": self.protocol_type
+        }
 

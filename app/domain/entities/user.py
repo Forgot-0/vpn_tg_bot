@@ -6,7 +6,7 @@ from app.domain.entities.base import AggregateRoot
 from app.domain.entities.subscription import Subscription
 from app.domain.events.users.created import NewUserEvent
 from app.domain.events.users.referred import ReferralAssignedEvent, ReferredUserEvent
-from app.domain.exception.base import InvalidEntityStateException
+from app.domain.exception.base import CanNotReferalYourselfException
 from app.domain.services.utils import now_utc
 from app.domain.values.users import UserId, UserRole
 
@@ -70,7 +70,7 @@ class User(AggregateRoot):
 
     def assignReferral(self, referral_id: UserId) -> None:
         if self.id == referral_id:
-            raise InvalidEntityStateException(text="User cannot refer themself")
+            raise CanNotReferalYourselfException(referral_id=self.id.as_generic_type())
 
         self.referrals_count += 1
 

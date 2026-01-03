@@ -4,7 +4,7 @@ from enum import Enum
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.exception.base import InvalidEntityStateException
+from app.domain.exception.base import SubscriptionPendingException
 from app.domain.services.utils import now_utc, replace
 from app.domain.values.servers import ProtocolType, Region
 from app.domain.values.subscriptions import SubscriptionId
@@ -64,21 +64,15 @@ class Subscription(AggregateRoot):
         self.status = SubscriptionStatus.ACTIVE
         self.start_date = now_utc()
 
-    def upgrade_devices(self, new_device_count: int):
-        if self.status in (SubscriptionStatus.EXPIRED, SubscriptionStatus.PENDING):
-            raise InvalidEntityStateException(text="Cannot upgrade devices in current subscription state")
-
+    def upgrade_devices(self, new_device_count: int) -> None:
         self.device_count = new_device_count
 
-    def change_region(self, new_region: Region):
-        if self.status in (SubscriptionStatus.EXPIRED, SubscriptionStatus.PENDING):
-            raise InvalidEntityStateException(text="Cannot change region in current subscription state")
-
+    def change_region(self, new_region: Region) -> None:
         self.region = new_region
 
     def renew(self, duration: int):
         if self.status  == SubscriptionStatus.PENDING:
-            raise InvalidEntityStateException(text="Cannot renew a pending subscription")
+            raise SubscriptionPendingException(subscription_id=self.id.as_generic_type())
 
         if replace(self.end_date) < now_utc():
             self.start_date = now_utc()

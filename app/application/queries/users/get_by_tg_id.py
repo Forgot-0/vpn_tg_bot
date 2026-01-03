@@ -20,3 +20,4 @@ class GetUserByTgIdQueryHandler(BaseQueryHandler[GetUserByTgIdQuery, UserJWTData
        if user is None:
            raise NotFoundException()
        return UserJWTData.create_from_user(user)
+
