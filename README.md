@@ -4,7 +4,7 @@
 
 Проект построен по принципам Domain-Driven Design (DDD) и Command Query Responsibility Segregation (CQRS), что обеспечивает чистую, масштабируемую и поддерживаемую архитектуру.
 
-Пощупать бота можна [@forgot_vpn_bot](https://t.me/forgot_vpn_bot) (Бот не работает так как продажа vpn услуг в россии запрещена )
+Пощупать бота можна [@forgot_vpn_bot](https://t.me/forgot_vpn_bot)
 
 ## О проекте
 
