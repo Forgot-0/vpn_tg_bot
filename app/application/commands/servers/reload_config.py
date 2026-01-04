@@ -7,8 +7,9 @@ from app.application.dtos.users.jwt import UserJWTData
 from app.application.exception import ForbiddenException
 from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.repositories.servers import BaseServerRepository
+from app.domain.services.ports import BaseApiClient
 from app.domain.values.users import UserRole
-from app.infrastructure.api_client.factory import ApiClientFactory
+from app.infrastructure.api_client.router import ApiClientRouter
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ class ReloadServerConfigCommand(BaseCommand):
 @dataclass(frozen=True)
 class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigCommand, None]):
     server_repository: BaseServerRepository
-    api_panel_factory: ApiClientFactory
+    api_panel: BaseApiClient
     role_access_control: RoleAccessControl
 
     async def handle(self, command: ReloadServerConfigCommand) -> None:
@@ -36,9 +37,7 @@ class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigComm
         if server is None:
             raise
 
-        api_panel = self.api_panel_factory.get(server.api_type)
-
-        protocol_configs = await api_panel.get_configs(server=server)
+        protocol_configs = await self.api_panel.get_configs(server=server)
         server.protocol_configs.clear()
         for cnf in protocol_configs:
             server.add_protocol_config(cnf)

@@ -1,7 +1,5 @@
 import logging
 
-from aiogram.types.web_app_info import WebAppInfo
-from aiogram.types.menu_button_web_app import MenuButtonWebApp
 from dishka.integrations.aiogram import setup_dishka as aiogram_setup_dishka
 from dishka.integrations.fastapi import setup_dishka as fast_setup_dishka
 from fastapi import FastAPI
@@ -30,15 +28,6 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await bot.set_chat_menu_button(
-        chat_id=app_settings.BOT_OWNER_ID,
-        menu_button=MenuButtonWebApp(
-            text="WebApp",
-            web_app=WebAppInfo(
-                url=app_settings.WEB_APP_URL or "https://youtube.com"
-            )
-        )
-    )
     await dp.emit_startup(bot=bot, dispatcher=dp)
     await init_data(app.state.dishka_container)
     yield

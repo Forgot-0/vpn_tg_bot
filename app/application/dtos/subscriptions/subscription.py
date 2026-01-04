@@ -54,4 +54,3 @@ class SubscriptionDTO(BaseDTO):
             protocol_types=entity.protocol_types
         )
 
-

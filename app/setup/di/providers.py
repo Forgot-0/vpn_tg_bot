@@ -11,10 +11,11 @@ from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
+from app.domain.services.ports import BaseApiClient
 from app.domain.services.servers import SecureService
 from app.domain.services.subscription import SubscriptionPricingService
 from app.domain.values.servers import ApiType, ProtocolType, Region
-from app.infrastructure.api_client.factory import ApiClientFactory
+from app.infrastructure.api_client.router import ApiClientRouter
 from app.infrastructure.api_client.x_ui.aclient import A3xUiApiClient
 from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 from app.infrastructure.builders_params.vless.x_ui.builder import Vless3XUIProtocolBuilder
@@ -95,10 +96,10 @@ class ApplicationProvider(Provider):
         return factory_builder
 
     @provide(scope=Scope.APP)
-    def client_factory(self, protocol_factory: ProtocolBuilderFactory, secure: SecureService) -> ApiClientFactory:
-        factory_client = ApiClientFactory()
-        factory_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=protocol_factory, secure_service=secure))
-        return factory_client
+    def client_factory(self, protocol_factory: ProtocolBuilderFactory, secure: SecureService) -> BaseApiClient:
+        router_client = ApiClientRouter()
+        router_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=protocol_factory, secure_service=secure))
+        return router_client
 
     @provide(scope=Scope.APP)
     def payment_service(self) -> BasePaymentService:

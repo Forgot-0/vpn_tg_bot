@@ -7,10 +7,11 @@ from app.application.dtos.users.jwt import UserJWTData
 from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.entities.server import Server
 from app.domain.repositories.servers import BaseServerRepository
+from app.domain.services.ports import BaseApiClient
 from app.domain.services.servers import SecureService
 from app.domain.values.servers import APIConfig, APICredits, ApiType, Region
 from app.domain.values.users import UserRole
-from app.infrastructure.api_client.factory import ApiClientFactory
+from app.infrastructure.api_client.router import ApiClientRouter
 from app.application.exception import ForbiddenException
 
 
@@ -38,7 +39,7 @@ class CreateServerCommand(BaseCommand):
 @dataclass(frozen=True)
 class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
     server_repository: BaseServerRepository
-    api_panel_factory: ApiClientFactory
+    api_panel: BaseApiClient
     secure_service: SecureService
     role_access_control: RoleAccessControl
 
@@ -49,7 +50,6 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
             raise ForbiddenException()
 
         api_type = ApiType(command.api_type)
-        api_panel = self.api_panel_factory.get(api_type)
 
         encrypt_creadits = APICredits(
             username=self.secure_service.encrypt(command.username),
@@ -70,7 +70,7 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
             )
         )
 
-        protocol_configs = await api_panel.get_configs(server=server)
+        protocol_configs = await self.api_panel.get_configs(server=server)
         for cnf in protocol_configs:
             server.add_protocol_config(cnf)
 

@@ -1,7 +1,11 @@
 import logging
+
+
 from aiogram import Bot, Dispatcher
 from aiogram.filters.exception import ExceptionTypeFilter
 from aiogram.types import ErrorEvent
+from aiogram.types.web_app_info import WebAppInfo
+from aiogram.types.menu_button_web_app import MenuButtonWebApp
 from aiogram.fsm.storage.redis import RedisStorage
 from redis.asyncio.client import Redis
 
@@ -18,6 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 async def startup_bot(bot: Bot) -> None:
+    await bot.set_chat_menu_button(
+        menu_button=MenuButtonWebApp(
+            text="WebApp",
+            web_app=WebAppInfo(
+                url=app_settings.WEB_APP_URL or "https://youtube.com"
+            )
+        )
+    )
     if (await bot.get_webhook_info()).url != app_settings.webhook_url:
         await bot.delete_webhook(drop_pending_updates=False)
         await bot.set_webhook(
@@ -46,7 +58,7 @@ async def handle_exception(event: ErrorEvent):
     #     await event.update.callback_query.message.answer(event.exception.message) # type: ignore
 
 def init_dispatch() -> Dispatcher:
-    dp = Dispatcher(storage=RedisStorage(Redis.from_url(app_settings.fsm_redis_url)))
+    dp = Dispatcher(storage=RedisStorage.from_url(app_settings.fsm_redis_url))
     dp.startup.register(startup_bot)
     dp.shutdown.register(shutdown_bot)
     add_middlewares(dp=dp)

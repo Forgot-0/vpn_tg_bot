@@ -7,7 +7,7 @@ from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
-from app.infrastructure.api_client.factory import ApiClientFactory
+from app.domain.services.ports import BaseApiClient
 from app.infrastructure.mediator.event import BaseEventBus
 
 
@@ -25,7 +25,7 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
     payment_repository: BasePaymentRepository
     subscription_repository: BaseSubscriptionRepository
     server_repository: BaseServerRepository
-    api_panel_factory: ApiClientFactory
+    api_panel: BaseApiClient
     event_bus: BaseEventBus
 
     async def handle(self, command: PaidPaymentCommand) -> None:
@@ -49,8 +49,7 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
 
         await self.payment_repository.update(payment=payment)
 
-        api_client = self.api_panel_factory.get(server.api_type)
-        await api_client.create_or_upgrade_subscription(
+        await self.api_panel.create_or_upgrade_subscription(
             user=user,
             subscription=payment.subscription,
             server=server
