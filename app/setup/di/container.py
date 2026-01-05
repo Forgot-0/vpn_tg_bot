@@ -1,5 +1,3 @@
-
-
 from dishka import AsyncContainer, make_async_container
 from dishka.integrations.aiogram import AiogramProvider
 from dishka.integrations.fastapi import FastapiProvider

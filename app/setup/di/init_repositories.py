@@ -1,4 +1,3 @@
-
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from app.configs.app import app_settings

@@ -21,20 +21,23 @@ class AppConfig(BaseConfig):
     DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
 
-    WEB_APP_URL: str = ""
+    PAYMENT_SECRET: str = ""
+    PAYMENT_ID: int = 0
+
+    @computed_field
+    @property
+    def web_app_url(self) -> str:
+        return f"https://{self.DOMAIN}"
 
     @computed_field
     @property
     def webhook_url(self) -> str:
-        return f"https://{self.DOMAIN}{self.TELEGRAM_WEBHOOK_PATH}"
-
-    PAYMENT_SECRET: str = ""
-    PAYMENT_ID: int = 0
+        return f"https://api.{self.DOMAIN}{self.TELEGRAM_WEBHOOK_PATH}"
 
     APP_PORT: int = 8080
     APP_HOST: str = "0.0.0.0"
 
-    DATABASE_DB: str = ""
+    DATABASE_DB: str = "main"
     DATABASE_USERNAME: str = ""
     DATABASE_PASSWORD: str = ""
     DATABASE_PORT: int = 27017
@@ -57,7 +60,6 @@ class AppConfig(BaseConfig):
     JSON_LOG: bool = True
     PATH_LOG: str | None = ".logs/logs.log"
     LOG_HANDLERS: Annotated[list[Literal['stream', 'file']] | str, BeforeValidator(BaseConfig.parse_list)] = ['stream']
-
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 60

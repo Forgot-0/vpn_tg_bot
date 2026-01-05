@@ -16,6 +16,7 @@ def convert_subscription_entity_to_document(subscription: Subscription) -> dict[
             "region": subscription.region.code,
             "user_id":subscription.user_id.value,
             "status": subscription.status.value,
+            "end_date": subscription.end_date,
             "protocol_types": [pt.value for pt in subscription.protocol_types],
         }
 

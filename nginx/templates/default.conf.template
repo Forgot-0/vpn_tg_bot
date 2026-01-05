@@ -15,7 +15,7 @@ http {
 
     server {
         listen 80;
-        server_name api.windoweropu.store windoweropu.store;
+        server_name ${DOMAIN} api.${DOMAIN};
 
         location /.well-known/acme-challenge/ {
             root /var/www/certbot;
@@ -29,10 +29,10 @@ http {
 
     server {
         listen 443 ssl;
-        server_name api.windoweropu.store;
+        server_name api.${DOMAIN};
 
-        ssl_certificate /etc/letsencrypt/live/api.windoweropu.store/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/api.windoweropu.store/privkey.pem;
+        ssl_certificate /etc/letsencrypt/live/api.${DOMAIN}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/api.${DOMAIN}/privkey.pem;
 
         location / {
             proxy_pass http://backend;
@@ -49,10 +49,10 @@ http {
 
     server {
         listen 443 ssl;
-        server_name windoweropu.store;
+        server_name ${DOMAIN};
 
-        ssl_certificate /etc/letsencrypt/live/windoweropu.store/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/windoweropu.store/privkey.pem;
+        ssl_certificate /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
 
         root /var/www/frontend;
         index index.html;

@@ -24,9 +24,9 @@ logger = logging.getLogger(__name__)
 async def startup_bot(bot: Bot) -> None:
     await bot.set_chat_menu_button(
         menu_button=MenuButtonWebApp(
-            text="WebApp",
+            text="🖥 Web",
             web_app=WebAppInfo(
-                url=app_settings.WEB_APP_URL or "https://youtube.com"
+                url=app_settings.web_app_url
             )
         )
     )

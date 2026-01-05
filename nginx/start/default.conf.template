@@ -11,7 +11,7 @@ http {
 
     server {
         listen 80;
-        server_name api.windoweropu.store windoweropu.store;
+        server_name api.${DOMAIN} ${DOMAIN};
 
         location /.well-known/acme-challenge/ {
             root /var/www/certbot;

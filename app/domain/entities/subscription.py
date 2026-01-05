@@ -55,7 +55,7 @@ class Subscription(AggregateRoot):
 
     @property
     def end_date(self) -> datetime:
-        return self.start_date + timedelta(days=self.duration)
+        return replace(self.start_date + timedelta(days=self.duration))
 
     def is_active(self) -> bool:
         return now_utc() < replace(self.end_date)

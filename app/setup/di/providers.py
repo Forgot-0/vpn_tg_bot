@@ -26,7 +26,6 @@ from app.infrastructure.mediator.mediator import DishkaMediator
 from app.infrastructure.mediator.queries import QueryRegistry
 from app.application.services.payment import BasePaymentService
 from app.infrastructure.notifications.telegram import TelegramNotificationSevice
-from app.infrastructure.payments.test import TestPaymentService
 from app.setup.di.init_payment import inti_yookass
 from app.setup.di.init_repositories import (
     init_mongo_payment_repository,
@@ -82,10 +81,12 @@ class ApplicationProvider(Provider):
             daily_rate=2,
             device_rate_multiplier=0.5,
             region_multipliers={
-                Region("🇳🇱", "Нидерланды", "NL"): 1.0,
+                Region.region_by_code("NL"): 1.0,
             },
             protocol_multipliers={
-                ProtocolType.VLESS: 0.15
+                ProtocolType.VLESS: 0.15,
+                ProtocolType.TROJAN: 0.15,
+                ProtocolType.SS: 0.15,
             }
         )
 
