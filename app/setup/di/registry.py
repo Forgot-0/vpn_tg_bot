@@ -6,8 +6,11 @@ from app.application.commands.payment.paid import PaidPaymentCommand, PaidPaymen
 from app.application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
 from app.application.commands.servers.delete import DeleteServerCommand, DeleteServerCommandHandler
 from app.application.commands.servers.reload_config import ReloadServerConfigCommand, ReloadServerConfigCommandHandler
+from app.application.commands.subscriptions.add_protocol_price import AddProtocolProceCommand, AddProtocolProceCommandHandler
+from app.application.commands.subscriptions.add_region_price import AddRegionProceCommand, AddRegionProceCommandHandler
 from app.application.commands.subscriptions.create import CreateSubscriptionCommand, CreateSubscriptionCommandHandler
 from app.application.commands.subscriptions.renew import RenewSubscriptionCommand, RenewSubscriptionCommandHandler
+from app.application.commands.subscriptions.update_price import UpdatePriceConfigCommand, UpdatePriceConfigCommandHandler
 from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
 from app.application.events.server.decrement_free import DecrementFreeServerEventHandler
 from app.application.queries.payments.get_by_id import GetByIDPaymentQuery, GetByIDPaymentQueryHandler
@@ -20,6 +23,7 @@ from app.application.queries.subscription.get_by_user import GetSubscriptionsUse
 from app.application.queries.subscription.get_config import GetConfigQuery, GetConfigQueryHandler
 from app.application.queries.subscription.get_list import GetListSubscriptionsQuery, GetListSubscriptionsQueryHandler
 from app.application.queries.subscription.get_price import GetPriceSubscriptionQuery, GetPriceSubscriptionQueryHandler
+from app.application.queries.subscription.get_price_config import GetPriceConfigQuery, GetPriceConfigQueryHandler
 from app.application.queries.tokens.verify import VerifyTokenQuery, VerifyTokenQueryHandler
 from app.application.queries.users.get_by_id import GetByIdUserQuery, GetByIdUserQueryHandler
 from app.application.queries.users.get_by_tg_id import GetUserByTgIdQuery, GetUserByTgIdQueryHandler
@@ -54,6 +58,11 @@ class MediatorProvider(Provider):
     get_subscription_by_id_hanler = provide(GetSubscriptionByIdQueryHandler, scope=Scope.APP)
     get_config_handler = provide(GetConfigQueryHandler, scope=Scope.APP)
 
+    update_price = provide(UpdatePriceConfigCommandHandler, scope=Scope.APP)
+    add_protocol_price = provide(AddProtocolProceCommandHandler, scope=Scope.APP)
+    add_region_price = provide(AddRegionProceCommandHandler, scope=Scope.APP)
+    get_prcie_config = provide(GetPriceConfigQueryHandler, scope=Scope.APP)
+
     decrement_server_handler = provide(DecrementFreeServerEventHandler, scope=Scope.APP)
     create_server_handler = provide(CreateServerCommandHandler, scope=Scope.APP)
     delete_server_handler = provide(DeleteServerCommandHandler, scope=Scope.APP)
@@ -87,6 +96,16 @@ class MediatorProvider(Provider):
         )
 
         command_maps.register_command(
+            UpdatePriceConfigCommand, [UpdatePriceConfigCommandHandler]
+        )
+        command_maps.register_command(
+            AddProtocolProceCommand, [AddProtocolProceCommandHandler]
+        )
+        command_maps.register_command(
+            AddRegionProceCommand, [AddRegionProceCommandHandler]
+        )
+
+        command_maps.register_command(
             CreateServerCommand, [CreateServerCommandHandler]
         )
         command_maps.register_command(
@@ -111,9 +130,12 @@ class MediatorProvider(Provider):
         query_maps.register_query(
             GetSubscriptionsUserQuery, GetSubscriptionsUserQueryHandler
         )
-
         query_maps.register_query(
             GetSubscriptionByIdQuery, GetSubscriptionByIdQueryHandler
+        )
+
+        query_maps.register_query(
+            GetPriceConfigQuery, GetPriceConfigQueryHandler
         )
 
         query_maps.register_query(

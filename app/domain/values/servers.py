@@ -60,6 +60,9 @@ class Region:
     @classmethod
     def region_by_code(cls, code: str) -> "Region":
         key = code.strip().upper()
+        if key not in cls._REGIONS:
+            raise
+
         return cls._REGIONS[key]
 
 
