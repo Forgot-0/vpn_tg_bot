@@ -62,7 +62,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
         payment = Payment.create(
             subscription=subscription,
             user_id=UserId(UUID(command.user_jwt_data.id)),
-            price=self.subs_price_service.calculate(subscription)
+            price= await self.subs_price_service.calculate(subscription)
         )
 
         payment_data = await self.payment_service.create(order=payment)

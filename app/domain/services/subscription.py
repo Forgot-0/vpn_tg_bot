@@ -1,28 +1,26 @@
 from dataclasses import dataclass
+
 from app.domain.entities.subscription import Subscription
-from app.domain.values.servers import ProtocolType, Region
+from app.domain.repositories.price import BasePriceRepository
+
 
 
 @dataclass
 class SubscriptionPricingService:
+    price_repository: BasePriceRepository
 
-    daily_rate: float
-    device_rate_multiplier: float
-    region_multipliers: dict[Region, float]
-    protocol_multipliers: dict[ProtocolType, float]
+    async def calculate(self, subscription: Subscription) -> float:
+        cfg = await self.price_repository.get_price_config()
 
-    def calculate(self, subscription: Subscription) -> float:
-        if not subscription.is_active():
-            return 0
-        base_cost = self.daily_rate * subscription.duration
+        base_cost = cfg.daily_rate * subscription.duration
 
-        devices_cost = base_cost * subscription.device_count * self.device_rate_multiplier
+        devices_cost = base_cost * subscription.device_count * cfg.device_rate_multiplier
 
-        region_coef = self.region_multipliers.get(subscription.region, 1.0)
+        region_coef = cfg.region_multipliers.get(subscription.region, cfg.region_base_multiplier)
         region_cost = base_cost * (region_coef - 1)
 
         protocols_cost = sum(
-            base_cost * self.protocol_multipliers.get(protocol, 0.15)
+            base_cost * cfg.protocol_multipliers.get(protocol, cfg.protocol_base_multiplier)
             for protocol in subscription.protocol_types
         )
 

@@ -7,7 +7,9 @@ from app.application.services.jwt_manager import JWTManager
 from app.application.services.notifications import NotificationSevice
 from app.application.services.role_hierarchy import RoleAccessControl
 from app.configs.app import app_settings
+from app.domain.entities.price import PriceConfig
 from app.domain.repositories.payment import BasePaymentRepository
+from app.domain.repositories.price import BasePriceRepository
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
@@ -29,6 +31,7 @@ from app.infrastructure.notifications.telegram import TelegramNotificationSevice
 from app.setup.di.init_payment import inti_yookass
 from app.setup.di.init_repositories import (
     init_mongo_payment_repository,
+    init_mongo_price_repository,
     init_mongo_server_repository,
     init_mongo_subscription_repository,
     init_mongo_user_repository
@@ -72,22 +75,34 @@ class ApplicationProvider(Provider):
         return init_mongo_server_repository(client)
 
     @provide(scope=Scope.APP)
-    def secure_service(self) -> SecureService:
-        return SecureService(Fernet(app_settings.SECRET))
-
-    @provide(scope=Scope.APP)
-    def subscription_service(self) -> SubscriptionPricingService:
-        return SubscriptionPricingService(
+    async def price_repositpry(self, client: AsyncIOMotorClient) -> BasePriceRepository:
+        cfg = PriceConfig(
             daily_rate=2,
             device_rate_multiplier=0.5,
+            region_base_multiplier=1.0,
             region_multipliers={
                 Region.region_by_code("NL"): 1.0,
             },
+            protocol_base_multiplier=0.15,
             protocol_multipliers={
                 ProtocolType.VLESS: 0.15,
                 ProtocolType.TROJAN: 0.15,
                 ProtocolType.SS: 0.15,
             }
+        )
+        return await init_mongo_price_repository(
+            client=client,
+            cfg=cfg
+        )
+
+    @provide(scope=Scope.APP)
+    def secure_service(self) -> SecureService:
+        return SecureService(Fernet(app_settings.SECRET))
+
+    @provide(scope=Scope.APP)
+    def subscription_service(self, repo: BasePriceRepository) -> SubscriptionPricingService:
+        return SubscriptionPricingService(
+            price_repository=repo
         )
 
     @provide(scope=Scope.APP)

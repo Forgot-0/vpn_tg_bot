@@ -32,6 +32,8 @@ class AppConfig(BaseConfig):
     @computed_field
     @property
     def webhook_url(self) -> str:
+        if self.ENVIRONMENT in ["local", "testing"]:
+            return f"https://{self.DOMAIN}{self.TELEGRAM_WEBHOOK_PATH}"
         return f"https://api.{self.DOMAIN}{self.TELEGRAM_WEBHOOK_PATH}"
 
     APP_PORT: int = 8080
