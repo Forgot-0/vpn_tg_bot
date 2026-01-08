@@ -1,6 +1,6 @@
-
+resolver 127.0.0.11 valid=30s;
 upstream backend {
-    server app:8080;
+    server app:8080 resolve;
 }
 
 server {
