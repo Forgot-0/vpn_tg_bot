@@ -65,6 +65,6 @@ class PriceRepository(BaseMongoDBRepository, BasePriceRepository):
 
     async def update(self, cfg: PriceConfig) -> None:
         self.cfg = cfg
-        await self._collection.update_one(
-            {"_id": 1}, update=convert_price_entity_to_document(cfg)
+        await self._collection.replace_one(
+            {"_id": 1}, replacement=convert_price_entity_to_document(cfg)
         )
