@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.dtos.users.jwt import UserJWTData
@@ -9,6 +10,8 @@ from app.domain.repositories.price import BasePriceRepository
 from app.domain.values.servers import ProtocolType, Region
 from app.domain.values.users import UserRole
 
+
+logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class UpdatePriceConfigCommand(BaseCommand):
@@ -49,3 +52,10 @@ class UpdatePriceConfigCommandHandler(BaseCommandHandler[UpdatePriceConfigComman
         )
 
         await self.price_repository.update(cfg=cfg)
+        logger.info(
+            "Update price config",
+            extra={
+                "user_by": command.user_jwt_data.id,
+                "new_cfg": cfg
+            }
+        )

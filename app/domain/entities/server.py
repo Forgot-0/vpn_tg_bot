@@ -49,3 +49,9 @@ class Server(AggregateRoot):
         if config.protocol_type in self.protocol_configs:
             raise AlreadyExistProtocolException(protocol_type=config.protocol_type.value)
         self.protocol_configs[config.protocol_type] = config
+
+    def set_domain(self, domain: str) -> None:
+        self.api_config.set_domain(domain)
+
+    def set_subscription_url(self, subscription_url: str) -> None:
+        self.api_config.set_subscription_url(subscription_url)

@@ -16,6 +16,7 @@ class UserId(BaseValueObject[UUID]):
 
 
 class UserRole(StrEnum):
+    OWNER = "owner"
     SUPER_ADMIN = "super_admin"
     ADMIN = "admin"
     USER = "user"

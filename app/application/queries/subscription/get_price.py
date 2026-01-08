@@ -29,4 +29,4 @@ class GetPriceSubscriptionQueryHandler(BaseQueryHandler[GetPriceSubscriptionQuer
             server_id=uuid4(),
             region=Region("🇳🇱", "Нидерланды", "NL")
         )
-        return self.subs_price_service.calculate(subs)
+        return await self.subs_price_service.calculate(subs)

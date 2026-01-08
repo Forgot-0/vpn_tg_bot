@@ -26,7 +26,7 @@ async def create_server(
     api_type: ApiType,
     server_request: CreateServerRequest,
     mediator: FromDishka[BaseMediator],
-    user_jwt_data: CurrentAdminJWTData
+    # user_jwt_data: CurrentAdminJWTData
 ) -> None:
 
     panel_path = server_request.panel_path
@@ -48,7 +48,7 @@ async def create_server(
             panel_path=panel_path,
             panel_port=server_request.panel_port,
             domain=server_request.domain,
-            user_jwt_data=user_jwt_data
+            # user_jwt_data=user_jwt_data
         )
     )
 

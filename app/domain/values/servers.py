@@ -19,13 +19,20 @@ class ApiType(Enum):
     x_ui = "3X-UI"
 
 
-@dataclass(frozen=True)
+@dataclass
 class APIConfig:
     ip: str
     panel_port: int
     panel_path: str
 
     domain: str | None = field(default=None)
+    subscription_url: str | None = field(default=None)
+
+    def set_domain(self, domain: str) -> None:
+        self.domain = domain
+
+    def set_subscription_url(self, subscription_url) -> None:
+        self.subscription_url = subscription_url
 
 
 @dataclass(frozen=True)

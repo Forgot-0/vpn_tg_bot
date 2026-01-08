@@ -21,6 +21,7 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
                     {
                         "id": subscription.id.as_generic_type(),
                         "flow": "xtls-rprx-vision",
+                        "subId": subscription.id.as_generic_type(),
                         "email": subscription.id.as_generic_type(),
                         "expiryTime": int(subscription.end_date.timestamp()*1000),
                         "limitIp": subscription.device_count,
@@ -32,6 +33,12 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
         }
 
     def builde_config_vpn(self, user: User, subscription: Subscription, server: Server) -> VPNConfig:
+        if server.api_config.subscription_url is not None:
+            return VPNConfig(
+                protocol_type=self.protocol_type,
+                config=f"{server.api_config.subscription_url}{subscription.id.as_generic_type()}"
+            )
+
         config = server.get_config_by_protocol(self.protocol_type).config
         return VPNConfig(
             protocol_type=self.protocol_type,

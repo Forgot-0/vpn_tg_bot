@@ -16,10 +16,10 @@ async def init_data(container: AsyncContainer):
     if user is None:
         user = User.create(
             telegram_id=app_settings.BOT_OWNER_ID,
-            username="SUPER_ADMIN",
-            fullname="SUPER_ADMIN",
+            username="OWNER",
+            fullname="OWNER",
         )
 
-        user.role = UserRole.SUPER_ADMIN
+        user.role = UserRole.OWNER
         await user_repository.create(user)
 

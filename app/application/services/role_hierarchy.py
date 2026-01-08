@@ -6,6 +6,7 @@ from app.domain.values.users import UserRole
 
 
 SUBORDINATE_ROLES: Final[Mapping[UserRole, set[UserRole]]] = {
+    UserRole.OWNER: {UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.USER},
     UserRole.SUPER_ADMIN: {UserRole.ADMIN, UserRole.USER},
     UserRole.ADMIN: {UserRole.USER},
     UserRole.USER: set(),

@@ -4,6 +4,7 @@ from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Query, status
 
+from app.application.commands.users.change_role_user import ChangeRoleUserCommand
 from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.application.dtos.users.base import UserDTO
@@ -11,6 +12,7 @@ from app.application.queries.subscription.get_by_user import GetSubscriptionsUse
 from app.application.queries.users.get_by_id import GetByIdUserQuery
 from app.application.queries.users.get_list import GetListUserQuery
 from app.application.queries.users.get_me import GetMeUserQuery
+from app.domain.values.users import UserRole
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.deps import CurrentAdminJWTData, CurrentUserJWTData
 from app.presentation.routers.v1.users.requests import GetUsersRequest
@@ -90,3 +92,20 @@ async def get_user_subscriptions(
     )
 
 
+@router.post(
+    "/{user_id}/change_role/{role}",
+    status_code=status.HTTP_200_OK
+)
+async def change_role(
+    user_id: UUID,
+    role: UserRole,
+    user_jwt_data: CurrentUserJWTData,
+    mediator: FromDishka[BaseMediator],
+) -> None:
+    await mediator.handle_command(
+        ChangeRoleUserCommand(
+            user_jwt_data=user_jwt_data,
+            user_to=user_id,
+            role=role
+        )
+    )

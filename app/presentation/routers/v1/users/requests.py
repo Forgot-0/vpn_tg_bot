@@ -1,9 +1,11 @@
 from datetime import datetime
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
 from app.domain.filters.pagination import Pagination
 from app.domain.filters.user import UserFilter
+from app.domain.values.users import UserRole
 from app.presentation.schemas.filters import FilterMapper
 
 
@@ -50,3 +52,8 @@ class GetUsersRequest(BaseModel):
             user_filter.add_sort(sort_field.field, sort_field.direction)
 
         return user_filter
+
+
+class ChangeRoleUserRequest(BaseModel):
+    user_to: UUID
+    role: UserRole

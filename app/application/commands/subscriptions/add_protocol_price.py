@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import logging
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.dtos.users.jwt import UserJWTData
@@ -9,8 +10,11 @@ from app.domain.values.servers import ProtocolType
 from app.domain.values.users import UserRole
 
 
+logger = logging.getLogger(__name__)
+
+
 @dataclass(frozen=True)
-class AddProtocolProceCommand(BaseCommand):
+class AddProtocolPriceCommand(BaseCommand):
     protocol: str
     coef: float
 
@@ -18,11 +22,11 @@ class AddProtocolProceCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class AddProtocolProceCommandHandler(BaseCommandHandler[AddProtocolProceCommand, None]):
+class AddProtocolPriceCommandHandler(BaseCommandHandler[AddProtocolPriceCommand, None]):
     price_repository: BasePriceRepository
     role_access_control: RoleAccessControl
 
-    async def handle(self, command: AddProtocolProceCommand) -> None:
+    async def handle(self, command: AddProtocolPriceCommand) -> None:
         if not self.role_access_control.can_action(
             UserRole(command.user_jwt_data.role), target_role=UserRole.ADMIN
         ):
@@ -31,4 +35,12 @@ class AddProtocolProceCommandHandler(BaseCommandHandler[AddProtocolProceCommand,
         await self.price_repository.add_protocol(
             protocol=ProtocolType(command.protocol),
             coef=command.coef
+        )
+        logger.info(
+            "Add protocol to price config",
+            extra={
+                "user_by": command.user_jwt_data.id,
+                "protocol": command.protocol,
+                "coef": command.coef
+            }
         )

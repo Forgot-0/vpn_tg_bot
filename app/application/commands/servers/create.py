@@ -33,7 +33,7 @@ class CreateServerCommand(BaseCommand):
     password: str
     twoFactorCode: str | None = field(default=None, kw_only=True)
 
-    user_jwt_data: UserJWTData
+    # user_jwt_data: UserJWTData
 
 
 @dataclass(frozen=True)
@@ -44,10 +44,10 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
     role_access_control: RoleAccessControl
 
     async def handle(self, command: CreateServerCommand) -> None:
-        if not self.role_access_control.can_action(
-            UserRole(command.user_jwt_data.role), target_role=UserRole.ADMIN
-        ):
-            raise ForbiddenException()
+        # if not self.role_access_control.can_action(
+        #     UserRole(command.user_jwt_data.role), target_role=UserRole.ADMIN
+        # ):
+        #     raise ForbiddenException()
 
         api_type = ApiType(command.api_type)
 
@@ -80,6 +80,6 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
                 "server_id": server.id,
                 "region_code": server.region.code,
                 "protocols": [protocol.value for  protocol in server.protocol_configs.keys()],
-                "user_id": command.user_jwt_data.id
+                # "user_id": command.user_jwt_data.id
                 }
         )
