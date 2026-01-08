@@ -1,7 +1,4 @@
 
-sendfile        on;
-server_tokens off;
-
 upstream backend {
     server app:8080;
 }

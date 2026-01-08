@@ -21,8 +21,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      # - ./nginx/start/:/etc/nginx/templates/:ro
-      - ./nginx/templates/:/etc/nginx/templates/:ro
+      # - ./nginx/start/:/etc/nginx/templates/
+      - ./nginx/templates/:/etc/nginx/templates/
       - ./nginx/ssl:/etc/letsencrypt
       - ./nginx/www:/var/www/certbot
       - frontend_dist:/var/www/frontend
