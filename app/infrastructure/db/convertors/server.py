@@ -2,7 +2,7 @@ from dataclasses import asdict
 from typing import Any
 
 from app.domain.entities.server import ProtocolConfig, Server
-from app.domain.values.servers import APIConfig, APICredits, ApiType, ProtocolType, Region
+from app.domain.values.servers import APIConfig, APICredits, ApiType, ProtocolType, Region, SubscriptionConfig
 
 
 def convert_server_entity_to_document(server: Server) -> dict[str, Any]:
@@ -24,7 +24,11 @@ def convert_server_entity_to_document(server: Server) -> dict[str, Any]:
                 "protocol_type": config.protocol_type.value
             }
             for protocol, config in server.protocol_configs.items()
-        }
+        },
+        "subscription_config": (
+            asdict(server.subscription_config)
+            if server.subscription_config else None
+        )
     }
 
 def convert_server_document_to_entity(data: dict[str, Any]) -> Server:
@@ -42,5 +46,8 @@ def convert_server_document_to_entity(data: dict[str, Any]) -> Server:
                 protocol_type=ProtocolType(key)
             )
             for key, value in data.get("protocol_configs", {}).items()
-        }
+        },
+        subscription_config=SubscriptionConfig(
+            **data['subscription_config']
+        ) if data['subscription_config'] else None
     )

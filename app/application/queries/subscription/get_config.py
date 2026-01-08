@@ -10,10 +10,10 @@ from app.domain.entities.subscription import SubscriptionStatus
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
+from app.domain.services.ports import BaseApiClient
 from app.domain.values.servers import VPNConfig
 from app.domain.values.subscriptions import SubscriptionId
 from app.domain.values.users import UserId, UserRole
-from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, list[VPNConfig]]):
     subscription_repository: BaseSubscriptionRepository
     user_repositry: BaseUserRepository
     server_reposiotry: BaseServerRepository
-    builder_factory: ProtocolBuilderFactory
+    api_panel: BaseApiClient
     role_access_control: RoleAccessControl
 
     async def handle(self, query: GetConfigQuery) -> list[VPNConfig]:
@@ -53,15 +53,9 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, list[VPNConfig]]):
         if not user or not server:
             raise NotFoundException()
 
-        configs: list[VPNConfig] = []
-        if server.api_config.subscription_url is not None:
-            builder = self.builder_factory.get(server.api_type, subscription.protocol_types[0])
-            configs.append(builder.builde_config_vpn(user, subscription, server))
-
-        else:
-            for protocol in subscription.protocol_types:
-                builder = self.builder_factory.get(server.api_type, protocol)
-                configs.append(builder.builde_config_vpn(user, subscription, server))
+        configs: list[VPNConfig] = await self.api_panel.get_configs_vpn(
+            user, subscription, server
+        )
 
         logger.debug(
             "Get config subscription",

@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 import logging
-from typing import Any
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.dtos.users.jwt import UserJWTData
@@ -11,7 +10,6 @@ from app.domain.services.ports import BaseApiClient
 from app.domain.services.servers import SecureService
 from app.domain.values.servers import APIConfig, APICredits, ApiType, Region
 from app.domain.values.users import UserRole
-from app.infrastructure.api_client.router import ApiClientRouter
 from app.application.exception import ForbiddenException
 
 
@@ -70,8 +68,12 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
             )
         )
 
-        protocol_configs = await self.api_panel.get_configs(server=server)
+        protocol_configs = await self.api_panel.get_protocols(server=server)
         server.set_new_config(protocol_configs)
+
+        subscription_cfg = await self.api_panel.get_subscription_info(server)
+        if subscription_cfg is not None:
+            server.set_new_subscription_config(subscription_cfg)
 
         await self.server_repository.create(server=server)
         logger.info(

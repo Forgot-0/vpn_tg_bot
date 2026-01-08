@@ -1,4 +1,4 @@
-from typing import Annotated, ClassVar, Literal
+from typing import Annotated, Literal
 from pydantic import BeforeValidator, computed_field
 from app.configs.base import BaseConfig
 

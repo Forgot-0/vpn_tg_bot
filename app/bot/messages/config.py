@@ -37,7 +37,6 @@ class ConfigMessage(BaseMediaBuilder):
     def build(self, configs: list[VPNConfig]) -> dict[str, Any]:
         content = super().build()
         for cfg in configs:
-            content['media'].caption += f"{cfg.protocol_type.value.capitalize()}: "
             content['media'].caption += f"```{cfg.config}```"
             content['media'].parse_mode = "MarkdownV2"
 

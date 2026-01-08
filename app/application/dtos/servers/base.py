@@ -5,7 +5,7 @@ from uuid import UUID
 
 from app.application.dtos.base import BaseDTO
 from app.domain.entities.server import Server
-from app.domain.values.servers import ProtocolConfig, ProtocolType
+from app.domain.values.servers import ProtocolConfig, ProtocolType, SubscriptionConfig
 
 
 
@@ -31,7 +31,6 @@ class ServerDTO(BaseDTO):
 
     protocol_configs: list[str]
 
-
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ServerDTO":
         ...
@@ -50,7 +49,7 @@ class ServerDTO(BaseDTO):
             panel_port=entity.api_config.panel_port,
             panel_path=entity.api_config.panel_path,
             domain=entity.api_config.domain,
-            protocol_configs=[protocol.value for protocol in entity.protocol_configs]
+            protocol_configs=[protocol.value for protocol in entity.protocol_configs],
         )
 
 
@@ -74,6 +73,7 @@ class ServerDetailDTO(BaseDTO):
     domain: str | None
 
     protocol_configs: dict[str, dict[str, Any]]
+    subscription_config: SubscriptionConfig | None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ServerDetailDTO":
@@ -96,5 +96,6 @@ class ServerDetailDTO(BaseDTO):
             protocol_configs={
                 protocol:entity.protocol_configs[protocol].config 
                 for protocol in entity.protocol_configs
-            }
+            },
+            subscription_config=entity.subscription_config
         )

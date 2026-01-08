@@ -8,7 +8,7 @@ from app.domain.entities.subscription import Subscription
 from app.domain.entities.user import User
 from app.domain.services.ports import BaseApiClient
 from app.domain.services.servers import SecureService
-from app.domain.values.servers import ProtocolConfig, ProtocolType
+from app.domain.values.servers import ProtocolConfig, ProtocolType, SubscriptionConfig, VPNConfig
 from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 from app.application.exception import ApiClientException
 
@@ -56,8 +56,8 @@ class A3xUiApiClient(BaseApiClient):
         )
         return resp_login.cookies
 
-    async def get_configs(self, server: Server)  -> list[ProtocolConfig]:
-        protocol_configs = []
+    async def get_protocols(self, server: Server)  -> list[ProtocolConfig]:
+        protocol_configs: list[ProtocolConfig] = []
 
         async with ClientSession() as session:
             auth_cookies = await self._login(session=session, server=server)
@@ -80,6 +80,11 @@ class A3xUiApiClient(BaseApiClient):
                         )
                 )
 
+            return protocol_configs
+
+    async def get_subscription_info(self, server: Server) -> SubscriptionConfig | None:
+        async with ClientSession() as session:
+            auth_cookies = await self._login(session=session, server=server)
             resp = await session.post(
                 url=self.panel_all_config(server),
                 cookies=auth_cookies
@@ -87,10 +92,17 @@ class A3xUiApiClient(BaseApiClient):
             all_config = await resp.json()
             all_config = all_config['obj']
             if all_config['subEnable'] == True:
-                subs = f"https://{server.api_config.domain}:{all_config["subPort"]}{all_config['subPath']}"
-                server.set_subscription_url(subs)
+                if server.api_config.domain is None:
+                    raise
 
-            return protocol_configs
+                cfg = SubscriptionConfig(
+                    domain=server.api_config.domain,
+                    port=all_config["subPort"],
+                    path=all_config['subPath'],
+                    url=f"https://{server.api_config.domain}:{all_config["subPort"]}{all_config['subPath']}"
+                )
+
+                return cfg
 
     async def create_or_upgrade_subscription(
             self,
@@ -149,3 +161,19 @@ class A3xUiApiClient(BaseApiClient):
                     )
 
                     resp = await resp.json()
+
+    async def get_configs_vpn(self, user: User, subscription: Subscription, server: Server) -> list[VPNConfig]:
+        configs = []
+        if server.subscription_config is not None:
+            configs.append(
+                VPNConfig(
+                    protocol_type=None,
+                    config=server.subscription_config.url+subscription.id.as_generic_type()
+                )
+            )
+        else:
+            for protocol in subscription.protocol_types:
+                builder = self.builder_factory.get(server.api_type, protocol)
+                configs.append(builder.builde_config_vpn(user, subscription, server))
+
+        return configs

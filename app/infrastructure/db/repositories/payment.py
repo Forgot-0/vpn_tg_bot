@@ -43,14 +43,12 @@ class PaymentRepository(BaseMongoDBRepository, BasePaymentRepository):
         query = MongoFilterConverter.filter_to_mongo_query(filters)
         sort = (
             MongoFilterConverter.sort_to_mongo(filters.sort_fields)
-            if filters.has_sorting()
-            else []
         )
 
         total = await self._collection.count_documents(query)
 
         cursor = self._collection.find(query)
-        if not sort:
+        if sort:
             cursor = cursor.sort(sort)
         cursor = cursor.skip(filters.pagination.offset)
         cursor = cursor.limit(filters.pagination.limit)

@@ -37,8 +37,13 @@ class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigComm
         if server is None:
             raise
 
-        protocol_configs = await self.api_panel.get_configs(server=server)
+        protocol_configs = await self.api_panel.get_protocols(server=server)
         server.set_new_config(protocol_configs)
+
+        subscription_cfg = await self.api_panel.get_subscription_info(server)
+        if subscription_cfg is not None:
+            server.set_new_subscription_config(subscription_cfg)
+
 
         logger.info(
             "Reload config server",

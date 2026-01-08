@@ -1,11 +1,18 @@
 from dataclasses import dataclass, field
-from typing import Any
 from uuid import UUID, uuid4
 
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.exception.base import AlreadyExistProtocolException, NotFoundProtocolException
-from app.domain.values.servers import APIConfig, APICredits, ApiType, ProtocolConfig, ProtocolType, Region
+from app.domain.values.servers import (
+    APIConfig,
+    APICredits,
+    ApiType,
+    ProtocolConfig,
+    ProtocolType,
+    Region,
+    SubscriptionConfig
+)
 
 
 @dataclass
@@ -20,12 +27,14 @@ class Server(AggregateRoot):
     auth_credits: APICredits
 
     protocol_configs: dict[ProtocolType, ProtocolConfig] = field(default_factory=dict)
-
+    subscription_config: SubscriptionConfig | None = field(default=None)
 
     @classmethod
     def create(cls, limit: int, region: Region, api_type: ApiType, \
             api_config: APIConfig, auth_credits: APICredits, \
-            protocol_configs: dict[ProtocolType, ProtocolConfig] | None = None) -> "Server":
+            protocol_configs: dict[ProtocolType, ProtocolConfig] | None = None, \
+            subscription_config: SubscriptionConfig | None = None
+        ) -> "Server":
 
         server =  Server(
             limit=limit,
@@ -34,7 +43,8 @@ class Server(AggregateRoot):
             api_type=api_type,
             api_config=api_config,
             auth_credits=auth_credits,
-            protocol_configs=protocol_configs if protocol_configs else dict()
+            protocol_configs=protocol_configs if protocol_configs else dict(),
+            subscription_config=subscription_config
         )
 
         return server
@@ -53,10 +63,10 @@ class Server(AggregateRoot):
     def set_domain(self, domain: str) -> None:
         self.api_config.set_domain(domain)
 
-    def set_subscription_url(self, subscription_url: str) -> None:
-        self.api_config.set_subscription_url(subscription_url)
-
     def set_new_config(self, configs: list[ProtocolConfig]) -> None:
         self.protocol_configs.clear()
         for cfg in configs:
             self.add_protocol_config(cfg)
+
+    def set_new_subscription_config(self, cfg: SubscriptionConfig) -> None:
+        self.subscription_config = cfg

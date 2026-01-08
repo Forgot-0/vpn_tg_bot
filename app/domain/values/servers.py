@@ -15,6 +15,14 @@ class ProtocolConfig:
     protocol_type: ProtocolType
 
 
+@dataclass(frozen=True)
+class SubscriptionConfig:
+    domain: str
+    port: int
+    path: str
+    url: str
+
+
 class ApiType(Enum):
     x_ui = "3X-UI"
 
@@ -26,13 +34,9 @@ class APIConfig:
     panel_path: str
 
     domain: str | None = field(default=None)
-    subscription_url: str | None = field(default=None)
 
     def set_domain(self, domain: str) -> None:
         self.domain = domain
-
-    def set_subscription_url(self, subscription_url) -> None:
-        self.subscription_url = subscription_url
 
 
 @dataclass(frozen=True)
@@ -44,9 +48,8 @@ class APICredits:
 
 @dataclass
 class VPNConfig:
-    protocol_type: ProtocolType
     config: str
-
+    protocol_type: ProtocolType | None = field(default=None)
 
 
 @dataclass(frozen=True)
