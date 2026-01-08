@@ -79,7 +79,7 @@ class A3xUiApiClient(BaseApiClient):
                         protocol_type=protocol_type
                         )
                 )
-            
+
             resp = await session.post(
                 url=self.panel_all_config(server),
                 cookies=auth_cookies

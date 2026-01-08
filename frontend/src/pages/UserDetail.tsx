@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAdmin } from '../contexts/AdminContext';
 import { apiClient } from '../services/api';
 import { Loading } from '../components/Loading';
-import { showTelegramAlert } from '../utils/telegram';
+import { showTelegramAlert, showTelegramConfirm } from '../utils/telegram';
 import type { User, Subscription } from '../types';
 
 export const UserDetailPage: React.FC = () => {
@@ -14,6 +14,7 @@ export const UserDetailPage: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingSubscriptions, setIsLoadingSubscriptions] = useState(false);
+  const [isChangingRole, setIsChangingRole] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -56,6 +57,36 @@ export const UserDetailPage: React.FC = () => {
       // Не показываем ошибку, если просто нет доступа - это нормально для не-админов
     } finally {
       setIsLoadingSubscriptions(false);
+    }
+  };
+
+  const handleChangeRole = async (newRole: string) => {
+    if (!id) return;
+
+    const roleNames: Record<string, string> = {
+      user: 'пользователь',
+      admin: 'администратор',
+      super_admin: 'супер-администратор',
+    };
+
+    const confirmed = await showTelegramConfirm(
+      `Вы уверены, что хотите изменить роль пользователя на "${roleNames[newRole] || newRole}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      setIsChangingRole(true);
+      await apiClient.changeUserRole(id, newRole);
+      showTelegramAlert('Роль пользователя успешно изменена');
+      await loadUser();
+    } catch (error: any) {
+      console.error('Failed to change user role:', error);
+      const errorMessage =
+        error.response?.data?.error?.message || 'Ошибка при изменении роли пользователя';
+      showTelegramAlert(errorMessage);
+    } finally {
+      setIsChangingRole(false);
     }
   };
 
@@ -136,7 +167,7 @@ export const UserDetailPage: React.FC = () => {
             {/* Статус и права */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <h2 className="text-xl font-bold text-gray-900 mb-4">⚙️ Статус и права</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div className="bg-white rounded-lg p-4 border-2 border-blue-400">
                   <p className="text-sm text-gray-600 mb-2 font-semibold">Роль</p>
                   <span
@@ -166,6 +197,33 @@ export const UserDetailPage: React.FC = () => {
                 <div className="bg-white rounded-lg p-4 border-2 border-green-400">
                   <p className="text-sm text-gray-600 mb-2 font-semibold">Рефералов</p>
                   <p className="text-2xl font-bold text-green-700">{user.referrals_count || 0}</p>
+                </div>
+              </div>
+              
+              {/* Change Role */}
+              <div className="bg-white rounded-lg p-4 border-2 border-blue-300">
+                <p className="text-sm text-gray-600 mb-3 font-semibold">Изменить роль</p>
+                <div className="flex flex-wrap gap-2">
+                  {['user', 'admin', 'super_admin'].map((role) => (
+                    <button
+                      key={role}
+                      onClick={() => handleChangeRole(role)}
+                      disabled={isChangingRole || user.role === role}
+                      className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                        user.role === role
+                          ? 'bg-blue-600 text-white cursor-default'
+                          : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                      }`}
+                    >
+                      {isChangingRole ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current inline-block"></div>
+                      ) : (
+                        <>
+                          {role === 'super_admin' ? '🔴 Super Admin' : role === 'admin' ? '⚙️ Admin' : '👤 User'}
+                        </>
+                      )}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -266,4 +324,5 @@ export const UserDetailPage: React.FC = () => {
     </div>
   );
 };
+
 

@@ -16,7 +16,7 @@ export const AdminMenu: React.FC = () => {
         <span>⚙️</span> Админ Панель
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         <button
           onClick={() => navigate('/admin/users')}
           className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-white/30"
@@ -43,6 +43,13 @@ export const AdminMenu: React.FC = () => {
           className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-white/30"
         >
           <span>🔐</span> Подписки
+        </button>
+
+        <button
+          onClick={() => navigate('/admin/prices')}
+          className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-white/30"
+        >
+          <span>💰</span> Цены
         </button>
       </div>
     </div>

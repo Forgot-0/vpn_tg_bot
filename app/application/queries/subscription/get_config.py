@@ -26,14 +26,14 @@ class GetConfigQuery(BaseQuery):
 
 
 @dataclass(frozen=True)
-class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, VPNConfig]):
+class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, list[VPNConfig]]):
     subscription_repository: BaseSubscriptionRepository
     user_repositry: BaseUserRepository
     server_reposiotry: BaseServerRepository
     builder_factory: ProtocolBuilderFactory
     role_access_control: RoleAccessControl
 
-    async def handle(self, query: GetConfigQuery) -> VPNConfig:
+    async def handle(self, query: GetConfigQuery) -> list[VPNConfig]:
 
         subscription = await self.subscription_repository.get_by_id(SubscriptionId(query.subscription_id))
         if not subscription:
@@ -53,11 +53,18 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, VPNConfig]):
         if not user or not server:
             raise NotFoundException()
 
-        builder = self.builder_factory.get(server.api_type, subscription.protocol_types[0])
-        config = builder.builde_config_vpn(user, subscription, server)
+        configs: list[VPNConfig] = []
+        if server.api_config.subscription_url is not None:
+            builder = self.builder_factory.get(server.api_type, subscription.protocol_types[0])
+            configs.append(builder.builde_config_vpn(user, subscription, server))
+
+        else:
+            for protocol in subscription.protocol_types:
+                builder = self.builder_factory.get(server.api_type, protocol)
+                configs.append(builder.builde_config_vpn(user, subscription, server))
 
         logger.debug(
             "Get config subscription",
-            extra={"subscription_id": query.subscription_id,}
+            extra={"subscription_id": query.subscription_id}
         )
-        return config
+        return configs

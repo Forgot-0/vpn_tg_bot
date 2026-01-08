@@ -13,6 +13,7 @@ import { AdminUsers } from './pages/AdminUsers';
 import { AdminServers } from './pages/AdminServers';
 import { AdminPayments } from './pages/AdminPayments';
 import { AdminSubscriptions } from './pages/AdminSubscriptions';
+import { AdminPrices } from './pages/AdminPrices';
 import { ServerDetailPage } from './pages/ServerDetail';
 import { UserDetailPage } from './pages/UserDetail';
 import { PaymentDetailPage } from './pages/PaymentDetail';
@@ -146,6 +147,16 @@ const AppRoutes: React.FC = () => {
           <ProtectedRoute>
             <AdminRoute>
               <AdminSubscriptions />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/prices"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminPrices />
             </AdminRoute>
           </ProtectedRoute>
         }

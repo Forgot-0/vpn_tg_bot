@@ -80,15 +80,9 @@ class ApplicationProvider(Provider):
             daily_rate=2,
             device_rate_multiplier=0.5,
             region_base_multiplier=1.0,
-            region_multipliers={
-                Region.region_by_code("NL"): 1.0,
-            },
+            region_multipliers={},
             protocol_base_multiplier=0.15,
-            protocol_multipliers={
-                ProtocolType.VLESS: 0.15,
-                ProtocolType.TROJAN: 0.15,
-                ProtocolType.SS: 0.15,
-            }
+            protocol_multipliers={}
         )
         return await init_mongo_price_repository(
             client=client,

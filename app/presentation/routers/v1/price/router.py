@@ -6,10 +6,14 @@ from app.application.commands.subscriptions.add_protocol_price import AddProtoco
 from app.application.commands.subscriptions.add_region_price import AddRegionPriceCommand
 from app.application.commands.subscriptions.update_price import UpdatePriceConfigCommand
 from app.application.queries.subscription.get_price_config import GetPriceConfigQuery
-from app.domain.entities.price import PriceConfig
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.deps import CurrentAdminJWTData
-from app.presentation.routers.v1.price.requests import AddProtocolPriceRequest, AddRegionPriceRequest, UpdatePriceRequest
+from app.presentation.routers.v1.price.requests import (
+    AddProtocolPriceRequest,
+    AddRegionPriceRequest,
+    UpdatePriceRequest
+)
+from app.presentation.routers.v1.price.responses import PriceConfigResponse
 
 
 
@@ -23,10 +27,11 @@ router = APIRouter(route_class=DishkaRoute)
 async def get_price_config(
     user_jwt_data: CurrentAdminJWTData,
     mediator: FromDishka[BaseMediator],
-) -> PriceConfig:
-    return await mediator.handle_query(
+) -> PriceConfigResponse:
+    config = await mediator.handle_query(
         GetPriceConfigQuery(user_jwt_data=user_jwt_data)
     )
+    return PriceConfigResponse.from_price_config(config)
 
 @router.post(
     "/add_protocol",
@@ -46,7 +51,7 @@ async def add_protocol_price(
     )
 
 @router.post(
-    "/add_redion",
+    "/add_region",
     status_code=status.HTTP_200_OK
 )
 async def add_region_price(

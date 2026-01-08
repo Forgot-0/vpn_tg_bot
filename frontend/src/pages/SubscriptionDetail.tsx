@@ -9,7 +9,7 @@ export const SubscriptionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [config, setConfig] = useState<VPNConfig | null>(null);
+  const [configs, setConfigs] = useState<VPNConfig[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingConfig, setIsLoadingConfig] = useState(false);
   const [isRenewing, setIsRenewing] = useState(false);
@@ -39,8 +39,8 @@ export const SubscriptionDetail: React.FC = () => {
 
     try {
       setIsLoadingConfig(true);
-      const configData = await apiClient.getSubscriptionConfig(id);
-      setConfig(configData);
+      const configsData = await apiClient.getSubscriptionConfig(id);
+      setConfigs(configsData);
       setShowConfig(true);
     } catch (error) {
       console.error('Failed to fetch config:', error);
@@ -234,28 +234,30 @@ export const SubscriptionDetail: React.FC = () => {
         </div>
 
         {/* VPN Config Card */}
-        {showConfig && config && (
+        {showConfig && configs.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6 mb-4 border-2 border-gray-300">
             <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2 leading-tight">
-              <span>🔐</span> Конфигурация VPN
+              <span>🔐</span> Конфигурации VPN
             </h2>
             <div className="space-y-4">
-              <div>
-                <label className="block text-base font-bold text-gray-900 mb-2">
-                  Протокол: <span className="font-bold text-blue-700">{config.protocol}</span>
-                </label>
-                <div className="bg-gray-900 rounded-lg p-4 border-2 border-gray-700">
-                  <pre className="text-xs text-green-400 whitespace-pre-wrap break-all font-mono">
-                    {config.config}
-                  </pre>
+              {configs.map((config, index) => (
+                <div key={index}>
+                  <label className="block text-base font-bold text-gray-900 mb-2">
+                    Протокол: <span className="font-bold text-blue-700">{config.protocol}</span>
+                  </label>
+                  <div className="bg-gray-900 rounded-lg p-4 border-2 border-gray-700">
+                    <pre className="text-xs text-green-400 whitespace-pre-wrap break-all font-mono">
+                      {config.config}
+                    </pre>
+                  </div>
+                  <button
+                    onClick={() => copyToClipboard(config.config)}
+                    className="mt-3 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
+                  >
+                    📋 Копировать конфигурацию {config.protocol}
+                  </button>
                 </div>
-                <button
-                  onClick={() => copyToClipboard(config.config)}
-                  className="mt-3 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"
-                >
-                  📋 Копировать конфигурацию
-                </button>
-              </div>
+              ))}
             </div>
           </div>
         )}

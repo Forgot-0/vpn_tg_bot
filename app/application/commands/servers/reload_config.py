@@ -38,9 +38,7 @@ class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigComm
             raise
 
         protocol_configs = await self.api_panel.get_configs(server=server)
-        server.protocol_configs.clear()
-        for cnf in protocol_configs:
-            server.add_protocol_config(cnf)
+        server.set_new_config(protocol_configs)
 
         logger.info(
             "Reload config server",

@@ -2,14 +2,13 @@ from typing import Any
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from app.application.exception import BadRequestException
 from app.bot.messages.base import BaseMediaBuilder
 from app.bot.messages.menu import BackButton
-from app.domain.values.servers import ProtocolType, VPNConfig
+from app.domain.values.servers import VPNConfig
 
 
 
-def vless_reply_markup_config_builder() -> InlineKeyboardMarkup:
+def reply_markup_config_builder() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(
@@ -28,13 +27,6 @@ def vless_reply_markup_config_builder() -> InlineKeyboardMarkup:
         )
 
 
-def get_reply_markup_config_builder(protocol_type: ProtocolType) -> InlineKeyboardMarkup:
-    match protocol_type:
-        case ProtocolType.VLESS:
-            return vless_reply_markup_config_builder()
-    raise BadRequestException()
-
-
 class ConfigMessage(BaseMediaBuilder):
     _photo = ('menu')
     _caption = (
@@ -42,12 +34,14 @@ class ConfigMessage(BaseMediaBuilder):
     )
     _reply_markup = None
 
-    def build(self, config: VPNConfig) -> dict[str, Any]:
+    def build(self, configs: list[VPNConfig]) -> dict[str, Any]:
         content = super().build()
-        content['media'].caption += f"```{config.config}```"
+        for cfg in configs:
+            content['media'].caption += f"{cfg.protocol_type.value.capitalize()}: "
+            content['media'].caption += f"```{cfg.config}```"
+            content['media'].parse_mode = "MarkdownV2"
 
-        content['media'].parse_mode = "MarkdownV2"
-        content['reply_markup'] = get_reply_markup_config_builder(config.protocol_type)
+        content['reply_markup'] = reply_markup_config_builder()
         content['reply_markup'].inline_keyboard.append(
             [
                 InlineKeyboardButton(text=BackButton.text, callback_data=BackButton.callback_data)

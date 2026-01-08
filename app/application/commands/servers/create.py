@@ -71,8 +71,7 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
         )
 
         protocol_configs = await self.api_panel.get_configs(server=server)
-        for cnf in protocol_configs:
-            server.add_protocol_config(cnf)
+        server.set_new_config(protocol_configs)
 
         await self.server_repository.create(server=server)
         logger.info(

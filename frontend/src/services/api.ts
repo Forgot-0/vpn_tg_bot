@@ -17,6 +17,10 @@ import type {
   ServerDetail,
   Payment,
   PaymentUrlResponse,
+  PriceConfig,
+  AddProtocolPriceRequest,
+  AddRegionPriceRequest,
+  UpdatePriceRequest,
 } from '../types';
 
 class ApiClient {
@@ -144,8 +148,8 @@ class ApiClient {
     return response.data;
   }
 
-  async getSubscriptionConfig(subscriptionId: string): Promise<VPNConfig> {
-    const response = await this.client.get<VPNConfig>(`/subscription/${subscriptionId}/config`);
+  async getSubscriptionConfig(subscriptionId: string): Promise<VPNConfig[]> {
+    const response = await this.client.get<VPNConfig[]>(`/subscription/${subscriptionId}/config`);
     return response.data;
   }
 
@@ -330,6 +334,29 @@ class ApiClient {
     }
     const response = await this.client.get<PaginatedResult<Payment>>('/payments/', { params });
     return response.data;
+  }
+
+  // Change user role (Admin only)
+  async changeUserRole(userId: string, role: string): Promise<void> {
+    await this.client.post(`/users/${userId}/change_role/${role}`);
+  }
+
+  // Price management (Admin only)
+  async getPriceConfig(): Promise<PriceConfig> {
+    const response = await this.client.get<PriceConfig>('/price/');
+    return response.data;
+  }
+
+  async addProtocolPrice(data: AddProtocolPriceRequest): Promise<void> {
+    await this.client.post('/price/add_protocol', data);
+  }
+
+  async addRegionPrice(data: AddRegionPriceRequest): Promise<void> {
+    await this.client.post('/price/add_region', data);
+  }
+
+  async updatePrice(data: UpdatePriceRequest): Promise<void> {
+    await this.client.patch('/price/', data);
   }
 }
 

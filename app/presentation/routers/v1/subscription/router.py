@@ -50,7 +50,7 @@ async def get_subscription_config(
     subscription_id: UUID,
     user_jwt_data: CurrentUserJWTData,
     mediator: FromDishka[BaseMediator],
-) -> VPNConfig:
+) -> list[VPNConfig]:
     return await mediator.handle_query(
         GetConfigQuery(
             subscription_id=subscription_id,

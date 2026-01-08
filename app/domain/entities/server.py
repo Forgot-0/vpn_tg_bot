@@ -55,3 +55,8 @@ class Server(AggregateRoot):
 
     def set_subscription_url(self, subscription_url: str) -> None:
         self.api_config.set_subscription_url(subscription_url)
+
+    def set_new_config(self, configs: list[ProtocolConfig]) -> None:
+        self.protocol_configs.clear()
+        for cfg in configs:
+            self.add_protocol_config(cfg)

@@ -35,6 +35,34 @@ export interface VPNConfig {
   qr_code?: string;
 }
 
+export interface PriceConfig {
+  daily_rate: number;
+  device_rate_multiplier: number;
+  region_base_multiplier: number;
+  region_multipliers: Record<string, number>;
+  protocol_base_multiplier: number;
+  protocol_multipliers: Record<string, number>;
+}
+
+export interface AddProtocolPriceRequest {
+  protocol: string;
+  coef: number;
+}
+
+export interface AddRegionPriceRequest {
+  region: string;
+  coef: number;
+}
+
+export interface UpdatePriceRequest {
+  daily_rate: number;
+  device_rate_multiplier: number;
+  region_base_multiplier: number;
+  region_multipliers: Record<string, number>;
+  protocol_base_multiplier: number;
+  protocol_multipliers: Record<string, number>;
+}
+
 export interface AccessTokenResponse {
   access_token: string;
 }
