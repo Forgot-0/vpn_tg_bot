@@ -76,7 +76,9 @@ export const Profile: React.FC = () => {
                 Роль
               </label>
               <div className="text-gray-900 font-bold text-lg">
-                {user?.role === 'super_admin'
+                {user?.role === 'owner'
+                  ? '👑 Owner'
+                  : user?.role === 'super_admin'
                   ? '🔴 Super Admin'
                   : user?.role === 'admin'
                   ? '⚙️ Администратор'

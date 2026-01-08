@@ -50,7 +50,6 @@ services:
 volumes:
   dbdata6:
   redis-data:
-  kafka-data:
 
 
 networks:

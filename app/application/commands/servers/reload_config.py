@@ -9,7 +9,6 @@ from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.services.ports import BaseApiClient
 from app.domain.values.users import UserRole
-from app.infrastructure.api_client.router import ApiClientRouter
 
 
 logger = logging.getLogger(__name__)
@@ -43,7 +42,6 @@ class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigComm
         subscription_cfg = await self.api_panel.get_subscription_info(server)
         if subscription_cfg is not None:
             server.set_new_subscription_config(subscription_cfg)
-
 
         logger.info(
             "Reload config server",

@@ -67,6 +67,7 @@ export const UserDetailPage: React.FC = () => {
       user: 'пользователь',
       admin: 'администратор',
       super_admin: 'супер-администратор',
+      owner: 'владелец',
     };
 
     const confirmed = await showTelegramConfirm(
@@ -172,12 +173,16 @@ export const UserDetailPage: React.FC = () => {
                   <p className="text-sm text-gray-600 mb-2 font-semibold">Роль</p>
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      user.role === 'admin' || user.role === 'super_admin'
+                      user.role === 'owner'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : user.role === 'admin' || user.role === 'super_admin'
                         ? 'bg-red-100 text-red-800'
                         : 'bg-green-100 text-green-800'
                     }`}
                   >
-                    {user.role === 'super_admin'
+                    {user.role === 'owner'
+                      ? '👑 Owner'
+                      : user.role === 'super_admin'
                       ? '🔴 Super Admin'
                       : user.role === 'admin'
                       ? '⚙️ Admin'
@@ -204,7 +209,7 @@ export const UserDetailPage: React.FC = () => {
               <div className="bg-white rounded-lg p-4 border-2 border-blue-300">
                 <p className="text-sm text-gray-600 mb-3 font-semibold">Изменить роль</p>
                 <div className="flex flex-wrap gap-2">
-                  {['user', 'admin', 'super_admin'].map((role) => (
+                  {['user', 'admin', 'super_admin', 'owner'].map((role) => (
                     <button
                       key={role}
                       onClick={() => handleChangeRole(role)}
@@ -219,7 +224,7 @@ export const UserDetailPage: React.FC = () => {
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current inline-block"></div>
                       ) : (
                         <>
-                          {role === 'super_admin' ? '🔴 Super Admin' : role === 'admin' ? '⚙️ Admin' : '👤 User'}
+                          {role === 'owner' ? '👑 Owner' : role === 'super_admin' ? '🔴 Super Admin' : role === 'admin' ? '⚙️ Admin' : '👤 User'}
                         </>
                       )}
                     </button>

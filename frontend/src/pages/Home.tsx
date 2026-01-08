@@ -180,7 +180,7 @@ export const Home: React.FC = () => {
           >
             👤 Профиль
           </button>
-          {user?.role === 'admin' || user?.role === 'super_admin' ? (
+          {user?.role === 'owner' || user?.role === 'admin' || user?.role === 'super_admin' ? (
             <button
               onClick={() => navigate('/servers/create')}
               className="flex-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg"

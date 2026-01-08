@@ -165,6 +165,7 @@ export const AdminUsers: React.FC = () => {
                   { value: 'user', label: '👤 Пользователь' },
                   { value: 'admin', label: '⚙️ Администратор' },
                   { value: 'super_admin', label: '🔴 Super Admin' },
+                  { value: 'owner', label: '👑 Owner' },
                 ],
                 value: roleFilter,
                 onChange: (value) => {
@@ -304,12 +305,16 @@ export const AdminUsers: React.FC = () => {
                       <td className="px-4 py-4">
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            user.role === 'admin' || user.role === 'super_admin'
+                            user.role === 'owner'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : user.role === 'admin' || user.role === 'super_admin'
                               ? 'bg-red-100 text-red-800'
                               : 'bg-green-100 text-green-800'
                           }`}
                         >
-                          {user.role === 'super_admin'
+                          {user.role === 'owner'
+                            ? '👑 Owner'
+                            : user.role === 'super_admin'
                             ? '🔴 Super Admin'
                             : user.role === 'admin'
                             ? '⚙️ Admin'
@@ -370,7 +375,7 @@ export const AdminUsers: React.FC = () => {
               <div className="bg-white border-2 border-red-400 p-5 rounded-lg shadow-md">
                 <p className="text-gray-700 text-sm mb-2 font-semibold">Администраторов</p>
                 <p className="text-4xl font-bold text-red-700">
-                  {users.filter((u) => u.role === 'admin' || u.role === 'super_admin').length}
+                  {users.filter((u) => u.role === 'owner' || u.role === 'admin' || u.role === 'super_admin').length}
                 </p>
               </div>
               <div className="bg-white border-2 border-purple-400 p-5 rounded-lg shadow-md">

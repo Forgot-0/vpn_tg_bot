@@ -13,8 +13,8 @@ const AdminContext = createContext<AdminContextType | undefined>(undefined);
 export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
 
-  // Проверяем роль пользователя (admin или super_admin)
-  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  // Проверяем роль пользователя (owner, super_admin или admin)
+  const isAdmin = user?.role === 'owner' || user?.role === 'super_admin' || user?.role === 'admin';
   const canManageServers = isAdmin;
   const canManageUsers = isAdmin;
   const canManagePayments = isAdmin;
