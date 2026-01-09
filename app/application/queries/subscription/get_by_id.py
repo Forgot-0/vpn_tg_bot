@@ -32,7 +32,7 @@ class GetSubscriptionByIdQueryHandler(BaseQueryHandler[GetSubscriptionByIdQuery,
         if not subscription:
             raise NotFoundException()
 
-        if self.role_access_control.can_action(
+        if not self.role_access_control.can_action(
             UserRole(query.user_jwt_data.role), target_role=UserRole.ADMIN
         ) and UserId(UUID(query.user_jwt_data.id)) != subscription.user_id:
             raise ForbiddenException()
