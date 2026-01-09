@@ -6,6 +6,10 @@ from app.application.commands.payment.paid import PaidPaymentCommand, PaidPaymen
 from app.application.commands.servers.create import CreateServerCommand, CreateServerCommandHandler
 from app.application.commands.servers.delete import DeleteServerCommand, DeleteServerCommandHandler
 from app.application.commands.servers.reload_config import ReloadServerConfigCommand, ReloadServerConfigCommandHandler
+from app.application.commands.servers.set_subscription_config import (
+    SetSubscriptionConfigServerCommand,
+    SetSubscriptionConfigServerCommandHandler
+)
 from app.application.commands.subscriptions.add_protocol_price import (
     AddProtocolPriceCommand,
     AddProtocolPriceCommandHandler
@@ -75,6 +79,7 @@ class MediatorProvider(Provider):
     get_list_protocols = provide(GetListProtocolsQueryHandler, scope=Scope.APP)
     get_by_id_server_handler = provide(GetByIdServerQueryHandler, scope=Scope.APP)
     reload_config_server_handler = provide(ReloadServerConfigCommandHandler, scope=Scope.APP)
+    subscription_config_handler = provide(SetSubscriptionConfigServerCommandHandler, scope=Scope.APP)
 
     login_telegram_handler = provide(LoginTelegramUserCommandHandler, scope=Scope.APP)
     refresh_token_handler = provide(RefreshTokenCommandHandler, scope=Scope.APP)
@@ -121,6 +126,9 @@ class MediatorProvider(Provider):
         )
         command_maps.register_command(
             ReloadServerConfigCommand, [ReloadServerConfigCommandHandler]
+        )
+        command_maps.register_command(
+            SetSubscriptionConfigServerCommand, [SetSubscriptionConfigServerCommandHandler]
         )
 
         command_maps.register_command(

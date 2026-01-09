@@ -7,7 +7,7 @@ from aiogram.types import ErrorEvent
 from aiogram.types.web_app_info import WebAppInfo
 from aiogram.types.menu_button_web_app import MenuButtonWebApp
 from aiogram.fsm.storage.redis import RedisStorage
-from aiogram.exceptions import TelegramBadRequest
+from aiogram.exceptions import TelegramAPIError
 
 from app.bot.middlewares.check_subs_channel import CheckSubsChannelMiddleware
 from app.bot.static.init import photo_manager
@@ -52,13 +52,11 @@ def add_middlewares(dp: Dispatcher):
 
 async def handle_domain_exception(event: ErrorEvent):
     logger.error("Handle error", exc_info=event.exception, extra={"error": event.exception.message}) # type: ignore
-    # if event.update.message:
-    #     await event.update.message.answer(text=event.exception.message) # type: ignore
-    # else:
-    #     await event.update.callback_query.message.answer(event.exception.message) # type: ignore
 
 async def handler_telegram_exception(event: ErrorEvent) -> None:
-    logger.error("Handle error", exc_info=event.exception, extra={"error": event.exception})
+    logger.error("Telegram api error", exc_info=event.exception, extra={
+        "error": str(event.exception), "event": event.update.model_dump()
+    })
 
 
 def init_dispatch() -> Dispatcher:
@@ -67,7 +65,7 @@ def init_dispatch() -> Dispatcher:
     dp.shutdown.register(shutdown_bot)
     add_middlewares(dp=dp)
     dp.error.register(handle_domain_exception, ExceptionTypeFilter(DomainException))
-    dp.error.register(handler_telegram_exception, ExceptionTypeFilter(TelegramBadRequest))
+    dp.error.register(handler_telegram_exception, ExceptionTypeFilter(TelegramAPIError))
 
     dp.include_router(start_router)
     dp.include_router(subscription_router)

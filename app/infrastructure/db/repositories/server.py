@@ -33,6 +33,10 @@ class ServerRepository(BaseMongoDBRepository, BaseServerRepository):
         doc = convert_server_entity_to_document(server)
         await self._collection.insert_one(doc)
 
+    async def update(self, server: Server) -> None:
+        doc = convert_server_entity_to_document(server)
+        await self._collection.replace_one({"_id": server.id},replacement=doc)
+
     async def update_decrement_free(self, server_id: UUID, decr: int = -1) -> None:
         await self._collection.update_one(
             {"_id": server_id},

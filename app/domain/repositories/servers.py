@@ -17,6 +17,9 @@ class BaseServerRepository(BaseRepository[Server]):
     async def create(self, server: Server) -> None: ...
 
     @abstractmethod
+    async def update(self, server: Server) -> None: ...
+
+    @abstractmethod
     async def update_decrement_free(self, server_id: UUID, decr: int = -1) -> None: ...
 
     @abstractmethod

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Query, status
 from app.application.commands.servers.create import CreateServerCommand
 from app.application.commands.servers.delete import DeleteServerCommand
 from app.application.commands.servers.reload_config import ReloadServerConfigCommand
+from app.application.commands.servers.set_subscription_config import SetSubscriptionConfigServerCommand
 from app.application.dtos.base import PaginatedResponseDTO
 from app.application.dtos.servers.base import ServerDTO, ServerDetailDTO
 from app.application.queries.servers.get_by_id import GetByIdServerQuery
@@ -14,7 +15,7 @@ from app.application.queries.servers.get_list import GetListServerQuery
 from app.domain.values.servers import ApiType
 from app.infrastructure.mediator.base import BaseMediator
 from app.presentation.deps import CurrentAdminJWTData
-from app.presentation.routers.v1.servers.requests import CreateServerRequest, GetServersRequest
+from app.presentation.routers.v1.servers.requests import CreateServerRequest, GetServersRequest, SetSubscriptionUrlRequest
 
 
 
@@ -101,7 +102,8 @@ async def delete(
     )
 
 @router.post(
-    "/{server_id}/reload_config"
+    "/{server_id}/reload_config",
+    status_code=status.HTTP_200_OK
 )
 async def realod_config_server(
     server_id: UUID,
@@ -114,3 +116,22 @@ async def realod_config_server(
             user_jwt_data=user_jwt_data
         )
     )
+
+@router.post(
+    "/{server_id}/set_subscription_config",
+    status_code=status.HTTP_200_OK,
+)
+async def set_subscription_config(
+    server_id: UUID,
+    url_request: SetSubscriptionUrlRequest,
+    user_jwt_data: CurrentAdminJWTData,
+    mediator: FromDishka[BaseMediator],
+) -> None:
+    await mediator.handle_command(
+        SetSubscriptionConfigServerCommand(
+            server_id=server_id,
+            url=url_request.url,
+            user_jwt_data=user_jwt_data
+        )
+    )
+

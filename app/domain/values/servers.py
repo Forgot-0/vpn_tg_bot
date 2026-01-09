@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, ClassVar, Iterable
+from urllib.parse import urlparse
 
 
 class ProtocolType(str, Enum):
@@ -21,6 +22,21 @@ class SubscriptionConfig:
     port: int
     path: str
     url: str
+
+    @classmethod
+    def from_url(cls, url: str) -> "SubscriptionConfig":
+        if url[-1] != "/":
+            url += "/"
+
+        parsed_url = urlparse(url)
+        domain = parsed_url.hostname
+        if domain is None:
+            raise
+
+        port = parsed_url.port if parsed_url.port else 443
+        path = parsed_url.path
+        return SubscriptionConfig(domain=domain, port=port, path=path, url=url)
+
 
 
 class ApiType(Enum):

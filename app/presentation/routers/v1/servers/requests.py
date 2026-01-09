@@ -53,3 +53,7 @@ class GetServersRequest(BaseModel):
             server_filter.add_sort(sort_field.field, sort_field.direction)
 
         return server_filter
+
+
+class SetSubscriptionUrlRequest(BaseModel):
+    url: str
