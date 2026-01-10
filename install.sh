@@ -99,7 +99,7 @@ sed -i "s/PAYMENT_ID=/PAYMENT_ID=${payment_id}/" .env
 
 echo ""
 read -p "Введите VPN_HELP_ACCOUNT (аккаунт для помощи): " vpn_help
-sed -i "s/VPN_HELP_ACCOUNT=/VPN_HELP_ACCOUNT=${vpn_help}/" .env
+sed -i "s|^VPN_HELP_ACCOUNT=.*|VPN_HELP_ACCOUNT=${vpn_help}|" .env
 
 
 # Database credentials
