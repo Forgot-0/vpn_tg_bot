@@ -110,8 +110,6 @@ if [ "$change_db_user" = "y" ]; then
     sed -i "s/DATABASE_USERNAME=admin/DATABASE_USERNAME=${db_username}/" .env
 fi
 
-dat=$(generate_password)
-
 echo ""
 read -p "Хотите установить свой DATABASE_PASSWORD? [y/n]: " change_db_pass
 if [ "$change_db_pass" = "y" ]; then
