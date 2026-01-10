@@ -42,10 +42,6 @@ echo "  newgrp docker"
 echo "или перелогиньтесь для применения изменений в группах"
 
 
-# git clone
-git clone https://github.com/Forgot-0/vpn_tg_bot.git
-
-
 if [ -f .env ]; then
     echo "Файл .env уже существует. Создать резервную копию? (y/n)"
     read -r backup
