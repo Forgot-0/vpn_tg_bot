@@ -1,7 +1,7 @@
 
 server {
     listen 80;
-    server_name api.${DOMAIN} ${DOMAIN};
+    server_name ${DOMAIN} api.${DOMAIN} monotoring.${DOMAIN};
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;

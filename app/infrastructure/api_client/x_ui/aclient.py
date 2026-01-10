@@ -38,8 +38,8 @@ class A3xUiApiClient(BaseApiClient):
     def get_config_url(self, server: Server) -> str:
         return f"{self._base_url(server)}/panel/api/inbounds/list"
 
-    def panel_all_config(self, server: Server) -> str:
-        return f"{self._base_url(server)}/panel/setting/all"
+    def panel_settings(self, server: Server) -> str:
+        return f"{self._base_url(server)}/panel/setting/defaultSettings"
 
     async def _login(self, session: ClientSession, server: Server) -> SimpleCookie:
         auth_credits = {
@@ -86,7 +86,7 @@ class A3xUiApiClient(BaseApiClient):
         async with ClientSession() as session:
             auth_cookies = await self._login(session=session, server=server)
             resp = await session.post(
-                url=self.panel_all_config(server),
+                url=self.panel_settings(server),
                 cookies=auth_cookies
             )
             all_config = await resp.json()
@@ -95,11 +95,8 @@ class A3xUiApiClient(BaseApiClient):
                 if server.api_config.domain is None:
                     raise
 
-                cfg = SubscriptionConfig(
-                    domain=server.api_config.domain,
-                    port=all_config["subPort"],
-                    path=all_config['subPath'],
-                    url=f"https://{server.api_config.domain}:{all_config["subPort"]}{all_config['subPath']}"
+                cfg = SubscriptionConfig.from_url(
+                    all_config['subURI']
                 )
 
                 return cfg
