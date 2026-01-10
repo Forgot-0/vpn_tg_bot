@@ -58,6 +58,10 @@ generate_secret() {
   openssl rand -base64 32
 }
 
+generate_webhook_secret() {
+  openssl rand -hex 32
+}
+
 generate_password() {
   tr -dc 'A-Za-z0-9' </dev/urandom | head -c 20
 }
@@ -74,18 +78,18 @@ sed -i "s/DOMAIN=/DOMAIN=${domain}/" .env
 read -p "Введите BOT_TOKEN: " bot_token
 sed -i "s/BOT_TOKEN=/BOT_TOKEN=${bot_token}/" .env
 
-read -p "Введите BOT_OWNER_ID: " bot_owner_id
-sed -i "s/BOT_OWNER_ID=/BOT_OWNER_ID=${bot_owner_id}/" .env
-
 read -p "Введите BOT_USERNAME: " bot_username
 sed -i "s/BOT_USERNAME=/BOT_USERNAME=${bot_username}/" .env
+
+read -p "Введите BOT_OWNER_ID: " bot_owner_id
+sed -i "s/BOT_OWNER_ID=/BOT_OWNER_ID=${bot_owner_id}/" .env
 
 
 echo ""
 echo "Генерация секретов..."
 
 sed -i "s|^SECRET=.*|SECRET=$(generate_secret)|" .env
-sed -i "s|^WEBHOOK_SECRET=.*|WEBHOOK_SECRET=$(generate_secret)|" .env
+sed -i "s|^WEBHOOK_SECRET=.*|WEBHOOK_SECRET=$(generate_webhook_secret)|" .env
 
 echo "Секреты сгенерированы автоматически"
 
