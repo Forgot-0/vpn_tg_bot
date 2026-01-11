@@ -61,7 +61,7 @@ def init_api() -> FastAPI:
         description='Simple subscription + DDD, CQRS',
         lifespan=lifespan,
         openapi_url=(
-            f"/api/v1/openapi.json"
+            "/api/v1/openapi.json"
             if app_settings.ENVIRONMENT in ["local", "testing"]
             else None
         ),

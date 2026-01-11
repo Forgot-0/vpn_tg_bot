@@ -25,7 +25,7 @@ class Discount(AggregateRoot):
     def is_valid(self) -> bool:
         flag = True
         if self.conditions.get('end_time'):
-            flag = flag and self.conditions['end_time'] > now_utc()
+            flag = self.conditions['end_time'] > now_utc()
 
         if self.conditions.get('max_uses'):
             flag = flag and self.conditions['max_uses'] > self.uses

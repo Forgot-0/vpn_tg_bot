@@ -46,8 +46,8 @@ class A3xUiApiClient(BaseApiClient):
             "username": self.secure_service.decrypt(server.auth_credits.username),
             "password": self.secure_service.decrypt(server.auth_credits.password),
             "twoFactorCode": (
-                self.secure_service.decrypt(server.auth_credits.twoFactorCode)
-                if server.auth_credits.twoFactorCode else None
+                self.secure_service.decrypt(server.auth_credits.two_factor_code)
+                if server.auth_credits.two_factor_code else None
             ),
         }
         resp_login = await session.post(
@@ -128,8 +128,10 @@ class A3xUiApiClient(BaseApiClient):
                             json=json,
                             cookies=auth_cookies
                         )
+                    if resp.status != 200:
+                        raise
 
-    async def delete_inactive_clients(self) -> None: ...
+    async def delete_inactive_clients(self, server: Server) -> None: ...
 
     async def delete_client(
             self,
@@ -171,6 +173,6 @@ class A3xUiApiClient(BaseApiClient):
         else:
             for protocol in subscription.protocol_types:
                 builder = self.builder_factory.get(server.api_type, protocol)
-                configs.append(builder.builde_config_vpn(user, subscription, server))
+                configs.append(builder.build_config_vpn(user, subscription, server))
 
         return configs

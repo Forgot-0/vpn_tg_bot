@@ -43,7 +43,7 @@ class Server(AggregateRoot):
             api_type=api_type,
             api_config=api_config,
             auth_credits=auth_credits,
-            protocol_configs=protocol_configs if protocol_configs else dict(),
+            protocol_configs=protocol_configs if protocol_configs else {},
             subscription_config=subscription_config
         )
 

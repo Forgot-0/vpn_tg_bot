@@ -52,7 +52,7 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
         encrypt_creadits = APICredits(
             username=self.secure_service.encrypt(command.username),
             password=self.secure_service.encrypt(command.password),
-            twoFactorCode=self.secure_service.encrypt(command.twoFactorCode) if command.twoFactorCode else None
+            two_factor_code=self.secure_service.encrypt(command.twoFactorCode) if command.twoFactorCode else None
         )
 
         server = Server.create(

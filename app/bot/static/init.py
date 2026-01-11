@@ -8,7 +8,7 @@ from app.application.exception import ImageNotFoundException
 
 class ImageManager:
     def __init__(self):
-        self.images_fileId = {}
+        self.images_file_id = {}
         self.images_paths = {
             "about": "about.jpg",
             "buy": "buy.jpg",
@@ -29,12 +29,12 @@ class ImageManager:
 
     async def save_image_ids(self) -> None:
         with open('./app/bot/static/images_fileid.json', 'w') as f:
-            f.write(dumps(self.images_fileId))
+            f.write(dumps(self.images_file_id))
 
     async def init_photo(self, bot: Bot) -> None:
-        self.images_fileId = await self.load_image_ids()
+        self.images_file_id = await self.load_image_ids()
 
-        if self.images_fileId and set(self.images_fileId.keys()) == set(self.images_paths.keys()):
+        if self.images_file_id and set(self.images_file_id.keys()) == set(self.images_paths.keys()):
             return
 
         for key, path in self.images_paths.items():
@@ -43,11 +43,11 @@ class ImageManager:
             if resp.photo is None:
                 raise ImageNotFoundException(photo_key=key)
 
-            self.images_fileId[key] = resp.photo[-1].file_id
+            self.images_file_id[key] = resp.photo[-1].file_id
 
         await self.save_image_ids()
 
     def get_image_id(self, key: str) -> str:
-        return self.images_fileId.get(key, "")
+        return self.images_file_id.get(key, "")
 
 photo_manager = ImageManager()

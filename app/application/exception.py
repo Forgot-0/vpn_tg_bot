@@ -23,7 +23,7 @@ class NotFoundActiveSubscriptionException(ApplicationException):
 
     @property
     def message(self):
-        return f'The user has no active subscriptions'
+        return 'The user has no active subscriptions'
 
     @property
     def detail(self):

@@ -35,8 +35,8 @@ class UserJWTDataGetter:
         user_jwt_data = await mediator.handle_query(
             VerifyTokenQuery(token=token)
         )
-        if self.reqrequired_role:
-            if not role_access_control.can_action(
+
+        if self.reqrequired_role and not role_access_control.can_action(
             UserRole(user_jwt_data.role), target_role=self.reqrequired_role
         ): raise ForbiddenException()
 

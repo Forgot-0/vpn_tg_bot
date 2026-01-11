@@ -32,7 +32,7 @@ class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
             })
         }
 
-    def builde_config_vpn(self, user: User, subscription: Subscription, server: Server) -> VPNConfig:
+    def build_config_vpn(self, user: User, subscription: Subscription, server: Server) -> VPNConfig:
 
         config = server.get_config_by_protocol(self.protocol_type).config
         return VPNConfig(

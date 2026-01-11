@@ -75,7 +75,7 @@ class JWTManager:
         return token_data
 
     async def refresh_tokens(self, refresh_token: str, security_user: UserJWTData) -> TokenGroup:
-        token = await self.validate_token(refresh_token, token_type=TokenType.REFRESH)
+        await self.validate_token(refresh_token, token_type=TokenType.REFRESH)
 
         token_pair = self.create_token_pair(security_user=security_user)
 

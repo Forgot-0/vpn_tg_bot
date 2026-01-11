@@ -59,7 +59,7 @@ class APIConfig:
 class APICredits:
     username: str
     password: str
-    twoFactorCode: str | None = field(default=None)
+    two_factor_code: str | None = field(default=None)
 
 
 @dataclass

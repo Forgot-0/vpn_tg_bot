@@ -74,7 +74,7 @@ class User(AggregateRoot):
 
         self.role = role
 
-    def assignReferral(self, referral_id: UserId) -> None:
+    def assign_referral(self, referral_id: UserId) -> None:
         if self.id == referral_id:
             raise CanNotReferalYourselfException(referral_id=self.id.as_generic_type())
 

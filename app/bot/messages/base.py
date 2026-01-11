@@ -23,7 +23,7 @@ class BaseMessageBuilder:
     def parse_mode(self) -> str | None:
         return self._parse_mode 
 
-    def build(self) -> dict[str, Any]:
+    def build(self, *args, **kwargs) -> dict[str, Any]:
         content = {"text": self.text}
 
         if self.reply_markup:
@@ -51,7 +51,7 @@ class BaseMediaBuilder:
     def caption(self) -> str:
         return self._caption
 
-    def build(self) -> dict[str, Any]:
+    def build(self,  *args, **kwargs) -> dict[str, Any]:
         content = {}
 
         media = InputMediaPhoto(media=photo_manager.get_image_id(self.photo), caption=self.caption)
