@@ -43,6 +43,8 @@ class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigComm
         if subscription_cfg is not None:
             server.set_new_subscription_config(subscription_cfg)
 
+        await self.server_repository.update(server)
+
         logger.info(
             "Reload config server",
             extra={
