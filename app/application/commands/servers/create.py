@@ -4,10 +4,10 @@ import logging
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.dtos.users.jwt import UserJWTData
 from app.application.services.role_hierarchy import RoleAccessControl
+from app.application.services.secure import SecureService
 from app.domain.entities.server import Server
 from app.domain.repositories.servers import BaseServerRepository
-from app.domain.services.ports import BaseApiClient
-from app.domain.services.servers import SecureService
+from app.domain.services.ports import ApiClient
 from app.domain.values.servers import APIConfig, APICredits, ApiType, Region
 from app.domain.values.users import UserRole
 from app.application.exception import ForbiddenException
@@ -37,7 +37,7 @@ class CreateServerCommand(BaseCommand):
 @dataclass(frozen=True)
 class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, None]):
     server_repository: BaseServerRepository
-    api_panel: BaseApiClient
+    api_panel: ApiClient
     secure_service: SecureService
     role_access_control: RoleAccessControl
 

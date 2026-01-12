@@ -10,7 +10,7 @@ from app.domain.entities.subscription import SubscriptionStatus
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
-from app.domain.services.ports import BaseApiClient
+from app.domain.services.ports import ApiClient
 from app.domain.values.servers import VPNConfig
 from app.domain.values.subscriptions import SubscriptionId
 from app.domain.values.users import UserId, UserRole
@@ -30,7 +30,7 @@ class GetConfigQueryHandler(BaseQueryHandler[GetConfigQuery, list[VPNConfig]]):
     subscription_repository: BaseSubscriptionRepository
     user_repositry: BaseUserRepository
     server_reposiotry: BaseServerRepository
-    api_panel: BaseApiClient
+    api_panel: ApiClient
     role_access_control: RoleAccessControl
 
     async def handle(self, query: GetConfigQuery) -> list[VPNConfig]:

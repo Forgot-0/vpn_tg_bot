@@ -31,9 +31,11 @@ class YooKassaPaymentService(BasePaymentService):
                 'return_url': f'https://t.me/{app_settings.BOT_USERNAME}'
             },
             'capture': True,
+            "customization": {
+                "payment_methods": ['bank_card', 'sbp']
+            },
             'metadata': {
                 'order_id': str(order.id)
-
             },
             "description": f"Подписка vpn за {order.total_price}"
 

@@ -29,8 +29,6 @@ class User(AggregateRoot):
 
     created_at: datetime = field(default_factory=now_utc)
 
-    subscriptions: list[Subscription] = field(default_factory=list)
-
     @classmethod
     def create(
             cls,

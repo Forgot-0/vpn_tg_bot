@@ -9,7 +9,7 @@ from app.domain.values.servers import ProtocolConfig, ProtocolType, Subscription
 
 
 
-class BaseApiClient(ABC):
+class ApiClient(ABC):
     @abstractmethod
     async def create_or_upgrade_subscription(
         self,user: User,
@@ -33,7 +33,7 @@ class BaseApiClient(ABC):
 
 
 @dataclass
-class BaseProtocolBuilder(ABC):
+class ProtocolBuilder(ABC):
     protocol_type: ProtocolType
 
     @abstractmethod

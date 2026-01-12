@@ -3,18 +3,18 @@ from dataclasses import dataclass, field
 from app.domain.entities.server import Server
 from app.domain.entities.subscription import Subscription
 from app.domain.entities.user import User
-from app.domain.services.ports import BaseApiClient
+from app.domain.services.ports import ApiClient
 from app.domain.values.servers import ApiType, ProtocolConfig, SubscriptionConfig, VPNConfig
 
 
 @dataclass
-class ApiClientRouter(BaseApiClient):
-    _registry: dict[ApiType, BaseApiClient] = field(default_factory=dict)
+class ApiClientRouter(ApiClient):
+    _registry: dict[ApiType, ApiClient] = field(default_factory=dict)
 
-    def register(self, api_type: ApiType, api_client: BaseApiClient) -> None:
+    def register(self, api_type: ApiType, api_client: ApiClient) -> None:
         self._registry[api_type] = api_client
 
-    def get(self, api_type: ApiType) -> BaseApiClient:
+    def get(self, api_type: ApiType) -> ApiClient:
         api_client = self._registry.get(api_type)
         if api_client is None:
             raise

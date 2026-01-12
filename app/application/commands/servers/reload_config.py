@@ -7,7 +7,7 @@ from app.application.dtos.users.jwt import UserJWTData
 from app.application.exception import ForbiddenException
 from app.application.services.role_hierarchy import RoleAccessControl
 from app.domain.repositories.servers import BaseServerRepository
-from app.domain.services.ports import BaseApiClient
+from app.domain.services.ports import ApiClient
 from app.domain.values.users import UserRole
 
 
@@ -23,7 +23,7 @@ class ReloadServerConfigCommand(BaseCommand):
 @dataclass(frozen=True)
 class ReloadServerConfigCommandHandler(BaseCommandHandler[ReloadServerConfigCommand, None]):
     server_repository: BaseServerRepository
-    api_panel: BaseApiClient
+    api_panel: ApiClient
     role_access_control: RoleAccessControl
 
     async def handle(self, command: ReloadServerConfigCommand) -> None:

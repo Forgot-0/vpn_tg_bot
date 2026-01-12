@@ -5,13 +5,13 @@ from typing import Any
 from app.domain.entities.server import Server
 from app.domain.entities.subscription import Subscription
 from app.domain.entities.user import User
-from app.domain.services.ports import BaseProtocolBuilder
+from app.domain.services.ports import ProtocolBuilder
 from app.domain.values.servers import VPNConfig
 from app.infrastructure.api_client.x_ui.schema import Inbound
 
 
 @dataclass
-class Vless3XUIProtocolBuilder(BaseProtocolBuilder):
+class Vless3XUIProtocolBuilder(ProtocolBuilder):
 
     def build_params(self, user: User, subscription: Subscription, server: Server) -> dict[str, Any]:
         return {

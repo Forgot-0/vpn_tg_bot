@@ -3,18 +3,18 @@ from http.cookies import SimpleCookie
 
 from aiohttp import ClientSession
 
+from app.application.services.secure import SecureService
 from app.domain.entities.server import Server
 from app.domain.entities.subscription import Subscription
 from app.domain.entities.user import User
-from app.domain.services.ports import BaseApiClient
-from app.domain.services.servers import SecureService
+from app.domain.services.ports import ApiClient
 from app.domain.values.servers import ProtocolConfig, ProtocolType, SubscriptionConfig, VPNConfig
 from app.infrastructure.builders_params.factory import ProtocolBuilderFactory
 from app.application.exception import ApiClientException
 
 
 @dataclass
-class A3xUiApiClient(BaseApiClient):
+class A3xUiApiClient(ApiClient):
     builder_factory: ProtocolBuilderFactory
     secure_service: SecureService
 

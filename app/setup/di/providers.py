@@ -6,6 +6,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from app.application.services.jwt_manager import JWTManager
 from app.application.services.notifications import NotificationSevice
 from app.application.services.role_hierarchy import RoleAccessControl
+from app.application.services.secure import SecureService
+from app.application.services.telegram import TelegramWebAppAuth
 from app.configs.app import app_settings
 from app.domain.entities.price import PriceConfig
 from app.domain.repositories.payment import BasePaymentRepository
@@ -13,8 +15,7 @@ from app.domain.repositories.price import BasePriceRepository
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
-from app.domain.services.ports import BaseApiClient
-from app.domain.services.servers import SecureService
+from app.domain.services.ports import ApiClient
 from app.domain.services.subscription import SubscriptionPricingService
 from app.domain.values.servers import ApiType, ProtocolType, Region
 from app.infrastructure.api_client.router import ApiClientRouter
@@ -28,6 +29,8 @@ from app.infrastructure.mediator.mediator import DishkaMediator
 from app.infrastructure.mediator.queries import QueryRegistry
 from app.application.services.payment import BasePaymentService
 from app.infrastructure.notifications.telegram import TelegramNotificationSevice
+from app.infrastructure.services.secure import FernetSecureService
+from app.infrastructure.telegram.auth import ITelegramWebAppAuth
 from app.setup.di.init_payment import inti_yookass
 from app.setup.di.init_repositories import (
     init_mongo_payment_repository,
@@ -90,8 +93,12 @@ class ApplicationProvider(Provider):
         )
 
     @provide(scope=Scope.APP)
+    def telegram_web_app_auth(self) -> TelegramWebAppAuth:
+        return ITelegramWebAppAuth(app_settings.BOT_TOKEN)
+
+    @provide(scope=Scope.APP)
     def secure_service(self) -> SecureService:
-        return SecureService(Fernet(app_settings.SECRET))
+        return FernetSecureService(Fernet(app_settings.SECRET))
 
     @provide(scope=Scope.APP)
     def subscription_service(self, repo: BasePriceRepository) -> SubscriptionPricingService:
@@ -106,7 +113,7 @@ class ApplicationProvider(Provider):
         return factory_builder
 
     @provide(scope=Scope.APP)
-    def client_factory(self, protocol_factory: ProtocolBuilderFactory, secure: SecureService) -> BaseApiClient:
+    def client_factory(self, protocol_factory: ProtocolBuilderFactory, secure: SecureService) -> ApiClient:
         router_client = ApiClientRouter()
         router_client.register(ApiType.x_ui, A3xUiApiClient(builder_factory=protocol_factory, secure_service=secure))
         return router_client

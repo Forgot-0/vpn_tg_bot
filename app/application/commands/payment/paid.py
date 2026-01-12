@@ -7,7 +7,7 @@ from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
 from app.domain.repositories.users import BaseUserRepository
-from app.domain.services.ports import BaseApiClient
+from app.domain.services.ports import ApiClient
 from app.infrastructure.mediator.event import BaseEventBus
 
 
@@ -25,7 +25,7 @@ class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
     payment_repository: BasePaymentRepository
     subscription_repository: BaseSubscriptionRepository
     server_repository: BaseServerRepository
-    api_panel: BaseApiClient
+    api_panel: ApiClient
     event_bus: BaseEventBus
 
     async def handle(self, command: PaidPaymentCommand) -> None:
