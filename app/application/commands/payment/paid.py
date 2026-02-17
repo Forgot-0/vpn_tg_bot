@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 import logging
+from typing import Any, Mapping
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.exception import NotFoundException
+from app.application.services.payment import BasePaymentService
 from app.domain.repositories.payment import BasePaymentRepository
 from app.domain.repositories.servers import BaseServerRepository
 from app.domain.repositories.subscriptions import BaseSubscriptionRepository
@@ -16,20 +18,25 @@ logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True)
 class PaidPaymentCommand(BaseCommand):
-    payment_id: str
+    playload: dict[str, Any]
+    headers: Mapping[str, str]
 
 
 @dataclass(frozen=True)
 class PaidPaymentCommandHandler(BaseCommandHandler[PaidPaymentCommand, str]):
     user_repository: BaseUserRepository
     payment_repository: BasePaymentRepository
+    payment_service: BasePaymentService
     subscription_repository: BaseSubscriptionRepository
     server_repository: BaseServerRepository
     api_panel: ApiClient
     event_bus: BaseEventBus
 
     async def handle(self, command: PaidPaymentCommand) -> None:
-        payment = await self.payment_repository.get_by_payment_id(payment_id=command.payment_id)
+        payment_id = await self.payment_service.handle_webhook(
+            command.playload, headers=command.playload
+        )
+        payment = await self.payment_repository.get_by_payment_id(payment_id=str(payment_id))
 
         if not payment:
             raise NotFoundException()

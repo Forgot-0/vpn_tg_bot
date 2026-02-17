@@ -237,7 +237,3 @@ export const ServerDetailPage: React.FC = () => {
     </div>
   );
 };
-
-
-
-

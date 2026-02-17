@@ -3,7 +3,7 @@ import logging
 from uuid import UUID
 
 from app.application.commands.base import BaseCommand, BaseCommandHandler
-from app.application.dtos.tokens.token import TokenGroup
+from app.application.dtos.tokens.token import TokenGroup, TokenType
 from app.application.dtos.users.jwt import UserJWTData
 from app.application.exception import BadRequestException
 from app.application.services.jwt_manager import JWTManager
@@ -29,7 +29,10 @@ class RefreshTokenCommandHandler(BaseCommandHandler[RefreshTokenCommand, TokenGr
         if command.refresh_token is None:
             raise BadRequestException()
 
-        refresh_token = await self.jwt_manager.validate_token(command.refresh_token)
+        refresh_token = await self.jwt_manager.validate_token(
+            command.refresh_token,
+            token_type=TokenType.REFRESH
+        )
         user = await self.user_repository.get_by_id(UserId(UUID(refresh_token.sub)))
         if user is None:
             raise

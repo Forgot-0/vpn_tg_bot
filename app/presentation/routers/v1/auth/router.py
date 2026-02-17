@@ -44,7 +44,7 @@ async def refresh(
     mediator: FromDishka[BaseMediator],
     cookie_manager: CookieManager,
     response: Response,
-    refresh_token: Annotated[str | None, Cookie()] = None ,
+    refresh_token: Annotated[str | None, Cookie()] = None,
 ) -> AccessTokenResponse:
     token_group, *_ = await mediator.handle_command(
         RefreshTokenCommand(

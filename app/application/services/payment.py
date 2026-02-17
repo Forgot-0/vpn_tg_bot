@@ -21,3 +21,6 @@ class BasePaymentService(ABC):
 
     @abstractmethod
     async def check(self, payment_id: UUID) -> dict[str, Any]: ...
+
+    @abstractmethod
+    async def handle_webhook(self, playload: dict[str, Any], headers: dict[str, Any]) -> UUID: ...
