@@ -146,9 +146,5 @@ class ApplicationProvider(Provider):
         return mediator
 
     @provide(scope=Scope.APP)
-    def create_bot(self) -> Bot:
-        return Bot(app_settings.BOT_TOKEN)
-
-    @provide(scope=Scope.APP)
-    def notification_service(self, bot: Bot) -> NotificationSevice:
-        return TelegramNotificationSevice(bot)
+    def notification_service(self) -> NotificationSevice:
+        return TelegramNotificationSevice(app_settings.BOT_TOKEN)

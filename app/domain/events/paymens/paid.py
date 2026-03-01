@@ -12,3 +12,5 @@ class PaidPaymentEvent(BaseEvent):
     user_id: UUID
     subscription_id: UUID
     end_time: datetime
+
+    __event_name__: str = "payment.paid"

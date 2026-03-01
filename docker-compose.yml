@@ -47,6 +47,28 @@ services:
     volumes:
       - redis-data:/data
 
+  queue_worker:
+    build: .
+    container_name: "queue_worker"
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: taskiq worker app.tasks:broker
+    networks:
+      - app-network
+
+  scheduler:
+    build: .
+    container_name: "scheduler"
+    volumes:
+      - .:/app
+    command: taskiq scheduler app.tasks:scheduler
+    env_file:
+      - .env
+    networks:
+      - app-network
+
 volumes:
   dbdata6:
   redis-data:

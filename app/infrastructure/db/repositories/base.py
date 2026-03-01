@@ -2,6 +2,7 @@ from abc import ABC
 from dataclasses import dataclass
 
 from motor.motor_asyncio import AsyncIOMotorClient
+from redis.asyncio import Redis
 
 
 

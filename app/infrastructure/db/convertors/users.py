@@ -11,6 +11,7 @@ def convert_user_entity_to_document(user: User) -> dict[str, Any]:
     return {
             '_id': user.id.value,
             'role': user.role.value,
+            'balance': user.balance,
             'telegram_id': user.telegram_id,
             'is_premium': user.is_premium,
             'username': user.username,
@@ -25,6 +26,7 @@ def convert_user_document_to_entity(data: dict[str, Any]) -> User:
     return User(
             id=UserId(data["_id"]),
             role=UserRole(data['role']),
+            balance=data['balance'],
             telegram_id=data['telegram_id'],
             is_premium=data['is_premium'],
             username=data['username'],

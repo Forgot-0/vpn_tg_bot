@@ -6,7 +6,6 @@ from app.configs.app import app_settings
 
 def inti_yookass() -> YooKassaPaymentService:
     return YooKassaPaymentService(
-        base64.b64encode(
-            f'{app_settings.PAYMENT_ID}:{app_settings.PAYMENT_SECRET}'.encode('utf-8')
-        ).decode('utf-8')
+        shop_id=str(app_settings.PAYMENT_ID),
+        api_key=app_settings.PAYMENT_SECRET
     )

@@ -19,6 +19,8 @@ class User(AggregateRoot):
 
     telegram_id: int | None = None
 
+    balance: float = field(default=0.0)
+
     is_premium: bool = field(default=False)
     username: str | None = field(default=None)
     fullname: str | None = field(default=None)

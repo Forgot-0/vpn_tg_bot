@@ -9,7 +9,8 @@ from app.domain.values.servers import VPNConfig
 
 @dataclass
 class TelegramNotificationSevice(NotificationSevice):
-    bot: Bot
+    def __init__(self, bot_token: str) -> None:
+        self.bot = Bot(bot_token)
 
     async def send_subscription_config(self, user: User, vpn_config: VPNConfig) -> None:
         if user.telegram_id is None:

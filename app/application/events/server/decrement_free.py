@@ -19,3 +19,4 @@ class DecrementFreeServerEventHandler(BaseEventHandler[PaidPaymentEvent, None]):
             server_id=payment.subscription.server_id,
             decr=payment.subscription.device_count
         )
+

@@ -58,6 +58,11 @@ class AppConfig(BaseConfig):
     def fsm_redis_url(self) -> str:
         return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1'
 
+    @computed_field
+    @property
+    def queue_redis_url(self) -> str:
+        return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/2'
+
     LOG_LEVEL: str = 'ERROR'
     JSON_LOG: bool = True
     PATH_LOG: str | None = ".logs/logs.log"

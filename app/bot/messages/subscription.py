@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Any
 from uuid import UUID
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -9,7 +9,6 @@ from app.application.dtos.subscriptions.subscription import SubscriptionDTO
 from app.bot.messages.base import BaseMediaBuilder
 from app.bot.messages.menu import BackButton, VPNButton
 from app.domain.services.utils import now_utc, replace
-from app.domain.values.servers import ProtocolType
 
 
 
