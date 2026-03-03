@@ -155,12 +155,14 @@ class SubscriptionMessage(BaseMediaBuilder):
     _reply_markup = None
 
     def build(self, subscription: SubscriptionDTO) -> dict[str, Any]:
-        content =  super().build()
-        left = replace(subscription.start_date + timedelta(days=subscription.duration))-now_utc()
-        if left.days < 0: left = 0
+        content = super().build()
+        end = subscription.start_date + timedelta(days=subscription.duration)
+        left_td = end - now_utc()
+        left_days = max(0, left_td.days)
+
         content['media'].caption = (
             f"Ваша подписка\n"
-            f"Осталось: {left}\n"
+            f"Осталось: {left_days} дней\n"
             f"Регион: {subscription.flag}\n"
             f"Кол-во устройств: {subscription.device_count}"
         )
@@ -185,3 +187,4 @@ class SubscriptionMessage(BaseMediaBuilder):
         )
 
         return content
+

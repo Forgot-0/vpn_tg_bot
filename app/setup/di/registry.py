@@ -20,6 +20,7 @@ from app.application.commands.subscriptions.renew import RenewSubscriptionComman
 from app.application.commands.subscriptions.update_price import UpdatePriceConfigCommand, UpdatePriceConfigCommandHandler
 from app.application.commands.users.change_role_user import ChangeRoleUserCommand, ChangeRoleUserCommandHandler
 from app.application.commands.users.create import CreateUserCommand, CreateUserCommandHandler
+from app.application.events.notifications.subscription_activated import SendSubscriptionActivatedNotificationEventHandler
 from app.application.events.server.decrement_free import DecrementFreeServerEventHandler
 from app.application.queries.payments.get_by_id import GetByIDPaymentQuery, GetByIDPaymentQueryHandler
 from app.application.queries.payments.get_list import GetListPaymentQuery, GetListPaymentQueryHandler
@@ -66,6 +67,7 @@ class MediatorProvider(Provider):
     get_subscription_user_handler = provide(GetSubscriptionsUserQueryHandler, scope=Scope.APP)
     get_subscription_by_id_hanler = provide(GetSubscriptionByIdQueryHandler, scope=Scope.APP)
     get_config_handler = provide(GetConfigQueryHandler, scope=Scope.APP)
+    activate_subs_event = provide(SendSubscriptionActivatedNotificationEventHandler, scope=Scope.APP)
 
     update_price = provide(UpdatePriceConfigCommandHandler, scope=Scope.APP)
     add_protocol_price = provide(AddProtocolPriceCommandHandler, scope=Scope.APP)
@@ -208,6 +210,6 @@ class MediatorProvider(Provider):
         )
 
         events_maps.subscribe(
-            PaidPaymentEvent, [DecrementFreeServerEventHandler]
+            PaidPaymentEvent, [DecrementFreeServerEventHandler, SendSubscriptionActivatedNotificationEventHandler]
         )
         return events_maps

@@ -54,7 +54,7 @@ services:
       - .:/app
     env_file:
       - .env
-    command: taskiq worker app.tasks:broker
+    command: taskiq worker app.workers.taskiq_worker.py:broker
     networks:
       - app-network
 
@@ -63,7 +63,7 @@ services:
     container_name: "scheduler"
     volumes:
       - .:/app
-    command: taskiq scheduler app.tasks:scheduler
+    command: taskiq scheduler app.workers.taskiq_worker.py:scheduler
     env_file:
       - .env
     networks:

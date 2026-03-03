@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 from uuid import UUID
 
@@ -13,6 +13,7 @@ class SubscriptionDTO(BaseDTO):
     id: UUID
     duration: int
     start_date: datetime
+    expires_at: datetime
     device_count: int
     user_id: UUID
     server_id: UUID
@@ -28,6 +29,7 @@ class SubscriptionDTO(BaseDTO):
             id=UUID(data['id']) if isinstance(data['id'], str) else data['id'],
             duration=data['duration'],
             start_date=data['start_date'],
+            expires_at=data['start_date'] + timedelta(days=data['duration']),
             device_count=data['device_count'],
             user_id=data['user_id'],
             server_id=data['server_id'],
@@ -44,6 +46,7 @@ class SubscriptionDTO(BaseDTO):
             id=entity.id.value,
             duration=entity.duration,
             start_date=entity.start_date,
+            expires_at=entity.end_date,
             device_count=entity.device_count,
             user_id=entity.user_id.value,
             server_id=entity.server_id,
