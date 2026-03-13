@@ -16,3 +16,12 @@ class NotificationSevice(ABC):
     @abstractmethod
     async def send_subscription_activated(self, user: User, subscription: Subscription) -> None:
         ...
+
+    @abstractmethod
+    async def send_subscription_expiring_soon(self, user: User, subscription: Subscription)-> None:
+        ...
+
+    @abstractmethod
+    async def send_subscription_expired(self, user: User, subscription: Subscription) -> None:
+        ...
+

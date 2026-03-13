@@ -55,13 +55,13 @@ class AppConfig(BaseConfig):
 
     @computed_field
     @property
-    def fsm_redis_url(self) -> str:
-        return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1'
+    def redis_url(self) -> str:
+        return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}'
 
     @computed_field
     @property
-    def queue_redis_url(self) -> str:
-        return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/2'
+    def fsm_redis_url(self) -> str:
+        return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1'
 
     LOG_LEVEL: str = 'ERROR'
     JSON_LOG: bool = True

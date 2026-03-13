@@ -26,10 +26,9 @@ async def shutdown(state: TaskiqState) -> None:
 
 if app_settings.ENVIRONMENT == "testing":
     sources = [LabelScheduleSource(broker=broker)]
-
 else:
     redis_schedule_source = RedisScheduleSource(
-        url=app_settings.queue_redis_url,
+        url=app_settings.redis_url,
     )
     sources = [redis_schedule_source, LabelScheduleSource(broker=broker)]
 

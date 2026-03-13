@@ -44,7 +44,7 @@ class YooKassaPaymentService(BasePaymentService):
         headers = {
             'Idempotence-Key': str(order.id),
         }
-    
+
         data = {
             'amount': {
                 'value': order.total_price,

@@ -40,10 +40,15 @@ class RenewSubscriptionCommandHandler(BaseCommandHandler[RenewSubscriptionComman
         if subscription.user_id != UserId(UUID(command.user_jwt_data.id)):
             raise ForbiddenException()
 
-        current_price = await self.subs_price_service.calculate(subscription)
 
         subscription.renew(command.duration)
-        new_price = abs(current_price - await self.subs_price_service.calculate(subscription))
+        new_price = await self.subs_price_service.culculate_by_field(
+            duration=command.duration,
+            device_count=subscription.device_count,
+            region=subscription.region,
+            protocol_types=subscription.protocol_types
+        )
+
         payment = Payment.create(
             subscription=subscription,
             user_id=subscription.user_id,
