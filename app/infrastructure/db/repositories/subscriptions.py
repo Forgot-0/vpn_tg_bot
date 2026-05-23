@@ -2,7 +2,6 @@ from datetime import date, timedelta
 from uuid import UUID
 
 from sqlalchemy import delete, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.subscription import Subscription, SubscriptionPlan
 from app.domain.repositories.subscriptions import SubscriptionPlanRepository, SubscriptionRepository
@@ -12,35 +11,30 @@ from app.infrastructure.db.models.subscriptions import SubscriptionModel, Subscr
 from app.infrastructure.db.repositories.base import SQLAlchemyRepository
 
 class SQLAlchemySubscriptionRepository(
-    SQLAlchemyRepository[SubscriptionModel],
+    SQLAlchemyRepository,
     SubscriptionRepository,
 ):
-    model_class = SubscriptionModel
-
-    def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session)
-
     async def get_by_id(self, subscription_id: UUID) -> Subscription | None:
         query = select(SubscriptionModel).where(
             SubscriptionModel.id == subscription_id
         )
-        subscription = (await self._session.execute(query)).scalar()
+        subscription = (await self.session.execute(query)).scalar()
         return SubscriptionMapper.to_domain(subscription) if subscription else None
 
     async def add(self, entity: Subscription) -> None:
-        self._session.add(SubscriptionMapper.to_model(entity))
+        self.session.add(SubscriptionMapper.to_model(entity))
 
     async def update(self, subscription_entity: Subscription) -> None:
         query = select(SubscriptionModel).where(
             SubscriptionModel.id == subscription_entity.id
         )
-        subscription = (await self._session.execute(query)).scalar()
+        subscription = (await self.session.execute(query)).scalar()
         if subscription is None:
             raise ValueError(f"Subscription {subscription_entity.id} not found")
         SubscriptionMapper.update_model(subscription, subscription_entity)
 
     async def delete(self, subscription_id: str) -> None:
-        await self._session.execute(
+        await self.session.execute(
             delete(SubscriptionModel).where(SubscriptionModel.id == subscription_id)
         )
 
@@ -48,14 +42,14 @@ class SQLAlchemySubscriptionRepository(
         stmt = select(SubscriptionModel).where(
             SubscriptionModel.user_id == user_id
         )
-        result = await self._session.execute(stmt)
+        result = await self.session.execute(stmt)
         return [SubscriptionMapper.to_domain(m) for m in result.scalars().all()]
 
     async def list_by_status(self, status: SubscriptionStatus) -> list[Subscription]:
         stmt = select(SubscriptionModel).where(
             SubscriptionModel.status == status.value
         )
-        result = await self._session.execute(stmt)
+        result = await self.session.execute(stmt)
         return [SubscriptionMapper.to_domain(m) for m in result.scalars().all()]
 
     async def list_expiring(self, within_days: int) -> list[Subscription]:
@@ -67,40 +61,35 @@ class SQLAlchemySubscriptionRepository(
             SubscriptionModel.expires_at <= boundary,
             SubscriptionModel.expires_at >= today,
         )
-        result = await self._session.execute(stmt)
+        result = await self.session.execute(stmt)
         return [SubscriptionMapper.to_domain(m) for m in result.scalars().all()]
 
 
 class SQLAlchemySubscriptionPlanRepository(
-    SQLAlchemyRepository[SubscriptionPlanModel],
+    SQLAlchemyRepository,
     SubscriptionPlanRepository,
 ):
-    model_class = SubscriptionPlanModel
-
-    def __init__(self, session: AsyncSession) -> None:
-        super().__init__(session)
-
     async def get(self, subscription_plan_id: UUID) -> SubscriptionPlan | None:
         query = select(SubscriptionPlanModel).where(
             SubscriptionPlanModel.id == subscription_plan_id
         )
-        subscription_plan = (await self._session.execute(query)).scalar()
+        subscription_plan = (await self.session.execute(query)).scalar()
         return SubscriptionPlanMapper.to_domain(subscription_plan) if subscription_plan else None
 
     async def add(self, subscription_plan_entity: SubscriptionPlan) -> None:
-        self._session.add(SubscriptionPlanMapper.to_model(subscription_plan_entity))
+        self.session.add(SubscriptionPlanMapper.to_model(subscription_plan_entity))
 
     async def update(self, subscription_plan_entity: SubscriptionPlan) -> None:
         query = select(SubscriptionPlanModel).where(
             SubscriptionPlanModel.id == subscription_plan_entity.id
         )
-        subscription = (await self._session.execute(query)).scalar()
+        subscription = (await self.session.execute(query)).scalar()
         if subscription is None:
             raise ValueError(f"Subscription {subscription_plan_entity.id} not found")
         SubscriptionPlanMapper.update_model(subscription, subscription_plan_entity)
 
     async def delete(self, subscription_plan_id: UUID) -> None:
-        await self._session.execute(
+        await self.session.execute(
             delete(SubscriptionPlanModel).where(SubscriptionPlanModel.id == subscription_plan_id)
         )
 
@@ -108,7 +97,7 @@ class SQLAlchemySubscriptionPlanRepository(
         stmt = select(SubscriptionPlanModel).where(
             SubscriptionPlanModel.code == code
         )
-        result = await self._session.execute(stmt)
+        result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()
         return SubscriptionPlanMapper.to_domain(model) if model else None
 
@@ -116,5 +105,5 @@ class SQLAlchemySubscriptionPlanRepository(
         stmt = select(SubscriptionPlanModel).where(
             SubscriptionPlanModel.is_active.is_(True)
         )
-        result = await self._session.execute(stmt)
+        result = await self.session.execute(stmt)
         return [SubscriptionPlanMapper.to_domain(m) for m in result.scalars().all()]

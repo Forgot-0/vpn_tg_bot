@@ -93,6 +93,7 @@ class SubscriptionMapper:
             user_id=model.user_id,
             plan_id=model.plan_id,
             server_id=model.server_id,
+            payment_order_id=model.payment_order_id,
             protocols=frozenset(VPNProtocol(p) for p in model.protocols),
             devices=DeviceCount(model.devices),
             status=SubscriptionStatus(model.status),

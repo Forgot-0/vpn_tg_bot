@@ -39,24 +39,12 @@ class SubscriptionPlan(AggregateRoot):
         self.validate()
 
     def validate(self) -> None:
-        if self.billing_mode == BillingMode.PERIOD_ONLY:
-            if self.duration is None:
-                raise ValueError("PERIOD_ONLY requires duration")
-            if self.traffic_quota is not None:
-                raise ValueError("PERIOD_ONLY must not have traffic quota")
-
-        elif self.billing_mode == BillingMode.PERIOD_WITH_TRAFFIC:
-            if self.duration is None or self.traffic_quota is None:
-                raise ValueError("PERIOD_WITH_TRAFFIC requires duration and traffic quota")
-
-        elif self.billing_mode == BillingMode.TRAFFIC_ONLY:
-            if self.traffic_quota is None:
-                raise ValueError("TRAFFIC_ONLY requires traffic quota")
-            if self.duration is not None:
-                raise ValueError("TRAFFIC_ONLY must not have duration")
-
-        else:
-            raise ValueError(f"Unknown billing mode: {self.billing_mode}")
+        if not self.allowed_protocols:
+            raise ValueError("plan must allow at least one protocol")
+        if self.duration is None and self.traffic_quota is None:
+            raise ValueError("plan must define duration or traffic quota")
+        if self.max_devices is not None and self.max_devices <= 0:
+            raise ValueError("max_devices must be positive")
 
 
 @dataclass(frozen=True)
@@ -93,6 +81,7 @@ class Subscription(AggregateRoot):
     user_id: UUID
     plan_id: UUID
     server_id: UUID
+    payment_order_id: UUID | None
 
     protocols: FrozenSet[VPNProtocol]
     devices: DeviceCount
@@ -153,3 +142,21 @@ class Subscription(AggregateRoot):
                 total_used_gb=self.used_traffic_gb,
             )
         )
+
+    def mark_pending_payment(self, payment_order_id: UUID) -> None:
+        self.status = SubscriptionStatus.PENDING_PAYMENT
+        self.payment_order_id = payment_order_id
+
+    def apply_usage(self, gb: Decimal) -> None:
+        if gb <= 0:
+            raise ValueError("usage must be positive")
+        self.used_traffic_gb += gb
+
+    def renew(self, renewal: "SubscriptionRenewal") -> None:
+        self.renewals.append(renewal)
+        self.expires_at = renewal.new_expires_at
+        self.status = SubscriptionStatus.RENEWED
+
+    def rotate_access(self, rotation: "AccessRotation") -> None:
+        self.access_rotations.append(rotation)
+        self.access_items = rotation.new_access_items

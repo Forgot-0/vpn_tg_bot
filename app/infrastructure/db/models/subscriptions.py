@@ -69,6 +69,11 @@ class SubscriptionModel(BaseModelORM):
         ForeignKey("vpn_servers.id", ondelete="RESTRICT"),
         nullable=False,
     )
+    payment_order_id: Mapped[UUID] = mapped_column(
+        SAUUID(as_uuid=True),
+        ForeignKey("payments.id", ondelete="RESTRICT"),
+        nullable=False
+    )
 
     protocols: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
     devices: Mapped[int] = mapped_column(Integer, nullable=False)

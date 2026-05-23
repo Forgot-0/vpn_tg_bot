@@ -14,6 +14,7 @@ class BillingMode(StrEnum):
 
 class SubscriptionStatus(StrEnum):
     PENDING = "pending"
+    PENDING_PAYMENT = "pending_payment"
     ACTIVE = "active"
     EXPIRED = "expired"
     REVOKED = "revoked"
@@ -93,6 +94,8 @@ class DeviceCount(BaseValueObject[int]):
     def __gt__(self, other: BaseValueObject):
         return self.value > other.as_generic_type()
 
+    def __le__(self, other: int) -> bool:
+        return self.value < other
 
 @dataclass(frozen=True)
 class VPNProtocol(BaseValueObject[str]):
