@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from copy import copy
 from dataclasses import dataclass, field
 
@@ -13,6 +13,13 @@ class AggregateRoot(ABC):
         default_factory=list,
         init=False, repr=False, hash=False, compare=False,
     )
+
+    def __post_init__(self) -> None:
+        self.validate()
+
+    @abstractmethod
+    def validate(self) -> None:
+        ...
 
     def register_event(self, event: BaseEvent) -> None:
         self._events.append(event)

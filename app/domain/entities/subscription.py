@@ -1,81 +1,114 @@
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from enum import Enum
-from uuid import UUID, uuid4
+from datetime import date, datetime, timedelta
+from decimal import Decimal
+from typing import FrozenSet
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.exception.base import SubscriptionPendingException
-from app.domain.services.utils import now_utc, replace
-from app.domain.values.servers import ProtocolType, Region
-from app.domain.values.subscriptions import SubscriptionId
-from app.domain.values.users import UserId
+from app.domain.values.subscriptions import (
+    AccessArtifact,
+    BillingMode,
+    DeviceCount,
+    DurationDays,
+    Money,
+    PlanFeature,
+    SubscriptionStatus,
+    TrafficQuota,
+    VPNProtocol
+)
 
-
-class SubscriptionStatus(Enum):
-    PENDING = "pending"
-    ACTIVE = "active"
-    EXPIRED = "expired"
 
 
 @dataclass
-class Subscription(AggregateRoot):
-    id: SubscriptionId = field(default_factory=lambda: SubscriptionId(uuid4()), kw_only=True)
-    duration: int
-    start_date: datetime = field(default_factory=now_utc, kw_only=True)
+class SubscriptionPlan(AggregateRoot):
+    id: str
+    code: str
+    name: str
+    billing_mode: BillingMode
 
-    device_count: int
+    duration: DurationDays | None = None
+    traffic_quota: TrafficQuota | None = None
 
-    server_id: UUID
-    region: Region
+    allowed_protocols: FrozenSet[VPNProtocol] = frozenset()
+    included_features: FrozenSet[PlanFeature] = frozenset()
+    max_devices: DeviceCount | None = None
 
-    user_id: UserId
+    fixed_price: Money | None = None
 
-    status: SubscriptionStatus = field(default=SubscriptionStatus.PENDING, kw_only=True)
-    protocol_types: list[ProtocolType]
+    def validate(self) -> None:
+        if self.billing_mode == BillingMode.PERIOD_ONLY:
+            if self.duration is None:
+                raise ValueError("PERIOD_ONLY requires duration")
+            if self.traffic_quota is not None:
+                raise ValueError("PERIOD_ONLY must not have traffic quota")
 
-    @staticmethod
-    def create(
-        user_id: UserId,
-        region: Region,
-        server_id: UUID,
-        duration: int,
-        device_count: int,
-        protocol_types: list[ProtocolType],
-    ) -> "Subscription":
-        subscription =  Subscription(
-            duration=duration,
-            device_count=device_count,
-            server_id=server_id,
-            region=region,
-            user_id=user_id,
-            protocol_types=protocol_types
-        )
-        return subscription
+        elif self.billing_mode == BillingMode.PERIOD_WITH_TRAFFIC:
+            if self.duration is None or self.traffic_quota is None:
+                raise ValueError("PERIOD_WITH_TRAFFIC requires duration and traffic quota")
 
+        elif self.billing_mode == BillingMode.TRAFFIC_ONLY:
+            if self.traffic_quota is None:
+                raise ValueError("TRAFFIC_ONLY requires traffic quota")
+            if self.duration is not None:
+                raise ValueError("TRAFFIC_ONLY must not have duration")
 
-    @property
-    def end_date(self) -> datetime:
-        return replace(self.start_date + timedelta(days=self.duration))
-
-    def is_active(self) -> bool:
-        return now_utc() < replace(self.end_date)
-
-    def activate(self) -> None:
-        self.status = SubscriptionStatus.ACTIVE
-        self.start_date = now_utc()
-
-    def upgrade_devices(self, new_device_count: int) -> None:
-        self.device_count = new_device_count
-
-    def change_region(self, new_region: Region) -> None:
-        self.region = new_region
-
-    def renew(self, duration: int):
-        if self.status  == SubscriptionStatus.PENDING:
-            raise SubscriptionPendingException(subscription_id=self.id.as_generic_type())
-
-        if replace(self.end_date) < now_utc():
-            self.start_date = now_utc()
-            self.duration = duration
         else:
-            self.duration += duration
+            raise ValueError("Unknown billing mode")
+
+
+@dataclass(frozen=True)
+class SubscriptionRenewal:
+    id: str
+    subscription_id: str
+    renewed_at: datetime
+
+    previous_expires_at: date | None
+    new_expires_at: date | None
+
+    renewal_period_days: int | None
+    price_paid: Money
+    payment_id: str | None = None
+    renewed_by: str | None = None
+
+@dataclass(frozen=True)
+class AccessRotation:
+    id: str
+    subscription_id: str
+    rotated_at: datetime
+    reason: str
+
+    old_access_items: list[AccessArtifact]
+    new_access_items: list[AccessArtifact]
+
+    rotated_by: str | None = None
+
+
+@dataclass
+class Subscription:
+    id: str
+    user_id: str
+    plan_id: str
+    server_id: str
+
+    protocols: FrozenSet[VPNProtocol]
+    devices: DeviceCount
+    status: SubscriptionStatus = SubscriptionStatus.PENDING
+
+    started_at: date | None = None
+    expires_at: date | None = None
+
+    purchased_price: Money | None = None
+    used_traffic_gb: Decimal = Decimal("0")
+
+    access_items: list["AccessArtifact"] = field(default_factory=list)
+    renewals: list["SubscriptionRenewal"] = field(default_factory=list)
+    access_rotations: list["AccessRotation"] = field(default_factory=list)
+
+    def activate(self, start_date: date, duration_days: int | None) -> None:
+        self.status = SubscriptionStatus.ACTIVE
+        self.started_at = start_date
+        self.expires_at = None if duration_days is None else start_date + timedelta(days=duration_days)
+
+    def consume_traffic(self, gb: Decimal) -> None:
+        if gb <= 0:
+            raise ValueError("Traffic must be positive")
+        self.used_traffic_gb += gb
