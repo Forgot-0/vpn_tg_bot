@@ -1,16 +1,4 @@
 from enum import StrEnum
-from uuid import UUID
-
-from app.domain.values.base import BaseValueObject
-
-
-class UserId(BaseValueObject[UUID]):
-    def validate(self):
-        if not self.value:
-            raise ValueError("UserId cannot be empty")
-
-    def as_generic_type(self) -> str:
-        return str(self.value)
 
 
 class UserRole(StrEnum):

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
-from uuid import UUID
 
 from app.domain.values.base import BaseValueObject
 from app.domain.values.servers import PanelType
@@ -33,15 +32,6 @@ class PlanFeatureCode(StrEnum):
     EXTRA_PORTS = "extra_ports"
     HIGH_SPEED = "high_speed"
     STATIC_IP = "static_ip"
-
-
-class SubscriptionId(BaseValueObject[UUID]):
-    def validate(self):
-        if not self.value:
-            raise ValueError("SubscriptionId cannot be empty")
-
-    def as_generic_type(self) -> str:
-        return str(self.value)
 
 
 @dataclass(frozen=True)

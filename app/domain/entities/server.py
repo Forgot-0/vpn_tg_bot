@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 from typing import FrozenSet
+from uuid import UUID
 
+from app.domain.entities.base import AggregateRoot
 from app.domain.values.servers import PanelConfig, PanelCredits, PanelType
 from app.domain.values.subscriptions import PlanFeatureCode, VPNProtocol
 
 
 @dataclass
-class VPNServer:
-    id: str
+class VPNServer(AggregateRoot):
+    id: UUID
 
     panel_type: PanelType
     panel_config: PanelConfig
@@ -20,6 +22,9 @@ class VPNServer:
     supported_features: FrozenSet[PlanFeatureCode] = frozenset()
 
     def __post_init__(self) -> None:
+        self.validate()
+
+    def validate(self) -> None:
         if not self.id:
             raise ValueError("VPNServer id cannot be empty")
         if not self.region_code:

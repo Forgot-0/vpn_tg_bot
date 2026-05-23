@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import FrozenSet
+from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.events.subscriptions import SubscriptionActivatedEvent, TrafficConsumedEvent
@@ -19,8 +20,8 @@ from app.domain.values.subscriptions import (
 
 
 @dataclass
-class SubscriptionPlan:
-    id: str
+class SubscriptionPlan(AggregateRoot):
+    id: UUID
     code: str
     name: str
     billing_mode: BillingMode
@@ -35,9 +36,9 @@ class SubscriptionPlan:
     fixed_price: Money | None = None
 
     def __post_init__(self) -> None:
-        self._validate()
+        self.validate()
 
-    def _validate(self) -> None:
+    def validate(self) -> None:
         if self.billing_mode == BillingMode.PERIOD_ONLY:
             if self.duration is None:
                 raise ValueError("PERIOD_ONLY requires duration")
@@ -60,8 +61,8 @@ class SubscriptionPlan:
 
 @dataclass(frozen=True)
 class SubscriptionRenewal:
-    id: str
-    subscription_id: str
+    id: UUID
+    subscription_id: UUID
     renewed_at: datetime
 
     previous_expires_at: date | None
@@ -75,8 +76,8 @@ class SubscriptionRenewal:
 
 @dataclass(frozen=True)
 class AccessRotation:
-    id: str
-    subscription_id: str
+    id: UUID
+    subscription_id: UUID
     rotated_at: datetime
     reason: str
 
@@ -88,10 +89,10 @@ class AccessRotation:
 
 @dataclass
 class Subscription(AggregateRoot):
-    id: str
-    user_id: str
-    plan_id: str
-    server_id: str
+    id: UUID
+    user_id: UUID
+    plan_id: UUID
+    server_id: UUID
 
     protocols: FrozenSet[VPNProtocol]
     devices: DeviceCount
@@ -130,9 +131,9 @@ class Subscription(AggregateRoot):
 
         self.register_event(
             SubscriptionActivatedEvent(
-                subscription_id=self.id,
-                user_id=self.user_id,
-                plan_id=self.plan_id,
+                subscription_id=str(self.id),
+                user_id=str(self.user_id),
+                plan_id=str(self.plan_id),
                 started_at=self.started_at,
                 expires_at=self.expires_at,
             )
@@ -146,8 +147,8 @@ class Subscription(AggregateRoot):
 
         self.register_event(
             TrafficConsumedEvent(
-                subscription_id=self.id,
-                user_id=self.user_id,
+                subscription_id=str(self.id),
+                user_id=str(self.user_id),
                 consumed_gb=gb,
                 total_used_gb=self.used_traffic_gb,
             )
