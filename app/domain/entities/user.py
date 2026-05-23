@@ -25,28 +25,31 @@ class User(AggregateRoot):
 
     created_at: datetime = field(default_factory=now_utc)
 
-
     @classmethod
     def create(
-        cls, email: str | None=None, password_hash: str | None=None,
-        telegram_id: int | None=None, referred_by: UserId | None=None
+        cls,
+        email: str | None = None,
+        password_hash: str | None = None,
+        telegram_id: int | None = None,
+        referred_by: UserId | None = None,
     ) -> Self:
         user = cls(
             email=email,
             password_hash=password_hash,
             telegram_id=telegram_id,
-            referred_by=referred_by
+            referred_by=referred_by,
         )
         user.register_event(
             NewUserEvent(
                 user_id=user.id.value,
                 email=user.email,
-                telegram_id=user.telegram_id
+                telegram_id=user.telegram_id,
             )
         )
-
         return user
 
     def validate(self) -> None:
-        if self.referred_by == self.id:
-            raise 
+        if self.email is None and self.telegram_id is None:
+            raise ValueError("User must have either email or telegram_id")
+        if self.referred_by is not None and self.referred_by == self.id:
+            raise ValueError("User cannot refer themselves")

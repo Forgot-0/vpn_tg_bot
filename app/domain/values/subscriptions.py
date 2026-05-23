@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from enum import StrEnum
@@ -39,7 +38,7 @@ class PlanFeatureCode(StrEnum):
 class SubscriptionId(BaseValueObject[UUID]):
     def validate(self):
         if not self.value:
-            raise 
+            raise ValueError("SubscriptionId cannot be empty")
 
     def as_generic_type(self) -> str:
         return str(self.value)
@@ -64,10 +63,13 @@ class Money:
 
     def _check_currency(self, other: "Money") -> None:
         if self.currency != other.currency:
-            raise 
+            raise ValueError(
+                f"Currency mismatch: cannot operate on {self.currency} and {other.currency}"
+            )
 
     def __str__(self) -> str:
         return f"{self.amount} {self.currency}"
+
 
 @dataclass(frozen=True)
 class TrafficQuota(BaseValueObject[int]):
@@ -88,6 +90,7 @@ class DurationDays(BaseValueObject[int]):
     def as_generic_type(self) -> int:
         return self.value
 
+
 @dataclass(frozen=True)
 class DeviceCount(BaseValueObject[int]):
     def validate(self):
@@ -107,11 +110,10 @@ class VPNProtocol(BaseValueObject[str]):
         normalized = self.value.strip().lower()
         if not normalized:
             raise ValueError("Protocol code cannot be empty")
-        object.__setattr__(self, "code", normalized)
+        object.__setattr__(self, "value", normalized)
 
     def as_generic_type(self) -> str:
         return self.value
-
 
 
 @dataclass(frozen=True)
@@ -133,7 +135,6 @@ class AccessArtifact:
         return self.format == AccessFormat.LINK
 
 
-
 @dataclass(frozen=True)
 class PlanFeature:
     code: PlanFeatureCode
@@ -142,4 +143,3 @@ class PlanFeature:
     def __post_init__(self) -> None:
         if self.quantity <= 0:
             raise ValueError("Feature quantity must be positive")
-

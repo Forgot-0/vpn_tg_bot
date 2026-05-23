@@ -21,20 +21,28 @@ services:
       --port ${WEBAPP_WEBHOOK_PORT} --no-access-log"
     ]
 
-  mongo:
-    image: mongo:8.0.15
-    container_name: mongo
-    restart: always
+  db:
+    image: postgres:18.3
+    container_name: db
     ports:
-      - '27017:27017'
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
     networks:
       - app-network
-    volumes:
-      - dbdata6:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
 
   redis:
     image: redis:7.2-alpine
