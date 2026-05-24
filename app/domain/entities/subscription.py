@@ -43,7 +43,7 @@ class Subscription(AggregateRoot):
 
     access_credentials: list[AccessCredential] = field(default_factory=list)
 
-    def _validate(self) -> None:
+    def validate(self) -> None:
         if not self.user_id:
             raise ValueError("Subscription must belong to a user")
         if not self.plan_id:

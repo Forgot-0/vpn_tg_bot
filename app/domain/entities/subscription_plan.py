@@ -34,7 +34,7 @@ class SubscriptionPlan(AggregateRoot):
     is_public: bool = True
     sort_order: int = 0
 
-    def _validate(self) -> None:
+    def validate(self) -> None:
         if not self.code:
             raise ValueError("Plan code cannot be empty")
         if not self.name:

@@ -73,7 +73,7 @@ class User(AggregateRoot):
     def increment_referrals(self) -> None:
         self.referrals_count += 1
 
-    def _validate(self) -> None:
+    def validate(self) -> None:
         if self.email is None and self.telegram_id is None:
             raise ValueError("User must have either email or telegram_id")
         if self.referred_by is not None and self.referred_by == self.id:

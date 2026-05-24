@@ -25,7 +25,8 @@ class PaymentOrder(AggregateRoot):
     created_at: datetime | None = None
     paid_at: datetime | None = None
 
-    def _validate(self) -> None:
+
+    def validate(self) -> None:
         if not self.subscription_id:
             raise ValueError("PaymentOrder must reference a subscription")
         if not self.user_id:

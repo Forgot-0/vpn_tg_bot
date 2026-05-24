@@ -35,7 +35,7 @@ class VPNServer(AggregateRoot):
 
     tags: FrozenSet[str] = frozenset()
 
-    def _validate(self) -> None:
+    def validate(self) -> None:
         if not self.name:
             raise ValueError("VPNServer name cannot be empty")
         if not self.region_code:
