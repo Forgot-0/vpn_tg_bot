@@ -1,7 +1,8 @@
 from abc import abstractmethod
 from uuid import UUID
 
-from app.domain.entities.subscription import Subscription, SubscriptionPlan
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.subscription_plan import SubscriptionPlan
 from app.domain.repositories.base import Repository
 from app.domain.values.subscriptions import SubscriptionStatus
 

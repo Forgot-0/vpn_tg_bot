@@ -8,7 +8,7 @@ import jwt
 from app.application.dtos.users import JwtTokenType, Token, UserJWTData
 from app.application.interfaces.auth import JWTService
 from app.configs.app import app_config
-from app.domain.services.utils import now_utc
+from app.domain.services.clock import now_utc
 
 
 

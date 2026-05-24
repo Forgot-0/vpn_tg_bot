@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from enum import StrEnum
+from typing import Final
 
 from app.domain.values.base import BaseValueObject
-from app.domain.values.servers import PanelType
+
 
 
 class BillingMode(StrEnum):
@@ -13,7 +16,7 @@ class BillingMode(StrEnum):
 
 
 class SubscriptionStatus(StrEnum):
-    PENDING = "pending"
+    DRAFT = "draft"
     PENDING_PAYMENT = "pending_payment"
     ACTIVE = "active"
     EXPIRED = "expired"
@@ -44,37 +47,24 @@ class Money:
         normalized = self.amount.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         object.__setattr__(self, "amount", normalized)
 
-    def __add__(self, other: "Money") -> "Money":
+    def _check_currency(self, other: Money) -> None:
+        if self.currency != other.currency:
+            raise ValueError(f"Currency mismatch: {self.currency} != {other.currency}")
+
+    def __add__(self, other: Money) -> Money:
         self._check_currency(other)
         return Money(self.amount + other.amount, self.currency)
 
-    def __mul__(self, factor: int | Decimal) -> "Money":
-        factor_decimal = Decimal(str(factor))
-        return Money(self.amount * factor_decimal, self.currency)
-
-    def _check_currency(self, other: "Money") -> None:
-        if self.currency != other.currency:
-            raise ValueError(
-                f"Currency mismatch: cannot operate on {self.currency} and {other.currency}"
-            )
+    def __mul__(self, factor: int | Decimal) -> Money:
+        return Money(self.amount * Decimal(str(factor)), self.currency)
 
     def __str__(self) -> str:
         return f"{self.amount} {self.currency}"
 
 
 @dataclass(frozen=True)
-class TrafficQuota(BaseValueObject[int]):
-    def validate(self):
-        if self.value <= 0:
-            raise ValueError("Traffic quota must be positive")
-
-    def as_generic_type(self) -> int:
-        return self.value
-
-
-@dataclass(frozen=True)
 class DurationDays(BaseValueObject[int]):
-    def validate(self):
+    def validate(self) -> None:
         if self.value <= 0:
             raise ValueError("Duration must be positive")
 
@@ -83,38 +73,37 @@ class DurationDays(BaseValueObject[int]):
 
 
 @dataclass(frozen=True)
+class TrafficQuota(BaseValueObject[int]):
+    def validate(self) -> None:
+        if self.value <= 0:
+            raise ValueError("Traffic quota must be positive")
+
+    def as_generic_type(self) -> int:
+        return self.value
+
+
+@dataclass(frozen=True)
 class DeviceCount(BaseValueObject[int]):
-    def validate(self):
+    def validate(self) -> None:
         if self.value <= 0:
             raise ValueError("Device count must be positive")
 
     def as_generic_type(self) -> int:
         return self.value
 
-    def __gt__(self, other: BaseValueObject):
-        return self.value > other.as_generic_type()
+    def __gt__(self, other: object) -> bool:
+        if isinstance(other, BaseValueObject):
+            return self.value > other.as_generic_type()
+        if isinstance(other, int):
+            return self.value > other
+        return NotImplemented
 
-    def __le__(self, other: int) -> bool:
-        return self.value < other
-
-
-@dataclass(frozen=True)
-class ServerSnapshot:
-    server_id: str
-    panel_type: PanelType
-    name: str
-    host: str
-    region: str | None = None
-
-
-@dataclass(frozen=True)
-class AccessArtifact:
-    format: AccessFormat
-    value: str
-    external_id: str | None = None
-
-    def is_link(self) -> bool:
-        return self.format == AccessFormat.LINK
+    def __le__(self, other: object) -> bool:
+        if isinstance(other, BaseValueObject):
+            return self.value <= other.as_generic_type()
+        if isinstance(other, int):
+            return self.value <= other
+        return NotImplemented
 
 
 @dataclass(frozen=True)
@@ -125,3 +114,13 @@ class PlanFeature:
     def __post_init__(self) -> None:
         if self.quantity <= 0:
             raise ValueError("Feature quantity must be positive")
+
+
+@dataclass(frozen=True)
+class AccessArtifact:
+    format: AccessFormat
+    value: str
+    external_id: str | None = None
+
+    def is_link(self) -> bool:
+        return self.format == AccessFormat.LINK

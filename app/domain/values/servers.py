@@ -1,10 +1,11 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import StrEnum
 
 
 class PanelType(StrEnum):
     X3UI = "3x-ui"
     REMNAWAVE = "remnawave"
+    MARBZAN = "marbzan"
     OTHER = "other"
 
 
@@ -17,19 +18,15 @@ class ProtocolCode(StrEnum):
 
 
 @dataclass(frozen=True)
-class PanelCredits:
+class PanelCredentials:
     username: str
     password: str
-    two_factor_code: str | None = field(default=None)
+    two_factor_code: str | None = None
 
 
-@dataclass
+@dataclass(frozen=True)
 class PanelConfig:
-    ip: str
+    host: str
     panel_port: int
     panel_path: str
-
-    domain: str | None = field(default=None)
-
-    def set_domain(self, domain: str) -> None:
-        self.domain = domain
+    domain: str | None = None

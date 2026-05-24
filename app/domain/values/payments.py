@@ -12,3 +12,5 @@ class PaymentStatus(StrEnum):
 
 class PaymentProvider(StrEnum):
     YOOKASSA = "yookassa"
+    STRIPE = "stripe"
+    OTHER = "other"

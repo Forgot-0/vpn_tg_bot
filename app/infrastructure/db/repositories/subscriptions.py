@@ -3,7 +3,8 @@ from uuid import UUID
 
 from sqlalchemy import delete, select
 
-from app.domain.entities.subscription import Subscription, SubscriptionPlan
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.subscription_plan import SubscriptionPlan
 from app.domain.repositories.subscriptions import SubscriptionPlanRepository, SubscriptionRepository
 from app.domain.values.subscriptions import SubscriptionStatus
 from app.infrastructure.db.mappers.subscriptions import SubscriptionMapper, SubscriptionPlanMapper

@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Self
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.events.users import NewUserEvent
-from app.domain.services.utils import now_utc
+from app.domain.events.users import UserCreatedEvent, UserRoleChangedEvent
+from app.domain.services.clock import now_utc
 from app.domain.values.users import UserRole
 
 
@@ -14,20 +16,20 @@ class User(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
     role: UserRole = field(default=UserRole.USER)
 
-    email: str | None = field(default=None)
-    password_hash: str | None = field(default=None)
-
-    telegram_id: int | None = field(default=None)
+    email: str | None = None
+    password_hash: str | None = None
+    telegram_id: int | None = None
 
     referral_code: str = field(default_factory=lambda: uuid4().hex)
-    referred_by: UUID | None = field(default=None)
-    referrals_count: int = field(default=0)
+    referred_by: UUID | None = None
+    referrals_count: int = 0
 
     created_at: datetime = field(default_factory=now_utc)
 
     @classmethod
     def create(
         cls,
+        *,
         email: str | None = None,
         password_hash: str | None = None,
         telegram_id: int | None = None,
@@ -40,13 +42,33 @@ class User(AggregateRoot):
             referred_by=referred_by,
         )
         user.register_event(
-            NewUserEvent(
+            UserCreatedEvent(
                 user_id=user.id,
                 email=user.email,
                 telegram_id=user.telegram_id,
             )
         )
         return user
+
+    def change_role(self, new_role: UserRole) -> None:
+        if not self.role.is_changeable:
+            raise ValueError("Current role cannot be changed")
+        if not new_role.is_assignable:
+            raise ValueError("Target role cannot be assigned")
+
+        old_role = self.role
+        self.role = new_role
+
+        self.register_event(
+            UserRoleChangedEvent(
+                user_id=self.id,
+                old_role=old_role,
+                new_role=new_role,
+            )
+        )
+
+    def increment_referrals(self) -> None:
+        self.referrals_count += 1
 
     def validate(self) -> None:
         if self.email is None and self.telegram_id is None:

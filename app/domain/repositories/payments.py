@@ -7,7 +7,7 @@ from app.domain.repositories.base import Repository
 
 class PaymentOrderRepository(Repository[PaymentOrder, UUID]):
     @abstractmethod
-    async def get_by_id(self, server_id: UUID) -> PaymentOrder | None:
+    async def get_by_id(self, payment_id: UUID) -> PaymentOrder | None:
         ...
 
     @abstractmethod

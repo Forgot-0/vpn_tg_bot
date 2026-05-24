@@ -4,10 +4,10 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import FrozenSet
 
-from app.domain.entities.subscription import SubscriptionPlan
+from app.domain.entities.subscription_plan import SubscriptionPlan
+from app.domain.errors import BusinessRuleViolationError
 from app.domain.values.servers import ProtocolCode
-from app.domain.values.subscriptions import DeviceCount, Money, PlanFeature, PlanFeatureCode
-
+from app.domain.values.subscriptions import DeviceCount, Money, PlanFeature
 
 
 @dataclass(frozen=True)
@@ -17,7 +17,7 @@ class RuleBasedPricingService:
     gb_rate: Money = Money(Decimal("0"))
     device_rate: Money = Money(Decimal("0"))
     protocol_rate: dict[ProtocolCode, Money] = field(default_factory=dict)
-    feature_rate: dict[PlanFeatureCode, Money] = field(default_factory=dict)
+    feature_rate: dict[str, Money] = field(default_factory=dict)
     traffic_only_flat_fee: Money = Money(Decimal("0"))
     minimum_price: Money | None = None
 
@@ -26,13 +26,13 @@ class RuleBasedPricingService:
         plan: SubscriptionPlan,
         protocols: FrozenSet[ProtocolCode],
         devices: DeviceCount,
-        features: FrozenSet[PlanFeature]
+        features: FrozenSet[PlanFeature],
     ) -> Money:
         if not protocols.issubset(plan.allowed_protocols):
-            raise ValueError("Selected protocols are not allowed by plan")
+            raise BusinessRuleViolationError(reason="selected protocols are not allowed by plan")
 
         if plan.max_devices is not None and devices > plan.max_devices:
-            raise ValueError("Selected device count exceeds plan limit")
+            raise BusinessRuleViolationError(reason="selected device count exceeds plan limit")
 
         price = self.base_fee
 
@@ -52,7 +52,8 @@ class RuleBasedPricingService:
             price += self.protocol_rate.get(protocol, Money(Decimal("0"), price.currency))
 
         for feature in features:
-            price += self.feature_rate.get(feature.code, Money(Decimal("0"), price.currency)) * feature.quantity
+            key = feature.code.value
+            price += self.feature_rate.get(key, Money(Decimal("0"), price.currency)) * feature.quantity
 
         if self.minimum_price is not None and price.amount < self.minimum_price.amount:
             return self.minimum_price

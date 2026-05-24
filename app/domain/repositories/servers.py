@@ -4,7 +4,8 @@ from uuid import UUID
 
 from app.domain.entities.server import VPNServer
 from app.domain.repositories.base import Repository
-from app.domain.values.subscriptions import VPNProtocol
+from app.domain.values.servers import ProtocolCode
+from app.domain.values.subscriptions import PlanFeature
 
 
 class VPNServerRepository(Repository[VPNServer, UUID]):
@@ -34,6 +35,6 @@ class VPNServerRepository(Repository[VPNServer, UUID]):
 
     @abstractmethod
     async def find_supporting(
-        self, protocols: FrozenSet[VPNProtocol]
+        self, protocols: FrozenSet[ProtocolCode], features: FrozenSet[PlanFeature]
     ) -> list[VPNServer]:
         ...

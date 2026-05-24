@@ -1,11 +1,7 @@
 from decimal import Decimal
 
-from app.domain.entities.subscription import (
-    AccessRotation,
-    Subscription,
-    SubscriptionPlan,
-    SubscriptionRenewal,
-)
+from app.domain.entities.subscription import Subscription
+from app.domain.entities.subscription_plan import SubscriptionPlan
 from app.domain.values.servers import ProtocolCode
 from app.domain.values.subscriptions import (
     AccessArtifact,
@@ -109,46 +105,6 @@ class SubscriptionMapper:
                     external_id=a.get("external_id"),
                 )
                 for a in model.access_items
-            ],
-            renewals=[
-                SubscriptionRenewal(
-                    id=r.id,
-                    subscription_id=r.subscription_id,
-                    renewed_at=r.renewed_at,
-                    previous_expires_at=r.previous_expires_at,
-                    new_expires_at=r.new_expires_at,
-                    renewal_period_days=r.renewal_period_days,
-                    price_paid=Money(r.price_paid_amount, r.price_paid_currency),
-                    payment_id=r.payment_id,
-                    renewed_by=r.renewed_by,
-                )
-                for r in model.renewals
-            ],
-            access_rotations=[
-                AccessRotation(
-                    id=rot.id,
-                    subscription_id=rot.subscription_id,
-                    rotated_at=rot.rotated_at,
-                    reason=rot.reason,
-                    old_access_items=[
-                        AccessArtifact(
-                            format=AccessFormat(a["format"]),
-                            value=a["value"],
-                            external_id=a.get("external_id"),
-                        )
-                        for a in rot.old_access_items
-                    ],
-                    new_access_items=[
-                        AccessArtifact(
-                            format=AccessFormat(a["format"]),
-                            value=a["value"],
-                            external_id=a.get("external_id"),
-                        )
-                        for a in rot.new_access_items
-                    ],
-                    rotated_by=rot.rotated_by,
-                )
-                for rot in model.access_rotations
             ],
         )
 

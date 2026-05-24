@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from app.domain.events.base import BaseEvent
+from app.domain.events.base import DomainEvent
 from app.infrastructure.bus import EventRegisty
 
 
@@ -11,5 +11,5 @@ class EventBus(ABC):
     event_registy: EventRegisty
 
     @abstractmethod
-    async def publish(self, events: Iterable[BaseEvent]) -> None:
+    async def publish(self, events: Iterable[DomainEvent]) -> None:
         ...

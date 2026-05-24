@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from collections import defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass, field
@@ -8,22 +7,22 @@ from dishka import AsyncContainer
 
 from app.application.event_bus import EventBus
 from app.application.events.base import BaseEventHandler
-from app.domain.events.base import BaseEvent
+from app.domain.events.base import DomainEvent
 
 
 
 
 @dataclass
 class EventRegisty:
-    events_map: dict[Type[BaseEvent], list[Type[BaseEventHandler]]] = field(
+    events_map: dict[Type[DomainEvent], list[Type[BaseEventHandler]]] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True,
     )
 
-    def subscribe(self, event: Type[BaseEvent], type_handlers: Iterable[Type[BaseEventHandler]]) -> None:
+    def subscribe(self, event: Type[DomainEvent], type_handlers: Iterable[Type[BaseEventHandler]]) -> None:
         self.events_map[event].extend(type_handlers)
 
-    def get_handler_types(self, events: Iterable[BaseEvent]) -> Iterable[Type[BaseEventHandler]]:
+    def get_handler_types(self, events: Iterable[DomainEvent]) -> Iterable[Type[BaseEventHandler]]:
         handler_types = []
         for event in events:
             handler_types.extend(self.events_map.get(event.__class__, []))
@@ -34,7 +33,7 @@ class EventRegisty:
 class MediatorEventBus(EventBus):
     container: AsyncContainer
 
-    async def publish(self, events: Iterable[BaseEvent]) -> None:
+    async def publish(self, events: Iterable[DomainEvent]) -> None:
         for event in events:
             type_handlers = self.event_registy.get_handler_types([event])
             if not type_handlers:

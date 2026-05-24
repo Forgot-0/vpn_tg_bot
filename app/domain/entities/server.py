@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import Any, FrozenSet
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.values.servers import PanelConfig, PanelCredits, PanelType, ProtocolCode
+from app.domain.values.servers import PanelConfig, PanelCredentials, PanelType, ProtocolCode
 from app.domain.values.subscriptions import PlanFeatureCode
 
 
@@ -13,7 +15,7 @@ class VPNServer(AggregateRoot):
 
     panel_type: PanelType
     panel_config: PanelConfig
-    panel_credits: PanelCredits
+    panel_credentials: PanelCredentials
 
     region_code: str
     is_active: bool = True
@@ -31,3 +33,6 @@ class VPNServer(AggregateRoot):
 
     def supports(self, protocols: FrozenSet[ProtocolCode]) -> bool:
         return protocols.issubset(self.supported_protocols)
+
+    def can_host_feature(self, feature: PlanFeatureCode) -> bool:
+        return feature in self.supported_features
