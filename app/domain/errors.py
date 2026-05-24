@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(eq=False)
@@ -20,11 +20,28 @@ class NotFoundError(DomainError):
     code: str = "NOT_FOUND"
     status: int = 404
 
+    entity: str = ""
+    entity_id: str = ""
+
+    @property
+    def message(self) -> str:
+        return f"{self.entity} not found" if self.entity else "Not found"
+
+    @property
+    def detail(self) -> dict:
+        return {"entity": self.entity, "id": self.entity_id}
+
 
 @dataclass(eq=False)
 class AlreadyExistsError(DomainError):
     code: str = "ALREADY_EXISTS"
     status: int = 409
+
+    reason: str = ""
+
+    @property
+    def message(self) -> str:
+        return self.reason or "Already exists"
 
 
 @dataclass(eq=False)
@@ -57,3 +74,19 @@ class BusinessRuleViolationError(DomainError):
     @property
     def detail(self) -> dict:
         return {"reason": self.reason}
+
+
+@dataclass(eq=False)
+class SpecValidationError(DomainError):
+    code: str = "SPEC_VALIDATION_ERROR"
+    status: int = 422
+
+    violations: list[str] = field(default_factory=list)
+
+    @property
+    def message(self) -> str:
+        return f"Subscription spec is invalid: {'; '.join(self.violations)}"
+
+    @property
+    def detail(self) -> dict:
+        return {"violations": self.violations}

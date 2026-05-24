@@ -15,9 +15,11 @@ class BaseValueObject(ABC, Generic[T]):
         self.validate()
 
     @abstractmethod
-    def validate(self) -> None:
-        ...
+    def validate(self) -> None: ...
 
     @abstractmethod
     def as_generic_type(self) -> T:
         ...
+
+    def unwrap(self) -> T:
+        return self.value

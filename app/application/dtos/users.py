@@ -1,42 +1,12 @@
 from dataclasses import dataclass
-from datetime import datetime
 from enum import StrEnum
-from typing import Any, Self
-from uuid import UUID
+from typing import Self
 
 from pydantic import BaseModel, Field
 
-from app.application.dtos.base import BaseDTO
 from app.domain.entities.user import User
 
 
-@dataclass
-class UserDTO(BaseDTO):
-    id: UUID
-    role: str
-    email: str | None
-    telegram_id: int | None
-    referral_code: str
-    referred_by: UUID | None
-    referrals_count: int
-    created_at: datetime
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> Self:
-        return cls(**data)
-
-    @classmethod
-    def from_entity(cls, entity: User) -> Self:
-        return cls(
-            id=entity.id,
-            role=entity.role.value,
-            email=entity.email,
-            telegram_id=entity.telegram_id,
-            referral_code=entity.referral_code,
-            referred_by=entity.referred_by,
-            referrals_count=entity.referrals_count,
-            created_at=entity.created_at,
-        )
 
 
 class JwtTokenType(StrEnum):

@@ -14,7 +14,7 @@ from app.domain.values.users import UserRole
 @dataclass
 class User(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
-    role: UserRole = field(default=UserRole.USER)
+    role: UserRole = UserRole.USER
 
     email: str | None = None
     password_hash: str | None = None
@@ -24,6 +24,7 @@ class User(AggregateRoot):
     referred_by: UUID | None = None
     referrals_count: int = 0
 
+    is_active: bool = True
     created_at: datetime = field(default_factory=now_utc)
 
     @classmethod
@@ -52,13 +53,12 @@ class User(AggregateRoot):
 
     def change_role(self, new_role: UserRole) -> None:
         if not self.role.is_changeable:
-            raise ValueError("Current role cannot be changed")
+            raise ValueError(f"Role '{self.role}' cannot be changed")
         if not new_role.is_assignable:
-            raise ValueError("Target role cannot be assigned")
+            raise ValueError(f"Role '{new_role}' cannot be assigned")
 
         old_role = self.role
         self.role = new_role
-
         self.register_event(
             UserRoleChangedEvent(
                 user_id=self.id,
@@ -67,10 +67,13 @@ class User(AggregateRoot):
             )
         )
 
+    def deactivate(self) -> None:
+        self.is_active = False
+
     def increment_referrals(self) -> None:
         self.referrals_count += 1
 
-    def validate(self) -> None:
+    def _validate(self) -> None:
         if self.email is None and self.telegram_id is None:
             raise ValueError("User must have either email or telegram_id")
         if self.referred_by is not None and self.referred_by == self.id:

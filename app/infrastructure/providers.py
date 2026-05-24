@@ -6,12 +6,6 @@ from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession, async_sessionmaker
 
 from app.configs.app import app_config
-from app.infrastructure.db.repositories.servers import SQLAlchemyVPNServerRepository
-from app.infrastructure.db.repositories.subscriptions import (
-    SQLAlchemySubscriptionPlanRepository,
-    SQLAlchemySubscriptionRepository
-)
-from app.infrastructure.db.repositories.users import SQLAlchemyUserRepository
 from app.infrastructure.db.session import create_async_marker, create_engine
 
 
@@ -42,9 +36,5 @@ class InfrastructureProvider(Provider):
         return Redis.from_url(app_config.redis_url, max_connections=50, decode_responses=True)
 
     repositories = provide_all(
-        SQLAlchemyVPNServerRepository,
-        SQLAlchemySubscriptionRepository,
-        SQLAlchemySubscriptionPlanRepository,
-        SQLAlchemyUserRepository,
         scope=Scope.REQUEST
     )
