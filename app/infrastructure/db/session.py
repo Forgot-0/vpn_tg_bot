@@ -17,7 +17,7 @@ def create_engine() -> AsyncEngine:
         max_overflow = 0
     else:
         pool_class = AsyncAdaptedQueuePool
-        pool_size = 10
+        pool_size = 20
         max_overflow = 15
 
     return create_async_engine(

@@ -9,7 +9,6 @@ from sqlalchemy.ext.asyncio.session import AsyncSession, async_sessionmaker
 from app.application.interfaces.auth import JWTService
 from app.application.interfaces.password import PasswordService
 from app.application.interfaces.payments import PaymentGateway
-from app.application.interfaces.servers import PanelPort
 from app.configs.app import app_config
 from app.domain.repositories.payments import PaymentOrderRepository
 from app.domain.repositories.servers import VPNServerRepository
@@ -23,7 +22,6 @@ from app.infrastructure.db.repositories.subscriptions import SQLAlchemySubscript
 from app.infrastructure.db.repositories.users import SQLAlchemyUserRepository
 from app.infrastructure.db.session import create_async_marker, create_engine
 from app.infrastructure.db.uow import SQLAlchemyUoW
-from app.infrastructure.panels.gateway import PanelGateway
 from app.infrastructure.payments.yookassa.gateway import YooKassaPaymentGateway
 from app.infrastructure.services.jwt import IJWTService
 from app.infrastructure.services.password import IPasswordService
@@ -78,15 +76,6 @@ class InfrastructureProvider(Provider):
         self, session: AsyncSession
     ) -> SubscriptionPlanRepository:
         return SQLAlchemySubscriptionPlanRepository(session)
-
-
-    @provide(scope=Scope.APP)
-    def get_panel_gateway(self) -> PanelPort:
-        return PanelGateway(
-            ports={
-                
-            }
-        )
 
     @provide(scope=Scope.APP)
     def get_payment_gateway(self) -> PaymentGateway:
