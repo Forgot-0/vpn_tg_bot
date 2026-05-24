@@ -8,11 +8,20 @@ class PanelType(StrEnum):
     OTHER = "other"
 
 
+class ProtocolCode(StrEnum):
+    SHADOWSOCKS = "shadowsocks"
+    TROJAN = "trojan"
+    HYSTERIA2 = "hysteria2"
+    TUIC = "tuic"
+    WIREGUARD = "wireguard"
+
+
 @dataclass(frozen=True)
 class PanelCredits:
     username: str
     password: str
     two_factor_code: str | None = field(default=None)
+
 
 @dataclass
 class PanelConfig:

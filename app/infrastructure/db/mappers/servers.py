@@ -1,6 +1,6 @@
 from app.domain.entities.server import VPNServer
-from app.domain.values.servers import PanelConfig, PanelCredits, PanelType
-from app.domain.values.subscriptions import PlanFeatureCode, VPNProtocol
+from app.domain.values.servers import PanelConfig, PanelCredits, PanelType, ProtocolCode
+from app.domain.values.subscriptions import PlanFeatureCode
 from app.infrastructure.db.models.servers import VPNServerModel
 
 
@@ -26,11 +26,12 @@ class VPNServerMapper:
             region_code=model.region_code,
             is_active=model.is_active,
             supported_protocols=frozenset(
-                VPNProtocol(p) for p in model.supported_protocols
+                ProtocolCode(p) for p in model.supported_protocols
             ),
             supported_features=frozenset(
                 PlanFeatureCode(f) for f in model.supported_features
             ),
+            protocols_config={ProtocolCode(key): value for key, value in model.protocols_config.items()}
         )
 
     @staticmethod
@@ -49,6 +50,7 @@ class VPNServerMapper:
             is_active=entity.is_active,
             supported_protocols=[p.value for p in entity.supported_protocols],
             supported_features=[f.value for f in entity.supported_features],
+            protocols_config={key.value: value for key, value in entity.protocols_config.items()}
         )
 
     @staticmethod
@@ -65,3 +67,4 @@ class VPNServerMapper:
         model.is_active = entity.is_active
         model.supported_protocols = [p.value for p in entity.supported_protocols]
         model.supported_features = [f.value for f in entity.supported_features]
+        model.protocols_config = {key.value: value for key, value in entity.protocols_config.items()}

@@ -6,6 +6,7 @@ from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.events.subscriptions import SubscriptionActivatedEvent, TrafficConsumedEvent
+from app.domain.values.servers import ProtocolCode
 from app.domain.values.subscriptions import (
     AccessArtifact,
     BillingMode,
@@ -15,7 +16,6 @@ from app.domain.values.subscriptions import (
     PlanFeature,
     SubscriptionStatus,
     TrafficQuota,
-    VPNProtocol,
 )
 
 
@@ -29,14 +29,11 @@ class SubscriptionPlan(AggregateRoot):
     duration: DurationDays | None = None
     traffic_quota: TrafficQuota | None = None
 
-    allowed_protocols: FrozenSet[VPNProtocol] = frozenset()
+    allowed_protocols: FrozenSet[ProtocolCode] = frozenset()
     included_features: FrozenSet[PlanFeature] = frozenset()
     max_devices: DeviceCount | None = None
 
     fixed_price: Money | None = None
-
-    def __post_init__(self) -> None:
-        self.validate()
 
     def validate(self) -> None:
         if not self.allowed_protocols:
@@ -83,7 +80,7 @@ class Subscription(AggregateRoot):
     server_id: UUID
     payment_order_id: UUID | None
 
-    protocols: FrozenSet[VPNProtocol]
+    protocols: FrozenSet[ProtocolCode]
     devices: DeviceCount
     status: SubscriptionStatus = SubscriptionStatus.PENDING
 

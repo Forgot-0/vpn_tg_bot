@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import UUID as SAUUID, Boolean, Integer, String, Text
@@ -32,3 +33,7 @@ class VPNServerModel(BaseModelORM):
     supported_features: Mapped[list[str]] = mapped_column(
         ARRAY(String), nullable=False, default=list
     )
+    protocols_config: Mapped[dict[str, dict[str, Any]]] = mapped_column(
+        JSONB, nullable=False, default="{}"
+    )
+

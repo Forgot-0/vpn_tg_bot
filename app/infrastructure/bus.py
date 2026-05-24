@@ -6,7 +6,8 @@ from typing import Type
 
 from dishka import AsyncContainer
 
-from app.applocations.events.base import BaseEventHandler
+from app.application.event_bus import EventBus
+from app.application.events.base import BaseEventHandler
 from app.domain.events.base import BaseEvent
 
 
@@ -30,16 +31,7 @@ class EventRegisty:
 
 
 @dataclass(eq=False)
-class BaseEventBus(ABC):
-    event_registy: EventRegisty
-
-    @abstractmethod
-    async def publish(self, events: Iterable[BaseEvent]) -> None:
-        ...
-
-
-@dataclass(eq=False)
-class MediatorEventBus(BaseEventBus):
+class MediatorEventBus(EventBus):
     container: AsyncContainer
 
     async def publish(self, events: Iterable[BaseEvent]) -> None:

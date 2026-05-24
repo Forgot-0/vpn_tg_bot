@@ -5,7 +5,8 @@ from sqlalchemy import delete, select
 
 from app.domain.entities.server import VPNServer
 from app.domain.repositories.servers import VPNServerRepository
-from app.domain.values.subscriptions import VPNProtocol
+from app.domain.values.servers import ProtocolCode
+from app.domain.values.subscriptions import PlanFeature
 from app.infrastructure.db.mappers.servers import VPNServerMapper
 from app.infrastructure.db.models.servers import VPNServerModel
 from app.infrastructure.db.repositories.base import SQLAlchemyRepository
@@ -54,12 +55,14 @@ class SQLAlchemyVPNServerRepository(
         return [VPNServerMapper.to_domain(m) for m in result.scalars().all()]
 
     async def find_supporting(
-        self, protocols: FrozenSet[VPNProtocol]
+        self, protocols: FrozenSet[ProtocolCode], features: FrozenSet[PlanFeature]
     ) -> list[VPNServer]:
         protocol_values = [p.value for p in protocols]
+        features_values = [f.code.value for f in features]
         stmt = select(VPNServerModel).where(
             VPNServerModel.is_active.is_(True),
             VPNServerModel.supported_protocols.contains(protocol_values),
+            VPNServerModel.supported_features.contains(features_values)
         )
         result = await self.session.execute(stmt)
         return [VPNServerMapper.to_domain(m) for m in result.scalars().all()]

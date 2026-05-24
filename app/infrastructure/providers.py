@@ -45,5 +45,6 @@ class InfrastructureProvider(Provider):
         SQLAlchemyVPNServerRepository,
         SQLAlchemySubscriptionRepository,
         SQLAlchemySubscriptionPlanRepository,
-        SQLAlchemyUserRepository
+        SQLAlchemyUserRepository,
+        scope=Scope.REQUEST
     )

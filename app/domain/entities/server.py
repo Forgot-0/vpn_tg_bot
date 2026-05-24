@@ -1,10 +1,10 @@
-from dataclasses import dataclass
-from typing import FrozenSet
+from dataclasses import dataclass, field
+from typing import Any, FrozenSet
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.values.servers import PanelConfig, PanelCredits, PanelType
-from app.domain.values.subscriptions import PlanFeatureCode, VPNProtocol
+from app.domain.values.servers import PanelConfig, PanelCredits, PanelType, ProtocolCode
+from app.domain.values.subscriptions import PlanFeatureCode
 
 
 @dataclass
@@ -18,11 +18,10 @@ class VPNServer(AggregateRoot):
     region_code: str
     is_active: bool = True
 
-    supported_protocols: FrozenSet[VPNProtocol] = frozenset()
+    supported_protocols: FrozenSet[ProtocolCode] = frozenset()
     supported_features: FrozenSet[PlanFeatureCode] = frozenset()
 
-    def __post_init__(self) -> None:
-        self.validate()
+    protocols_config: dict[ProtocolCode, dict[str, Any]] = field(default_factory=dict)
 
     def validate(self) -> None:
         if not self.id:
@@ -30,5 +29,5 @@ class VPNServer(AggregateRoot):
         if not self.region_code:
             raise ValueError("VPNServer region_code cannot be empty")
 
-    def supports(self, protocols: FrozenSet[VPNProtocol]) -> bool:
+    def supports(self, protocols: FrozenSet[ProtocolCode]) -> bool:
         return protocols.issubset(self.supported_protocols)

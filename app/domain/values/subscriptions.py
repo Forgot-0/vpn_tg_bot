@@ -97,17 +97,6 @@ class DeviceCount(BaseValueObject[int]):
     def __le__(self, other: int) -> bool:
         return self.value < other
 
-@dataclass(frozen=True)
-class VPNProtocol(BaseValueObject[str]):
-    def validate(self):
-        normalized = self.value.strip().lower()
-        if not normalized:
-            raise ValueError("Protocol code cannot be empty")
-        object.__setattr__(self, "value", normalized)
-
-    def as_generic_type(self) -> str:
-        return self.value
-
 
 @dataclass(frozen=True)
 class ServerSnapshot:

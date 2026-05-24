@@ -13,35 +13,34 @@ class SQLAlchemyUserRepository(
     SQLAlchemyRepository,
     UserRepository,
 ):
-
     async def get_by_id(self, user_id: UUID) -> User | None:
-        query = select(UserModel).where(
-            UserModel.id == user_id
-        )
-        user = (await self.session.execute(query)).scalar()
-        return UserMapper.to_domain(user) if user else None
+        query = select(UserModel).where(UserModel.id == user_id)
+        model = (await self.session.execute(query)).scalar_one_or_none()
+        return UserMapper.to_domain(model) if model else None
 
     async def add(self, user: User) -> None:
         self.session.add(UserMapper.to_model(user))
 
+    async def update(self, user: User) -> None:
+        query = select(UserModel).where(UserModel.id == user.id)
+        model = (await self.session.execute(query)).scalar_one_or_none()
+        if model is None:
+            raise ValueError(f"User {user.id} not found")
+        UserMapper.update_model(model, user)
+
     async def get_by_email(self, email: str) -> User | None:
-        stmt = select(UserModel).where(
-            func.lower(UserModel.email) == email.lower()
-        )
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
+        stmt = select(UserModel).where(func.lower(UserModel.email) == email.lower())
+        model = (await self.session.execute(stmt)).scalar_one_or_none()
         return UserMapper.to_domain(model) if model else None
 
     async def get_by_telegram_id(self, telegram_id: int) -> User | None:
         stmt = select(UserModel).where(UserModel.telegram_id == telegram_id)
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
+        model = (await self.session.execute(stmt)).scalar_one_or_none()
         return UserMapper.to_domain(model) if model else None
 
     async def get_by_referral_code(self, referral_code: str) -> User | None:
         stmt = select(UserModel).where(UserModel.referral_code == referral_code)
-        result = await self.session.execute(stmt)
-        model = result.scalar_one_or_none()
+        model = (await self.session.execute(stmt)).scalar_one_or_none()
         return UserMapper.to_domain(model) if model else None
 
     async def list_referrals(self, referrer_id: UUID) -> list[User]:

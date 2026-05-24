@@ -5,7 +5,8 @@ from decimal import Decimal
 from typing import FrozenSet
 
 from app.domain.entities.subscription import SubscriptionPlan
-from app.domain.values.subscriptions import DeviceCount, Money, PlanFeature, PlanFeatureCode, VPNProtocol
+from app.domain.values.servers import ProtocolCode
+from app.domain.values.subscriptions import DeviceCount, Money, PlanFeature, PlanFeatureCode
 
 
 
@@ -15,7 +16,7 @@ class RuleBasedPricingService:
     day_rate: Money = Money(Decimal("0"))
     gb_rate: Money = Money(Decimal("0"))
     device_rate: Money = Money(Decimal("0"))
-    protocol_rate: dict[str, Money] = field(default_factory=dict)
+    protocol_rate: dict[ProtocolCode, Money] = field(default_factory=dict)
     feature_rate: dict[PlanFeatureCode, Money] = field(default_factory=dict)
     traffic_only_flat_fee: Money = Money(Decimal("0"))
     minimum_price: Money | None = None
@@ -23,7 +24,7 @@ class RuleBasedPricingService:
     def calculate(
         self,
         plan: SubscriptionPlan,
-        protocols: FrozenSet[VPNProtocol],
+        protocols: FrozenSet[ProtocolCode],
         devices: DeviceCount,
         features: FrozenSet[PlanFeature]
     ) -> Money:
@@ -48,7 +49,7 @@ class RuleBasedPricingService:
         price += self.device_rate * extra_devices
 
         for protocol in protocols:
-            price += self.protocol_rate.get(protocol.as_generic_type(), Money(Decimal("0"), price.currency))
+            price += self.protocol_rate.get(protocol, Money(Decimal("0"), price.currency))
 
         for feature in features:
             price += self.feature_rate.get(feature.code, Money(Decimal("0"), price.currency)) * feature.quantity

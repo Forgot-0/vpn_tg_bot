@@ -1,25 +1,24 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Self, TypeVar
 
 
 from app.domain.entities.base import AggregateRoot
 
 
-T = TypeVar('T', bound='BaseDTO')
 
 @dataclass
-class BaseDTO(ABC, Generic[T]):
+class BaseDTO(ABC):
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict[str, Any]) -> T: ...
+    def from_dict(cls, data: dict[str, Any]) -> Self: ...
 
     @classmethod
     @abstractmethod
-    def from_entity(cls, entity: AggregateRoot) -> T: ...
+    def from_entity(cls, entity: AggregateRoot) -> Self: ...
 
 
-TDTO = TypeVar('TDTO')
+TDTO = TypeVar('TDTO', bound=BaseDTO)
 
 
 @dataclass(frozen=True)
