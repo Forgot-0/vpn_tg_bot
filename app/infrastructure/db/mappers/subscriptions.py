@@ -6,6 +6,7 @@ from app.domain.entities.subscription import (
     SubscriptionPlan,
     SubscriptionRenewal,
 )
+from app.domain.values.servers import ProtocolCode
 from app.domain.values.subscriptions import (
     AccessArtifact,
     AccessFormat,
@@ -17,7 +18,6 @@ from app.domain.values.subscriptions import (
     PlanFeatureCode,
     SubscriptionStatus,
     TrafficQuota,
-    VPNProtocol,
 )
 from app.infrastructure.db.models.subscriptions import (
     SubscriptionModel,
@@ -36,7 +36,7 @@ class SubscriptionPlanMapper:
             duration=DurationDays(model.duration_days) if model.duration_days else None,
             traffic_quota=TrafficQuota(model.traffic_quota_gb) if model.traffic_quota_gb else None,
             max_devices=DeviceCount(model.max_devices) if model.max_devices else None,
-            allowed_protocols=frozenset(VPNProtocol(p) for p in model.allowed_protocols),
+            allowed_protocols=frozenset(ProtocolCode(p) for p in model.allowed_protocols),
             included_features=frozenset(
                 PlanFeature(
                     code=PlanFeatureCode(f["code"]),
@@ -94,8 +94,6 @@ class SubscriptionMapper:
             plan_id=model.plan_id,
             server_id=model.server_id,
             payment_order_id=model.payment_order_id,
-            protocols=frozenset(VPNProtocol(p) for p in model.protocols),
-            devices=DeviceCount(model.devices),
             status=SubscriptionStatus(model.status),
             started_at=model.started_at,
             expires_at=model.expires_at,
@@ -161,8 +159,6 @@ class SubscriptionMapper:
             user_id=entity.user_id,
             plan_id=entity.plan_id,
             server_id=entity.server_id,
-            protocols=[p.value for p in entity.protocols],
-            devices=entity.devices.value,
             status=entity.status.value,
             started_at=entity.started_at,
             expires_at=entity.expires_at,
@@ -195,5 +191,3 @@ class SubscriptionMapper:
             }
             for a in entity.access_items
         ]
-        model.protocols = [p.value for p in entity.protocols]
-        model.devices = entity.devices.value

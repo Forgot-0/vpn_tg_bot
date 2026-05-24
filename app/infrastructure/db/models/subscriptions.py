@@ -71,8 +71,6 @@ class SubscriptionModel(BaseModelORM):
         nullable=True,
     )
 
-    protocols: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False)
-    devices: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False, default="pending", index=True)
 
     started_at: Mapped[date | None] = mapped_column(Date, nullable=True)

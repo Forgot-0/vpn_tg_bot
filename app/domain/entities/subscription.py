@@ -80,8 +80,6 @@ class Subscription(AggregateRoot):
     server_id: UUID
     payment_order_id: UUID | None
 
-    protocols: FrozenSet[ProtocolCode]
-    devices: DeviceCount
     status: SubscriptionStatus = SubscriptionStatus.PENDING
 
     started_at: date | None = None
@@ -95,12 +93,7 @@ class Subscription(AggregateRoot):
     access_rotations: list[AccessRotation] = field(default_factory=list)
 
     def validate(self) -> None:
-        if not self.id:
-            raise ValueError("Subscription id cannot be empty")
-        if not self.user_id:
-            raise ValueError("Subscription must belong to a user")
-        if not self.protocols:
-            raise ValueError("Subscription must have at least one protocol")
+        ...
 
     def activate(self, start_date: date, duration_days: int | None) -> None:
         if self.status not in (SubscriptionStatus.PENDING, SubscriptionStatus.RENEWED):

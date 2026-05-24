@@ -6,6 +6,21 @@ from uuid import UUID
 
 from app.application.dtos.base import BaseDTO
 from app.domain.entities.payment import PaymentOrder
+from app.domain.values.payments import PaymentStatus
+
+
+
+@dataclass(frozen=True)
+class CreatePaymentResult:
+    provider_payment_id: str
+    confirmation_url: str
+
+
+@dataclass(frozen=True)
+class PaymentStatusResult:
+    provider_payment_id: str
+    status: PaymentStatus
+    paid_at: datetime | None = None
 
 
 @dataclass

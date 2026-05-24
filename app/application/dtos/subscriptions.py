@@ -62,8 +62,7 @@ class SubscriptionDTO(BaseDTO):
     plan_id: UUID
     server_id: UUID
     payment_order_id: UUID | None
-    protocols: list[str]
-    devices: int
+
     status: str
     started_at: date | None
     expires_at: date | None
@@ -84,8 +83,6 @@ class SubscriptionDTO(BaseDTO):
             plan_id=entity.plan_id,
             server_id=entity.server_id,
             payment_order_id=entity.payment_order_id,
-            protocols=[p.value for p in entity.protocols],
-            devices=entity.devices.value,
             status=entity.status.value,
             started_at=entity.started_at,
             expires_at=entity.expires_at,
