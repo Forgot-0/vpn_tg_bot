@@ -27,7 +27,7 @@ class VPNServerMapper:
             panel_credentials=PanelCredentials(
                 username=model.panel_username,
                 password=model.panel_password,
-                two_factor_secret=model.panel_two_factor_secret,
+                api_token=model.panel_two_factor_secret,
             ),
             supported_protocols=load_enum_set(model.supported_protocols, ProtocolCode),
             supported_features=load_enum_set(model.supported_features, FeatureCode),
@@ -50,7 +50,7 @@ class VPNServerMapper:
             panel_use_ssl=entity.panel_endpoint.use_ssl,
             panel_username=entity.panel_credentials.username,
             panel_password=entity.panel_credentials.password,
-            panel_two_factor_secret=entity.panel_credentials.two_factor_secret,
+            panel_two_factor_secret=entity.panel_credentials.api_token,
             supported_protocols=dump_enum_set(entity.supported_protocols),
             supported_features=dump_enum_set(entity.supported_features),
             is_active=entity.is_active,
@@ -70,7 +70,7 @@ class VPNServerMapper:
         model.panel_use_ssl = entity.panel_endpoint.use_ssl
         model.panel_username = entity.panel_credentials.username
         model.panel_password = entity.panel_credentials.password
-        model.panel_two_factor_secret = entity.panel_credentials.two_factor_secret
+        model.panel_two_factor_secret = entity.panel_credentials.api_token
         model.supported_protocols = dump_enum_set(entity.supported_protocols)
         model.supported_features = dump_enum_set(entity.supported_features)
         model.is_active = entity.is_active

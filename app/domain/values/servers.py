@@ -5,6 +5,7 @@ from enum import StrEnum
 
 
 class ProtocolCode(StrEnum):
+    SUBSCRIPTION = "subs"
     SHADOWSOCKS = "shadowsocks"
     TROJAN = "trojan"
     VLESS = "vless"
@@ -32,9 +33,16 @@ class PanelType(StrEnum):
 
 @dataclass(frozen=True)
 class PanelCredentials:
-    username: str
-    password: str
-    two_factor_secret: str | None = None
+    username: str | None = None
+    password: str | None = None
+    api_token: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.username is None and self.api_token is None:
+            raise
+
+        if self.username is not None and self.password is None:
+            raise
 
 
 @dataclass(frozen=True)
