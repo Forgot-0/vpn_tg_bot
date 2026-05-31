@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -10,6 +10,7 @@ class Option(BaseModel):
     protocol: Literal["vless", "vmess"]
     port: int
     tlsFlowCapable: bool
+    
 
 
 class InbounOptions(BaseModel):
@@ -49,3 +50,13 @@ class SeverSubscriptionSettings(BaseModel):
   ]
 }
 """
+class ServerInboundSettings:
+    id: int
+    protocol: str
+    streamSettings: dict[str, Any]
+
+
+class ServerSettings(BaseModel):
+    inbounds: dict[int, str]
+    subscription: SeverSubscriptionSettings
+

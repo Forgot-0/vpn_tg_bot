@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import FrozenSet
+from dataclasses import dataclass, field
+from typing import Any, FrozenSet
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
@@ -34,6 +34,8 @@ class VPNServer(AggregateRoot):
     current_clients: int = 0
 
     tags: FrozenSet[str] = frozenset()
+
+    panel_config: dict[str, Any] = field(default_factory=dict)
 
     def validate(self) -> None:
         if not self.name:
