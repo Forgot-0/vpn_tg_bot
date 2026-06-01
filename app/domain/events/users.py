@@ -11,6 +11,7 @@ class UserCreatedEvent(DomainEvent):
     user_id: UUID
     email: str | None
     telegram_id: int | None
+    referred_by: UUID | None
 
 
 @dataclass(frozen=True)

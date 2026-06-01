@@ -15,11 +15,9 @@ class JwtTokenType(StrEnum):
     REFRESH = "refresh"
 
 
-@dataclass
-class TokenPairDTO:
-    access_token: str
+class TokenGroup(BaseModel):
     refresh_token: str
-    token_type: str = "bearer"
+    access_token: str
 
 
 class Token(BaseModel):

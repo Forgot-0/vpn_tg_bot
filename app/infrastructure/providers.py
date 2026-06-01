@@ -7,7 +7,7 @@ from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio.session import AsyncSession, async_sessionmaker
 
-from app.application.interfaces.auth import JWTService
+from app.application.interfaces.auth import JWTManager
 from app.application.interfaces.password import PasswordService
 from app.application.interfaces.payments import PaymentGateway
 from app.application.interfaces.servers import PanelClientFactory
@@ -91,7 +91,7 @@ class InfrastructureProvider(Provider):
         )
 
     @provide(scope=Scope.APP)
-    def get_jwt_service(self) -> JWTService:
+    def get_jwt_service(self) -> JWTManager:
         return IJWTService()
 
     @provide(scope=Scope.APP)

@@ -28,7 +28,9 @@ class AppConfig(BaseConfig):
 
     @computed_field
     @property
-    def web_app_url(self) -> str:
+    def app_url(self) -> str:
+        if self.ENVIRONMENT in ["local", "testing"]:
+            return f"http://{self.DOMAIN}"
         return f"https://{self.DOMAIN}"
 
     @computed_field

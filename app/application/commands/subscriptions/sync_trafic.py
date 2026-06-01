@@ -21,18 +21,18 @@ class SyncSubscriptionTrafficCommand(BaseCommand):
 
 @dataclass(frozen=True)
 class SyncSubscriptionTrafficHandler(BaseCommandHandler[SyncSubscriptionTrafficCommand, Decimal]):
-    subscription_repo: SubscriptionRepository
-    server_repo: VPNServerRepository
+    subscription_repository: SubscriptionRepository
+    server_repository: VPNServerRepository
     panel_factory: PanelClientFactory
     uow: UnitOfWork
     event_bus: EventBus
 
     async def handle(self, command: SyncSubscriptionTrafficCommand) -> Decimal:
-        subscription = await self.subscription_repo.get_by_id(command.subscription_id)
+        subscription = await self.subscription_repository.get_by_id(command.subscription_id)
         if subscription is None:
             raise 
 
-        server = await self.server_repo.get_by_id(subscription.server_id)
+        server = await self.server_repository.get_by_id(subscription.server_id)
         if server is None:
             raise 
 
@@ -42,7 +42,7 @@ class SyncSubscriptionTrafficHandler(BaseCommandHandler[SyncSubscriptionTrafficC
         delta = used_gb - subscription.used_traffic_gb
         if delta > Decimal("0"):
             subscription.consume_traffic(delta)
-            await self.subscription_repo.update(subscription)
+            await self.subscription_repository.update(subscription)
             await self.uow.commit()
             await self.event_bus.publish(subscription.pull_events())
 

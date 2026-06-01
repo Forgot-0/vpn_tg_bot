@@ -5,15 +5,31 @@ from uuid import uuid4
 
 import jwt
 
-from app.application.dtos.users import JwtTokenType, Token, UserJWTData
-from app.application.interfaces.auth import JWTService
+from app.application.dtos.users import JwtTokenType, Token, TokenGroup, UserJWTData
+from app.application.interfaces.auth import JWTManager
 from app.configs.app import app_config
 from app.domain.services.clock import now_utc
 
 
 
 @dataclass
-class IJWTService(JWTService):
+class IJWTService(JWTManager):
+    def create_token_pair(
+        self,
+        security_user: UserJWTData,
+    ) -> TokenGroup:
+        access_payload = self.generate_payload(
+            security_user, JwtTokenType.ACCESS
+        )
+        refresh_payload = self.generate_payload(
+            security_user, JwtTokenType.REFRESH
+        )
+
+        access_token = self.encode(access_payload)
+        refresh_token = self.encode(refresh_payload)
+
+        return TokenGroup(access_token=access_token, refresh_token=refresh_token)
+
     def generate_payload(self, user_data: UserJWTData, token_type: JwtTokenType) -> dict[str, Any]:
         now = now_utc()
         payload = {

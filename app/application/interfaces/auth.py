@@ -2,11 +2,17 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from app.application.dtos.users import JwtTokenType, Token, UserJWTData
+from app.application.dtos.users import JwtTokenType, Token, TokenGroup, UserJWTData
 
 
 @dataclass
-class JWTService(Protocol):
+class JWTManager(Protocol):
+    def create_token_pair(
+        self,
+        security_user: UserJWTData,
+    ) -> TokenGroup:
+        ...
+
     def generate_payload(self, user_data: UserJWTData, token_type: JwtTokenType) -> dict[str, Any]:
         ...
 

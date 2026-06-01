@@ -14,17 +14,17 @@ from app.domain.values.users import UserRole
 @dataclass
 class User(AggregateRoot):
     id: UUID = field(default_factory=uuid4, kw_only=True)
-    role: UserRole = UserRole.USER
+    role: UserRole = field(default=UserRole.USER)
 
-    email: str | None = None
-    password_hash: str | None = None
-    telegram_id: int | None = None
+    email: str | None = field(default=None)
+    password_hash: str | None = field(default=None)
+    telegram_id: int | None = field(default=None)
 
     referral_code: str = field(default_factory=lambda: uuid4().hex)
-    referred_by: UUID | None = None
-    referrals_count: int = 0
+    referred_by: UUID | None = field(default=None)
+    referrals_count: int = field(default=0)
 
-    is_active: bool = True
+    is_active: bool = field(default=True)
     created_at: datetime = field(default_factory=now_utc)
 
     @classmethod
@@ -47,6 +47,7 @@ class User(AggregateRoot):
                 user_id=user.id,
                 email=user.email,
                 telegram_id=user.telegram_id,
+                referred_by=referred_by
             )
         )
         return user
