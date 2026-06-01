@@ -39,3 +39,14 @@ class SQLAlchemyVPNServerRepository(SQLAlchemyRepository, VPNServerRepository):
         stmt = select(VPNServerModel).where(VPNServerModel.region_code == region_code)
         result = await self.session.execute(stmt)
         return [VPNServerMapper.to_entity(model) for model in result.scalars().all()]
+
+    async def get_max_free_server(self, protocols: frozenset[str], features: frozenset[str]) -> VPNServer | None:
+        stmt = select(VPNServerModel).where(
+            VPNServerModel.supported_protocols.contains(list(protocols)),
+            VPNServerModel.supported_features.contains(list(features))
+        ).order_by(
+            (VPNServerModel.free).desc()
+        ).limit(1)
+
+        result = (await self.session.execute(stmt)).scalar()
+        return VPNServerMapper.to_entity(result) if result else None

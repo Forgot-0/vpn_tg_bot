@@ -22,3 +22,6 @@ class VPNServerRepository(ABC):
     @abstractmethod
     async def list_by_region(self, region_code: str) -> list[VPNServer]: ...
  
+    @abstractmethod
+    async def get_max_free_server(self, protocols: frozenset[str], features: frozenset[str]) -> VPNServer | None:
+        ...

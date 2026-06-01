@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from uuid import UUID
 
 from sqlalchemy import select
@@ -10,9 +11,8 @@ from app.infrastructure.db.models.users import UserModel
 from app.infrastructure.db.repositories.base import SQLAlchemyRepository
 
 
+@dataclass
 class SQLAlchemyUserRepository(SQLAlchemyRepository, UserRepository):
-    def __init__(self, session: AsyncSession) -> None:
-        self.session = session
 
     async def get_by_id(self, user_id: UUID) -> User | None:
         model = await self.session.get(UserModel, user_id)

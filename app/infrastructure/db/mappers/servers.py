@@ -35,7 +35,6 @@ class VPNServerMapper:
             max_clients=model.max_clients,
             current_clients=model.current_clients,
             tags=frozenset(model.tags or []),
-            panel_config=dict(model.panel_config or {}),
         )
 
     @staticmethod
@@ -52,12 +51,12 @@ class VPNServerMapper:
             panel_username=entity.panel_credentials.username,
             panel_password=entity.panel_credentials.password,
             panel_two_factor_secret=entity.panel_credentials.api_token,
-            panel_config=dict(entity.panel_config),
             supported_protocols=dump_enum_set(entity.supported_protocols),
             supported_features=dump_enum_set(entity.supported_features),
             is_active=entity.is_active,
             max_clients=entity.max_clients,
             current_clients=entity.current_clients,
+            free=entity.max_clients - entity.current_clients if entity.max_clients else 0,
             tags=dump_optional_str_set(entity.tags),
         )
 
@@ -72,11 +71,11 @@ class VPNServerMapper:
         model.panel_use_ssl = entity.panel_endpoint.use_ssl
         model.panel_username = entity.panel_credentials.username
         model.panel_password = entity.panel_credentials.password
-        model.panel_config = dict(entity.panel_config)
         model.panel_two_factor_secret = entity.panel_credentials.api_token
         model.supported_protocols = dump_enum_set(entity.supported_protocols)
         model.supported_features = dump_enum_set(entity.supported_features)
         model.is_active = entity.is_active
         model.max_clients = entity.max_clients
         model.current_clients = entity.current_clients
+        model.free = entity.max_clients - entity.current_clients if entity.max_clients else 0
         model.tags = dump_optional_str_set(entity.tags)

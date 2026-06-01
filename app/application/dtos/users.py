@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Self
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -32,14 +33,14 @@ class Token(BaseModel):
 
 
 class UserJWTData(BaseModel):
-    id: str
+    id: UUID
     role: str
     device_id: str | None = Field(default=None)
 
     @classmethod
     def create_from_token(cls, token_dto: Token) -> Self:
         return cls(
-            id=token_dto.sub,
+            id=UUID(token_dto.sub),
             role=token_dto.role,
             device_id=token_dto.did,
         )
@@ -47,7 +48,7 @@ class UserJWTData(BaseModel):
     @classmethod
     def create_from_user(cls, user: User, device_id: str | None=None) -> Self:
         return cls(
-            id=str(user.id),
+            id=user.id,
             role=user.role.value,
             device_id=device_id
         )

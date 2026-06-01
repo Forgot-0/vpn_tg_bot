@@ -1,11 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import date, timedelta
-from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.subscription import Subscription
 from app.domain.repositories.subscriptions import SubscriptionRepository
@@ -15,10 +14,8 @@ from app.infrastructure.db.models.subscriptions import SubscriptionModel
 from app.infrastructure.db.repositories.base import SQLAlchemyRepository
 
 
+@dataclass
 class SQLAlchemySubscriptionRepository(SQLAlchemyRepository, SubscriptionRepository):
-    def __init__(self, session: AsyncSession) -> None:
-        self.session = session
-
     async def get_by_id(self, subscription_id: UUID) -> Subscription | None:
         model = await self.session.get(SubscriptionModel, subscription_id)
         return SubscriptionMapper.to_entity(model) if model else None

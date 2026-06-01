@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from app.application.dtos.payments import GatewayPaymentResult, GatewayStatusResult
 from app.domain.entities.payment import PaymentOrder
@@ -38,6 +39,5 @@ class PaymentGateway(ABC):
         *,
         amount_to_refund: float | None = None,
     ) -> None: ...
-
 
 

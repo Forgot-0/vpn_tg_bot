@@ -1,7 +1,7 @@
+from dataclasses import dataclass
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.subscription_plan import SubscriptionPlan
 from app.domain.repositories.subscriptions import SubscriptionPlanRepository
@@ -10,9 +10,8 @@ from app.infrastructure.db.models.subscription_plans import SubscriptionPlanMode
 from app.infrastructure.db.repositories.base import SQLAlchemyRepository
 
 
+@dataclass
 class SQLAlchemySubscriptionPlanRepository(SQLAlchemyRepository, SubscriptionPlanRepository):
-    def __init__(self, session: AsyncSession) -> None:
-        self.session = session
 
     async def get_by_id(self, plan_id: UUID) -> SubscriptionPlan | None:
         model = await self.session.get(SubscriptionPlanModel, plan_id)

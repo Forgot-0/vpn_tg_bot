@@ -3,7 +3,7 @@ from __future__ import annotations
 from uuid import UUID
 
 from sqlalchemy import Boolean, Integer, String
-from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.infrastructure.db.models.base import BaseModelORM
@@ -27,9 +27,11 @@ class VPNServerModel(BaseModelORM):
     panel_two_factor_secret: Mapped[str | None] = mapped_column(String(255), nullable=True)
     panel_config: Mapped[dict[str, object]] = mapped_column(JSONB, nullable=False, default=dict)
 
-    supported_protocols: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
-    supported_features: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    supported_protocols: Mapped[list] = mapped_column(ARRAY((String(128))), nullable=False, default=list)
+    supported_features: Mapped[list] = mapped_column(ARRAY(String(128)), nullable=False, default=list)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     max_clients: Mapped[int | None] = mapped_column(Integer, nullable=True)
     current_clients: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    free: Mapped[int] = mapped_column(Integer, default=0)
+
     tags: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
