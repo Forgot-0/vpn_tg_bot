@@ -1,6 +1,7 @@
 from collections.abc import AsyncIterable
 
 from dishka import Provider, Scope, provide
+from httpx import AsyncClient
 from passlib.context import CryptContext
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -9,6 +10,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession, async_sessionmaker
 from app.application.interfaces.auth import JWTService
 from app.application.interfaces.password import PasswordService
 from app.application.interfaces.payments import PaymentGateway
+from app.application.interfaces.servers import PanelClientFactory
 from app.configs.app import app_config
 from app.domain.repositories.payments import PaymentOrderRepository
 from app.domain.repositories.servers import VPNServerRepository
@@ -22,6 +24,7 @@ from app.infrastructure.db.repositories.subscriptions import SQLAlchemySubscript
 from app.infrastructure.db.repositories.users import SQLAlchemyUserRepository
 from app.infrastructure.db.session import create_async_marker, create_engine
 from app.infrastructure.db.uow import SQLAlchemyUoW
+from app.infrastructure.panels.xui.client import ThreeXUIClient
 from app.infrastructure.payments.yookassa.gateway import YooKassaPaymentGateway
 from app.infrastructure.services.jwt import IJWTService
 from app.infrastructure.services.password import IPasswordService
@@ -90,3 +93,14 @@ class InfrastructureProvider(Provider):
     @provide(scope=Scope.APP)
     def get_jwt_service(self) -> JWTService:
         return IJWTService()
+
+    @provide(scope=Scope.APP)
+    async def get_http_client(self) -> AsyncIterable[AsyncClient]:
+        async with AsyncClient(timeout=30.0) as client:
+            yield client
+
+    @provide(scope=Scope.APP)
+    def get_panel_client_factory(self, http_client: AsyncClient) -> PanelClientFactory:
+        factory = PanelClientFactory()
+        factory.register(ThreeXUIClient(client=http_client))
+        return factory

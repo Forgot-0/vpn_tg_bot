@@ -1,11 +1,20 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from decimal import Decimal
+from typing import Any
 
 from app.domain.entities.server import VPNServer
 from app.domain.entities.subscription import Subscription
-from app.domain.values.servers import PanelType
+from app.domain.values.servers import FeatureCode, PanelType, ProtocolCode
 from app.domain.values.subscriptions import AccessCredential
+
+
+@dataclass(frozen=True)
+class PanelServerInfoResult:
+    supported_protocols: frozenset[ProtocolCode]
+    supported_features: frozenset[FeatureCode] = frozenset()
+    panel_config: dict[str, object] = field(default_factory=dict)
+    current_clients: int = 0
 
 
 class PanelClient(ABC):
@@ -36,6 +45,10 @@ class PanelClient(ABC):
         server: VPNServer,
         subscription: Subscription,
     ) -> Decimal:
+        ...
+
+    @abstractmethod
+    async def get_info(self, server: VPNServer) -> PanelServerInfoResult:
         ...
 
 

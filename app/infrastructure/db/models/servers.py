@@ -22,9 +22,10 @@ class VPNServerModel(BaseModelORM):
     panel_path: Mapped[str] = mapped_column(String(255), nullable=False, default="/")
     panel_use_ssl: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
-    panel_username: Mapped[str] = mapped_column(String(128), nullable=False)
-    panel_password: Mapped[str] = mapped_column(String(255), nullable=False)
+    panel_username: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    panel_password: Mapped[str | None] = mapped_column(String(255), nullable=True)
     panel_two_factor_secret: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    panel_config: Mapped[dict[str, object]] = mapped_column(JSONB, nullable=False, default=dict)
 
     supported_protocols: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     supported_features: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
