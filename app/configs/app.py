@@ -6,6 +6,7 @@ from app.configs.base import BaseConfig
 
 class AppConfig(BaseConfig):
     ENVIRONMENT: Literal['local', 'production', 'testing'] = 'local'
+    PROJECT_NAME: str = "Social"
 
     SECRET: str = ""
     WEBHOOK_SECRET: str = ""
@@ -71,6 +72,16 @@ class AppConfig(BaseConfig):
     @property
     def fsm_redis_url(self) -> str:
         return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1'
+
+    SMTP_TLS: bool = True
+    SMTP_SSL: bool = False
+    SMTP_PORT: int = 587
+    SMTP_HOST: str | None = None
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+
+    EMAIL_SENDER_ADDRESS: str | None = None
+    EMAIL_SENDER_NAME: str | None = None
 
     LOG_LEVEL: str = 'ERROR'
     JSON_LOG: bool = True
