@@ -8,16 +8,16 @@ from app.application.dtos.subscriptions import CreateSubscriptionResultDTO
 from app.application.dtos.users import UserJWTData
 from app.application.event_bus import EventBus
 from app.application.interfaces.payments import PaymentGateway
-from app.domain.entities.payment import PaymentOrder
-from app.domain.entities.subscription_draft import SubscriptionDraft
-from app.domain.repositories.payments import PaymentOrderRepository
+from app.domain.entities.payment import PaymentIntent
+from app.domain.entities.checkout import CheckoutSession
+from app.domain.repositories.payments import PaymentIntentRepository
 from app.domain.repositories.servers import VPNServerRepository
-from app.domain.repositories.subscription_drafts import SubscriptionDraftRepository
-from app.domain.repositories.subscriptions import SubscriptionPlanRepository
+from app.domain.repositories.checkouts import CheckoutSessionRepository
+from app.domain.repositories.subscriptions import PlanRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.services.pricings import PricingService
 from app.domain.values.servers import FeatureCode, ProtocolCode
-from app.domain.values.subscriptions import PlanType, SubscriptionSpec
+from app.domain.values.subscriptions import PlanType, PlanConfiguration
 
 
 logger = logging.getLogger(__name__)
@@ -39,10 +39,10 @@ class CreateSubscriptionCommand(BaseCommand):
 
 @dataclass(frozen=True)
 class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, CreateSubscriptionResultDTO]):
-    plan_repository: SubscriptionPlanRepository
-    draft_repository: SubscriptionDraftRepository
+    plan_repository: PlanRepository
+    checkout_repository: CheckoutSessionRepository
     server_repository: VPNServerRepository
-    payment_repository: PaymentOrderRepository
+    payment_repository: PaymentIntentRepository
     payment_gateway: PaymentGateway
     pricing_service: PricingService
     uow: UnitOfWork
@@ -60,7 +60,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
             protocols = frozenset(ProtocolCode(p) for p in command.protocol_codes) or plan.get_allowed_protocols()
             features = frozenset(FeatureCode(f) for f in command.feature_codes)
 
-            spec = SubscriptionSpec(
+            spec = PlanConfiguration(
                 protocols=protocols,
                 duration_days=command.duration_days,
                 traffic_limit_gb=command.traffic_limit_gb,
@@ -76,19 +76,19 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
         if server is None:
             raise
 
-        draft = SubscriptionDraft(
+        checkout = CheckoutSession(
             id=uuid4(),
             user_id=command.user_jwt_data.id,
             plan_id=command.plan_id,
             server_id=server.id,
             spec=spec,
         )
-        draft.recalculate_price(plan, self.pricing_service)
-        draft.mark_ready_for_checkout()
+        checkout.recalculate_price(plan, self.pricing_service)
+        checkout.mark_ready_for_checkout()
 
-        payment_order = PaymentOrder(
+        payment_intent = PaymentIntent(
             id=uuid4(),
-            draft_id=draft.id,
+            checkout_session_id=checkout.id,
             user_id=command.user_jwt_data.id,
             amount=price,
             provider=self.payment_gateway.provider,
@@ -96,27 +96,27 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         try:
             gateway_result = await self.payment_gateway.create_payment(
-                payment_order,
+                payment_intent,
                 return_url=command.return_url,
             )
         except Exception:
             await self.uow.rollback()
             raise
 
-        payment_order.awaiting_confirmation(
+        payment_intent.awaiting_confirmation(
             external_id=gateway_result.external_id,
             confirmation_url=gateway_result.confirmation_url or "",
         )
-        await self.draft_repository.add(draft)
-        await self.payment_repository.add(payment_order)
+        await self.checkout_repository.add(checkout)
+        await self.payment_repository.add(payment_intent)
         await self.uow.commit()
 
-        await self.event_bus.publish(draft.pull_events())
-        await self.event_bus.publish(payment_order.pull_events())
+        await self.event_bus.publish(checkout.pull_events())
+        await self.event_bus.publish(payment_intent.pull_events())
 
         return CreateSubscriptionResultDTO(
-            draft_id=draft.id,
-            payment_order_id=payment_order.id,
+            checkout_session_id=checkout.id,
+            payment_intent_id=payment_intent.id,
             confirmation_url=gateway_result.confirmation_url or "",
             amount=price.amount,
             currency=price.currency,

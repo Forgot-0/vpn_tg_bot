@@ -73,9 +73,9 @@ class SQLAlchemySubscriptionRepository(SQLAlchemyRepository, SubscriptionReposit
                 exceeded.append(entity)
         return exceeded
 
-    async def get_by_payment_order(self, payment_order_id: UUID) -> Subscription | None:
+    async def get_by_payment_intent(self, payment_intent_id: UUID) -> Subscription | None:
         stmt = select(SubscriptionModel).where(
-            SubscriptionModel.payment_order_id == payment_order_id
+            SubscriptionModel.payment_intent_id == payment_intent_id
         )
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()

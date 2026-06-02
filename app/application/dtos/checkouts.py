@@ -7,11 +7,11 @@ from typing import Any, Self
 from uuid import UUID
 
 from app.application.dtos.base import BaseDTO
-from app.domain.entities.subscription_draft import SubscriptionDraft
+from app.domain.entities.checkout import CheckoutSession
 
 
 @dataclass
-class SubscriptionDraftDTO(BaseDTO):
+class CheckoutSessionDTO(BaseDTO):
     id: UUID
     user_id: UUID
     plan_id: UUID
@@ -23,7 +23,7 @@ class SubscriptionDraftDTO(BaseDTO):
     updated_at: datetime
 
     @classmethod
-    def from_entity(cls, entity: SubscriptionDraft) -> Self:
+    def from_entity(cls, entity: CheckoutSession) -> Self:
         amount = None
         currency = None
         if entity.calculated_price is not None:

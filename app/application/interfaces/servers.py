@@ -6,7 +6,7 @@ from typing import Any
 from app.domain.entities.server import VPNServer
 from app.domain.entities.subscription import Subscription
 from app.domain.values.servers import FeatureCode, PanelType, ProtocolCode
-from app.domain.values.subscriptions import AccessCredential
+from app.domain.entities.access import ProvisionedAccess
 
 
 @dataclass(frozen=True)
@@ -28,7 +28,7 @@ class PanelClient(ABC):
         self,
         server: VPNServer,
         subscription: Subscription,
-    ) -> list[AccessCredential]:
+    ) -> ProvisionedAccess:
         ...
 
     @abstractmethod

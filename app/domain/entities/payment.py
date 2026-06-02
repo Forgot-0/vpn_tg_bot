@@ -1,35 +1,39 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.errors import InvalidStateTransitionError
-from app.domain.events.payments import PaymentOrderCreatedEvent, PaymentSucceededEvent
+from app.domain.events.payments import PaymentIntentCreatedEvent, PaymentSucceededEvent
 from app.domain.values.money import Money
 from app.domain.values.payments import PaymentProvider, PaymentStatus
 
 
 @dataclass
-class PaymentOrder(AggregateRoot):
+class PaymentIntent(AggregateRoot):
     id: UUID
-    draft_id: UUID
     user_id: UUID
     amount: Money
     provider: PaymentProvider
 
+    order_id: UUID | None = None
+    checkout_session_id: UUID | None = None
+
     status: PaymentStatus = PaymentStatus.PENDING
     external_id: str | None = None
     confirmation_url: str | None = None
+    idempotency_key: str | None = None
+    provider_payload: dict[str, object] = field(default_factory=dict)
     created_at: datetime | None = None
     paid_at: datetime | None = None
-
 
     def validate(self) -> None:
         if self.amount.amount <= 0:
             raise ValueError("Payment amount must be positive")
-
+        if self.order_id is None and self.checkout_session_id is None:
+            raise ValueError("Payment intent must reference order_id or checkout_session_id")
 
     def awaiting_confirmation(self, *, external_id: str, confirmation_url: str) -> None:
         self._require_mutable()
@@ -37,9 +41,9 @@ class PaymentOrder(AggregateRoot):
         self.external_id = external_id
         self.confirmation_url = confirmation_url
         self.register_event(
-            PaymentOrderCreatedEvent(
-                payment_order_id=self.id,
-                draft_id=self.draft_id,
+            PaymentIntentCreatedEvent(
+                payment_intent_id=self.id,
+                checkout_session_id=self.checkout_session_id or self.order_id or self.id,
                 user_id=self.user_id,
             )
         )
@@ -51,8 +55,8 @@ class PaymentOrder(AggregateRoot):
         self.paid_at = paid_at
         self.register_event(
             PaymentSucceededEvent(
-                payment_order_id=self.id,
-                draft_id=self.draft_id,
+                payment_intent_id=self.id,
+                checkout_session_id=self.checkout_session_id or self.order_id or self.id,
                 external_id=external_id,
             )
         )
@@ -82,7 +86,6 @@ class PaymentOrder(AggregateRoot):
             PaymentStatus.FAILED,
             PaymentStatus.REFUNDED,
         }
-
 
     def _require_mutable(self) -> None:
         if self.status not in {PaymentStatus.PENDING, PaymentStatus.WAITING_FOR_CAPTURE}:

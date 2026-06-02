@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from app.domain.entities.subscription_plan import SubscriptionPlan
+from app.domain.entities.plan import Plan
 from app.domain.values.money import Money
 from app.domain.values.servers import FeatureCode, ProtocolCode
-from app.domain.values.subscriptions import PlanConstraints, PlanType, PricingRules, SubscriptionSpec
+from app.domain.values.subscriptions import PlanOptionSet, PlanType, PlanVisibility, PricingRules, ProductType, PlanConfiguration
 from app.infrastructure.db.mappers._serialization import (
     dump_decimal,
     dump_enum_set,
@@ -13,12 +13,12 @@ from app.infrastructure.db.mappers._serialization import (
     load_enum_set,
 )
 from app.infrastructure.db.mappers.subscriptions import SubscriptionMapper
-from app.infrastructure.db.models.subscription_plans import SubscriptionPlanModel
+from app.infrastructure.db.models.plans import PlanModel
 
 
-class SubscriptionPlanMapper:
+class PlanMapper:
     @staticmethod
-    def _constraints_to_json(constraints: PlanConstraints) -> dict:
+    def _constraints_to_json(constraints: PlanOptionSet) -> dict:
         return {
             "allowed_protocols": dump_enum_set(constraints.allowed_protocols),
             "allowed_features": dump_enum_set(constraints.allowed_features),
@@ -33,8 +33,8 @@ class SubscriptionPlanMapper:
         }
 
     @staticmethod
-    def _constraints_from_json(raw: dict) -> PlanConstraints:
-        return PlanConstraints(
+    def _constraints_from_json(raw: dict) -> PlanOptionSet:
+        return PlanOptionSet(
             allowed_protocols=load_enum_set(raw.get("allowed_protocols"), ProtocolCode),
             allowed_features=load_enum_set(raw.get("allowed_features"), FeatureCode),
             min_duration_days=raw.get("min_duration_days", 1),
@@ -86,7 +86,7 @@ class SubscriptionPlanMapper:
         )
 
     @classmethod
-    def to_entity(cls, model: SubscriptionPlanModel) -> SubscriptionPlan:
+    def to_entity(cls, model: PlanModel) -> Plan:
         fixed_spec = (
             SubscriptionMapper._spec_from_json(model.fixed_spec)
             if model.fixed_spec
@@ -96,11 +96,14 @@ class SubscriptionPlanMapper:
         if model.fixed_amount is not None and model.fixed_currency:
             fixed_price = Money(Decimal(model.fixed_amount), model.fixed_currency)
 
-        return SubscriptionPlan(
+        return Plan(
             id=model.id,
             code=model.code,
             name=model.name,
             plan_type=PlanType(model.plan_type),
+            product_id=getattr(model, "product_id", None),
+            product_type=ProductType(getattr(model, "product_type", "vpn_subscription")),
+            visibility=PlanVisibility(getattr(model, "visibility", "public")),
             fixed_spec=fixed_spec,
             fixed_price=fixed_price,
             constraints=cls._constraints_from_json(model.constraints) if model.constraints else None,
@@ -111,15 +114,20 @@ class SubscriptionPlanMapper:
             is_active=model.is_active,
             is_public=model.is_public,
             sort_order=model.sort_order,
+            allowed_region_codes=frozenset(getattr(model, "allowed_region_codes", []) or []),
+            metadata=getattr(model, "meta", {}) or {},
         )
 
     @classmethod
-    def to_model(cls, entity: SubscriptionPlan) -> SubscriptionPlanModel:
-        return SubscriptionPlanModel(
+    def to_model(cls, entity: Plan) -> PlanModel:
+        return PlanModel(
             id=entity.id,
             code=entity.code,
             name=entity.name,
             plan_type=entity.plan_type.value,
+            product_id=entity.product_id,
+            product_type=entity.product_type.value,
+            visibility=entity.visibility.value,
             fixed_spec=SubscriptionMapper._spec_to_json(entity.fixed_spec)
             if entity.fixed_spec
             else None,
@@ -133,13 +141,20 @@ class SubscriptionPlanMapper:
             is_active=entity.is_active,
             is_public=entity.is_public,
             sort_order=entity.sort_order,
+            allowed_region_codes=sorted(entity.allowed_region_codes),
+            allowed_location_ids=[str(item) for item in entity.allowed_location_ids],
+            allowed_server_group_ids=[str(item) for item in entity.allowed_server_group_ids],
+            meta=entity.metadata,
         )
 
     @classmethod
-    def update_model(cls, model: SubscriptionPlanModel, entity: SubscriptionPlan) -> None:
+    def update_model(cls, model: PlanModel, entity: Plan) -> None:
         model.code = entity.code
         model.name = entity.name
         model.plan_type = entity.plan_type.value
+        model.product_id = entity.product_id
+        model.product_type = entity.product_type.value
+        model.visibility = entity.visibility.value
         model.fixed_spec = (
             SubscriptionMapper._spec_to_json(entity.fixed_spec) if entity.fixed_spec else None
         )
@@ -155,3 +170,7 @@ class SubscriptionPlanMapper:
         model.is_active = entity.is_active
         model.is_public = entity.is_public
         model.sort_order = entity.sort_order
+        model.allowed_region_codes = sorted(entity.allowed_region_codes)
+        model.allowed_location_ids = [str(item) for item in entity.allowed_location_ids]
+        model.allowed_server_group_ids = [str(item) for item in entity.allowed_server_group_ids]
+        model.meta = entity.metadata

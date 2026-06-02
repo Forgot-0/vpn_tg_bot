@@ -1,32 +1,83 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date
 from decimal import Decimal
 from enum import StrEnum
 from typing import FrozenSet
 
-from app.domain.values.money import Money
 from app.domain.values.servers import FeatureCode, ProtocolCode
 
 
-class SubscriptionStatus(StrEnum):
-    PENDING_PAYMENT = "pending_payment"
-    ACTIVE = "active"
-    SUSPENDED = "suspended"
-    EXPIRED = "expired"
-    CANCELLED = "cancelled"
-
-
-class DraftStatus(StrEnum):
-    DRAFT = "draft"
-    READY_FOR_CHECKOUT = "ready_for_checkout"
-    CONVERTED = "converted"
-    EXPIRED = "expired"
+class ProductType(StrEnum):
+    VPN_SUBSCRIPTION = "vpn_subscription"
+    DEDICATED_IP = "dedicated_ip"
+    EXTRA_TRAFFIC = "extra_traffic"
+    EXTRA_DEVICES = "extra_devices"
+    TRIAL = "trial"
+    BUSINESS = "business"
 
 
 class PlanType(StrEnum):
     FIXED = "fixed"
     FLEXIBLE = "flexible"
+
+
+class PlanVisibility(StrEnum):
+    PUBLIC = "public"
+    PRIVATE = "private"
+    HIDDEN = "hidden"
+
+
+class PriceType(StrEnum):
+    ONE_TIME = "one_time"
+    RECURRING = "recurring"
+    USAGE_BASED = "usage_based"
+
+
+class BillingInterval(StrEnum):
+    DAY = "day"
+    WEEK = "week"
+    MONTH = "month"
+    YEAR = "year"
+    LIFETIME = "lifetime"
+
+
+class OfferStatus(StrEnum):
+    DRAFT = "draft"
+    ACTIVE = "active"
+    ARCHIVED = "archived"
+
+
+class CheckoutStatus(StrEnum):
+    OPEN = "open"
+    DRAFT = "draft"
+    READY_FOR_PAYMENT = "ready_for_payment"
+    READY_FOR_CHECKOUT = "ready_for_checkout"
+    COMPLETED = "completed"
+    CONVERTED = "converted"
+    EXPIRED = "expired"
+    CANCELLED = "cancelled"
+
+
+class OrderStatus(StrEnum):
+    DRAFT = "draft"
+    PENDING_PAYMENT = "pending_payment"
+    PAID = "paid"
+    FULFILLING = "fulfilling"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    REFUNDED = "refunded"
+
+
+class SubscriptionStatus(StrEnum):
+    PENDING_PAYMENT = "pending_payment"
+    PENDING_PROVISIONING = "pending_provisioning"
+    PROVISIONING_FAILED = "provisioning_failed"
+    ACTIVE = "active"
+    SUSPENDED = "suspended"
+    EXPIRED = "expired"
+    CANCELLED = "cancelled"
 
 
 class AccessFormat(StrEnum):
@@ -35,17 +86,37 @@ class AccessFormat(StrEnum):
     CONNECTION_STRING = "connection_string"
 
 
+class ProvisioningStatus(StrEnum):
+    PENDING = "pending"
+    PROVISIONING = "provisioning"
+    ACTIVE = "active"
+    FAILED = "failed"
+    SUSPENDED = "suspended"
+    DELETING = "deleting"
+    DELETED = "deleted"
+
+
+class RemoteAccessState(StrEnum):
+    UNKNOWN = "unknown"
+    EXISTS = "exists"
+    MISSING = "missing"
+    DISABLED = "disabled"
+    DELETED = "deleted"
+
+
 @dataclass(frozen=True)
-class SubscriptionSpec:
+class PlanConfiguration:
     protocols: FrozenSet[ProtocolCode]
     duration_days: int | None
     traffic_limit_gb: Decimal | None
     max_devices: int
     features: FrozenSet[FeatureCode] = frozenset()
+    location_ids: FrozenSet[str] = frozenset()
+    server_group_ids: FrozenSet[str] = frozenset()
 
     def __post_init__(self) -> None:
         if not self.protocols:
-            raise ValueError("At least one protocol required")
+            raise ValueError("At least one protocol is required")
         if self.max_devices < 1:
             raise ValueError("max_devices must be >= 1")
         if self.duration_days is not None and self.duration_days < 1:
@@ -63,57 +134,90 @@ class SubscriptionSpec:
 
 
 @dataclass(frozen=True)
-class PlanConstraints:
+class PlanOptionSet:
     allowed_protocols: FrozenSet[ProtocolCode]
     allowed_features: FrozenSet[FeatureCode] = frozenset()
+    allowed_location_ids: FrozenSet[str] = frozenset()
+    allowed_server_group_ids: FrozenSet[str] = frozenset()
 
     min_duration_days: int = 1
     max_duration_days: int | None = None
+    duration_options_days: FrozenSet[int] = frozenset()
 
     min_traffic_gb: Decimal | None = None
     max_traffic_gb: Decimal | None = None
+    traffic_options_gb: FrozenSet[Decimal] = frozenset()
 
     min_devices: int = 1
     max_devices: int = 1
+    device_options: FrozenSet[int] = frozenset()
 
     duration_required: bool = True
     traffic_required: bool = False
 
-    def check(self, spec: SubscriptionSpec) -> list[str]:
+    def check(self, config: PlanConfiguration) -> list[str]:
         violations: list[str] = []
 
-        disallowed_protocols = spec.protocols - self.allowed_protocols
+        disallowed_protocols = config.protocols - self.allowed_protocols
         if disallowed_protocols:
             violations.append(f"Protocols not allowed by plan: {', '.join(disallowed_protocols)}")
 
-        disallowed_features = spec.features - self.allowed_features
+        disallowed_features = config.features - self.allowed_features
         if disallowed_features:
             violations.append(f"Features not allowed by plan: {', '.join(disallowed_features)}")
 
-        if self.duration_required and spec.duration_days is None:
+        if self.allowed_location_ids and not config.location_ids.issubset(self.allowed_location_ids):
+            violations.append("Locations are not allowed by plan")
+
+        if self.allowed_server_group_ids and not config.server_group_ids.issubset(self.allowed_server_group_ids):
+            violations.append("Server groups are not allowed by plan")
+
+        if self.duration_required and config.duration_days is None:
             violations.append("Duration is required for this plan")
 
-        if spec.duration_days is not None:
-            if spec.duration_days < self.min_duration_days:
+        if config.duration_days is not None:
+            if config.duration_days < self.min_duration_days:
                 violations.append(f"Duration must be >= {self.min_duration_days} days")
-            if self.max_duration_days and spec.duration_days > self.max_duration_days:
+            if self.max_duration_days and config.duration_days > self.max_duration_days:
                 violations.append(f"Duration must be <= {self.max_duration_days} days")
+            if self.duration_options_days and config.duration_days not in self.duration_options_days:
+                violations.append("Duration is not available for this plan")
 
-        if self.traffic_required and spec.traffic_limit_gb is None:
+        if self.traffic_required and config.traffic_limit_gb is None:
             violations.append("Traffic limit is required for this plan")
 
-        if spec.traffic_limit_gb is not None:
-            if self.min_traffic_gb and spec.traffic_limit_gb < self.min_traffic_gb:
+        if config.traffic_limit_gb is not None:
+            if self.min_traffic_gb and config.traffic_limit_gb < self.min_traffic_gb:
                 violations.append(f"Traffic must be >= {self.min_traffic_gb} GB")
-            if self.max_traffic_gb and spec.traffic_limit_gb > self.max_traffic_gb:
+            if self.max_traffic_gb and config.traffic_limit_gb > self.max_traffic_gb:
                 violations.append(f"Traffic must be <= {self.max_traffic_gb} GB")
+            if self.traffic_options_gb and config.traffic_limit_gb not in self.traffic_options_gb:
+                violations.append("Traffic limit is not available for this plan")
 
-        if spec.max_devices < self.min_devices:
+        if config.max_devices < self.min_devices:
             violations.append(f"Devices must be >= {self.min_devices}")
-        if spec.max_devices > self.max_devices:
+        if config.max_devices > self.max_devices:
             violations.append(f"Devices must be <= {self.max_devices}")
+        if self.device_options and config.max_devices not in self.device_options:
+            violations.append("Device count is not available for this plan")
 
         return violations
+
+
+@dataclass(frozen=True)
+class PriceContext:
+    country_code: str | None = None
+    tax_category: str | None = None
+    promo_eligible: bool = True
+    active_from: date | None = None
+    active_to: date | None = None
+
+    def is_active_on(self, value: date) -> bool:
+        if self.active_from is not None and value < self.active_from:
+            return False
+        if self.active_to is not None and value > self.active_to:
+            return False
+        return True
 
 
 @dataclass(frozen=True)
@@ -135,3 +239,10 @@ class AccessCredential:
     protocol: ProtocolCode | None = None
     panel_client_id: str | None = None
     label: str = ""
+
+
+@dataclass(frozen=True)
+class SubscriptionLimits:
+    duration_days: int | None
+    traffic_limit_gb: Decimal | None
+    max_devices: int

@@ -12,16 +12,24 @@ from app.application.interfaces.password import PasswordService
 from app.application.interfaces.payments import PaymentGateway
 from app.application.interfaces.servers import PanelClientFactory
 from app.configs.app import app_config
-from app.domain.repositories.payments import PaymentOrderRepository
+from app.domain.repositories.access import ProvisionedAccessRepository
+from app.domain.repositories.catalog import OfferRepository, PriceRepository, ProductRepository
+from app.domain.repositories.payments import PaymentIntentRepository
 from app.domain.repositories.servers import VPNServerRepository
-from app.domain.repositories.subscription_drafts import SubscriptionDraftRepository
-from app.domain.repositories.subscriptions import SubscriptionPlanRepository, SubscriptionRepository
+from app.domain.repositories.checkouts import CheckoutSessionRepository
+from app.domain.repositories.subscriptions import PlanRepository, SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.repositories.users import UserRepository
-from app.infrastructure.db.repositories.payments import SQLAlchemyPaymentOrderRepository
+from app.infrastructure.db.repositories.access import SQLAlchemyProvisionedAccessRepository
+from app.infrastructure.db.repositories.catalog import (
+    SQLAlchemyOfferRepository,
+    SQLAlchemyPriceRepository,
+    SQLAlchemyProductRepository,
+)
+from app.infrastructure.db.repositories.payment_intents import SQLAlchemyPaymentIntentRepository
 from app.infrastructure.db.repositories.servers import SQLAlchemyVPNServerRepository
-from app.infrastructure.db.repositories.subscription_drafts import SQLAlchemySubscriptionDraftRepository
-from app.infrastructure.db.repositories.subscription_plans import SQLAlchemySubscriptionPlanRepository
+from app.infrastructure.db.repositories.checkouts import SQLAlchemyCheckoutSessionRepository
+from app.infrastructure.db.repositories.plans import SQLAlchemyPlanRepository
 from app.infrastructure.db.repositories.subscriptions import SQLAlchemySubscriptionRepository
 from app.infrastructure.db.repositories.users import SQLAlchemyUserRepository
 from app.infrastructure.db.session import create_async_marker, create_engine
@@ -65,28 +73,47 @@ class InfrastructureProvider(Provider):
         return SQLAlchemyUserRepository(session)
 
     @provide(scope=Scope.REQUEST)
-    def get_payment_repository(self, session: AsyncSession) -> PaymentOrderRepository:
-        return SQLAlchemyPaymentOrderRepository(session)
+    def get_payment_repository(self, session: AsyncSession) -> PaymentIntentRepository:
+        return SQLAlchemyPaymentIntentRepository(session)
 
     @provide(scope=Scope.REQUEST)
     def get_server_repository(self, session: AsyncSession) -> VPNServerRepository:
         return SQLAlchemyVPNServerRepository(session)
 
     @provide(scope=Scope.REQUEST)
-    def get_subscription_draft_repository(
+    def get_checkout_repository(
         self, session: AsyncSession,
-    ) -> SubscriptionDraftRepository:
-        return SQLAlchemySubscriptionDraftRepository(session)
+    ) -> CheckoutSessionRepository:
+        return SQLAlchemyCheckoutSessionRepository(session)
 
     @provide(scope=Scope.REQUEST)
     def get_subscription_repository(self, session: AsyncSession) -> SubscriptionRepository:
         return SQLAlchemySubscriptionRepository(session)
 
     @provide(scope=Scope.REQUEST)
-    def get_subscription_plan_repository(
+    def get_plan_repository(
         self, session: AsyncSession
-    ) -> SubscriptionPlanRepository:
-        return SQLAlchemySubscriptionPlanRepository(session)
+    ) -> PlanRepository:
+        return SQLAlchemyPlanRepository(session)
+
+
+    @provide(scope=Scope.REQUEST)
+    def get_product_repository(self, session: AsyncSession) -> ProductRepository:
+        return SQLAlchemyProductRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_price_repository(self, session: AsyncSession) -> PriceRepository:
+        return SQLAlchemyPriceRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_offer_repository(self, session: AsyncSession) -> OfferRepository:
+        return SQLAlchemyOfferRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_provisioned_access_repository(
+        self, session: AsyncSession,
+    ) -> ProvisionedAccessRepository:
+        return SQLAlchemyProvisionedAccessRepository(session)
 
     @provide(scope=Scope.APP)
     def get_payment_gateway(self) -> PaymentGateway:

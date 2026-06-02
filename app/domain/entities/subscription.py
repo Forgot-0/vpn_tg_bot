@@ -16,11 +16,7 @@ from app.domain.events.subscriptions import (
     TrafficConsumedEvent,
 )
 from app.domain.values.money import Money
-from app.domain.values.subscriptions import (
-    AccessCredential,
-    SubscriptionSpec,
-    SubscriptionStatus,
-)
+from app.domain.values.subscriptions import AccessCredential, PlanConfiguration, SubscriptionStatus
 
 
 @dataclass
@@ -28,19 +24,24 @@ class Subscription(AggregateRoot):
     id: UUID
     user_id: UUID
     plan_id: UUID
-    server_id: UUID
 
-    spec: SubscriptionSpec
+    spec: PlanConfiguration
 
+    server_id: UUID | None = None
+    order_id: UUID | None = None
+    payment_intent_id: UUID | None = None
     status: SubscriptionStatus = SubscriptionStatus.PENDING_PAYMENT
-    payment_order_id: UUID | None = None
     purchased_price: Money | None = None
 
+    current_period_start: date | None = None
+    current_period_end: date | None = None
     started_at: date | None = None
     expires_at: date | None = None
 
     used_traffic_gb: Decimal = Decimal("0")
+    provisioned_access_ids: list[UUID] = field(default_factory=list)
 
+    # Deprecated  field. Technical credentials belong to ProvisionedAccess.
     access_credentials: list[AccessCredential] = field(default_factory=list)
 
     def validate(self) -> None:
@@ -48,38 +49,78 @@ class Subscription(AggregateRoot):
             raise ValueError("Subscription must belong to a user")
         if not self.plan_id:
             raise ValueError("Subscription must reference a plan")
-        if not self.server_id:
-            raise ValueError("Subscription must reference a server")
 
+    @classmethod
+    def pending_provisioning(
+        cls,
+        *,
+        id: UUID,
+        user_id: UUID,
+        plan_id: UUID,
+        spec: PlanConfiguration,
+        order_id: UUID | None,
+        payment_intent_id: UUID,
+        purchased_price: Money,
+        server_id: UUID | None = None,
+    ) -> Subscription:
+        return cls(
+            id=id,
+            user_id=user_id,
+            plan_id=plan_id,
+            server_id=server_id,
+            spec=spec,
+            order_id=order_id,
+            payment_intent_id=payment_intent_id,
+            purchased_price=purchased_price,
+            status=SubscriptionStatus.PENDING_PROVISIONING,
+        )
 
     def activate(
         self,
         *,
         start_date: date,
-        purchased_price: Money,
-        access_credentials: list[AccessCredential],
+        purchased_price: Money | None = None,
+        access_credentials: list[AccessCredential] | None = None,
+        provisioned_access_id: UUID | None = None,
     ) -> None:
         self._require_status(
-            {SubscriptionStatus.PENDING_PAYMENT},
+            {SubscriptionStatus.PENDING_PAYMENT, SubscriptionStatus.PENDING_PROVISIONING, SubscriptionStatus.PROVISIONING_FAILED},
             action="activate",
         )
         self.status = SubscriptionStatus.ACTIVE
         self.started_at = start_date
-        self.purchased_price = purchased_price
-        self.access_credentials = access_credentials
+        self.current_period_start = start_date
+        if purchased_price is not None:
+            self.purchased_price = purchased_price
+        if access_credentials is not None:
+            self.access_credentials = access_credentials
+        if provisioned_access_id is not None and provisioned_access_id not in self.provisioned_access_ids:
+            self.provisioned_access_ids.append(provisioned_access_id)
 
         if self.spec.is_time_limited:
             assert self.spec.duration_days is not None
             self.expires_at = start_date + timedelta(days=self.spec.duration_days)
+            self.current_period_end = self.expires_at
 
         self.register_event(
             SubscriptionActivatedEvent(
                 subscription_id=self.id,
                 user_id=self.user_id,
                 plan_id=self.plan_id,
-                server_id=self.server_id,
+                server_id=self.server_id or UUID(int=0),
                 started_at=self.started_at,
                 expires_at=self.expires_at,
+            )
+        )
+
+    def mark_provisioning_failed(self, *, reason: str) -> None:
+        self._require_status({SubscriptionStatus.PENDING_PROVISIONING}, action="mark_provisioning_failed")
+        self.status = SubscriptionStatus.PROVISIONING_FAILED
+        self.register_event(
+            SubscriptionSuspendedEvent(
+                subscription_id=self.id,
+                user_id=self.user_id,
+                reason=reason,
             )
         )
 
@@ -99,6 +140,9 @@ class Subscription(AggregateRoot):
             self.expires_at or renewed_at.date(),
         )
         self.expires_at = base + timedelta(days=self.spec.duration_days)
+        self.current_period_end = self.expires_at
+        if self.current_period_start is None:
+            self.current_period_start = renewed_at.date()
         self.status = SubscriptionStatus.ACTIVE
 
         self.register_event(
@@ -143,9 +187,7 @@ class Subscription(AggregateRoot):
     def unsuspend(self) -> None:
         self._require_status({SubscriptionStatus.SUSPENDED}, action="unsuspend")
         if self.is_traffic_exceeded:
-            raise BusinessRuleViolationError(
-                reason="Cannot unsuspend: traffic limit still exceeded"
-            )
+            raise BusinessRuleViolationError(reason="Cannot unsuspend: traffic limit still exceeded")
         self.status = SubscriptionStatus.ACTIVE
 
     def expire(self) -> None:
@@ -163,9 +205,7 @@ class Subscription(AggregateRoot):
 
     def cancel(self) -> None:
         if self.status in {SubscriptionStatus.EXPIRED, SubscriptionStatus.CANCELLED}:
-            raise InvalidStateTransitionError(
-                reason=f"Cannot cancel subscription in status {self.status}"
-            )
+            raise InvalidStateTransitionError(reason=f"Cannot cancel subscription in status {self.status}")
         self.status = SubscriptionStatus.CANCELLED
         self.register_event(
             SubscriptionCancelledEvent(
@@ -174,13 +214,16 @@ class Subscription(AggregateRoot):
             )
         )
 
+    def attach_access(self, provisioned_access_id: UUID) -> None:
+        if provisioned_access_id not in self.provisioned_access_ids:
+            self.provisioned_access_ids.append(provisioned_access_id)
+
     def rotate_credentials(self, new_credentials: list[AccessCredential]) -> None:
         self._require_status(
             {SubscriptionStatus.ACTIVE, SubscriptionStatus.SUSPENDED},
             action="rotate_credentials",
         )
         self.access_credentials = new_credentials
-
 
     @property
     def is_active(self) -> bool:
@@ -220,6 +263,4 @@ class Subscription(AggregateRoot):
 
     def _require_status(self, allowed: set[SubscriptionStatus], *, action: str) -> None:
         if self.status not in allowed:
-            raise InvalidStateTransitionError(
-                reason=f"Cannot {action} subscription in status '{self.status}'"
-            )
+            raise InvalidStateTransitionError(reason=f"Cannot {action} subscription in status '{self.status}'")

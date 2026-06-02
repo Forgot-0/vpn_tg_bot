@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from uuid import UUID
 
 from app.domain.entities.subscription import Subscription
 from app.domain.values.money import Money
 from app.domain.values.subscriptions import (
     AccessCredential,
     AccessFormat,
-    SubscriptionSpec,
+    PlanConfiguration,
     SubscriptionStatus,
 )
 from app.domain.values.servers import FeatureCode, ProtocolCode
@@ -22,7 +23,7 @@ from app.infrastructure.db.models.subscriptions import SubscriptionModel
 
 class SubscriptionMapper:
     @staticmethod
-    def _spec_to_json(spec: SubscriptionSpec) -> dict:
+    def _spec_to_json(spec: PlanConfiguration) -> dict:
         return {
             "protocols": dump_enum_set(spec.protocols),
             "duration_days": spec.duration_days,
@@ -32,8 +33,8 @@ class SubscriptionMapper:
         }
 
     @staticmethod
-    def _spec_from_json(raw: dict) -> SubscriptionSpec:
-        return SubscriptionSpec(
+    def _spec_from_json(raw: dict) -> PlanConfiguration:
+        return PlanConfiguration(
             protocols=load_enum_set(raw.get("protocols"), ProtocolCode),
             duration_days=raw.get("duration_days"),
             traffic_limit_gb=load_decimal(raw.get("traffic_limit_gb")),
@@ -83,14 +84,18 @@ class SubscriptionMapper:
             user_id=model.user_id,
             plan_id=model.plan_id,
             server_id=model.server_id,
+            order_id=getattr(model, "order_id", None),
             spec=cls._spec_from_json(model.spec),
             status=SubscriptionStatus(model.status),
-            payment_order_id=model.payment_order_id,
+            payment_intent_id=model.payment_intent_id,
             purchased_price=purchased_price,
             started_at=model.started_at,
             expires_at=model.expires_at,
+            current_period_start=getattr(model, "current_period_start", None) or model.started_at,
+            current_period_end=getattr(model, "current_period_end", None) or model.expires_at,
             used_traffic_gb=Decimal(model.used_traffic_gb),
             access_credentials=cls._credentials_from_json(model.access_credentials),
+            provisioned_access_ids=[UUID(item) for item in (getattr(model, "provisioned_access_ids", []) or [])],
         )
 
     @classmethod
@@ -106,15 +111,19 @@ class SubscriptionMapper:
             user_id=entity.user_id,
             plan_id=entity.plan_id,
             server_id=entity.server_id,
+            order_id=entity.order_id,
             spec=cls._spec_to_json(entity.spec),
             status=entity.status.value,
-            payment_order_id=entity.payment_order_id,
+            payment_intent_id=entity.payment_intent_id,
             purchased_amount=purchased_amount,
             purchased_currency=purchased_currency,
             started_at=entity.started_at,
             expires_at=entity.expires_at,
+            current_period_start=entity.current_period_start,
+            current_period_end=entity.current_period_end,
             used_traffic_gb=entity.used_traffic_gb,
             access_credentials=cls._credentials_to_json(entity.access_credentials),
+            provisioned_access_ids=[str(item) for item in entity.provisioned_access_ids],
         )
 
     @classmethod
@@ -128,12 +137,16 @@ class SubscriptionMapper:
         model.user_id = entity.user_id
         model.plan_id = entity.plan_id
         model.server_id = entity.server_id
+        model.order_id = entity.order_id
         model.spec = cls._spec_to_json(entity.spec)
         model.status = entity.status.value
-        model.payment_order_id = entity.payment_order_id
+        model.payment_intent_id = entity.payment_intent_id
         model.purchased_amount = purchased_amount
         model.purchased_currency = purchased_currency
         model.started_at = entity.started_at
         model.expires_at = entity.expires_at
+        model.current_period_start = entity.current_period_start
+        model.current_period_end = entity.current_period_end
         model.used_traffic_gb = float(entity.used_traffic_gb)
         model.access_credentials = cls._credentials_to_json(entity.access_credentials)
+        model.provisioned_access_ids = [str(item) for item in entity.provisioned_access_ids]

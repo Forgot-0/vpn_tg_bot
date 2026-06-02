@@ -12,7 +12,7 @@ import httpx
 from app.application.dtos.payments import GatewayPaymentResult, GatewayStatusResult
 from app.application.interfaces.payments import PaymentGateway
 from app.configs.app import app_config
-from app.domain.entities.payment import PaymentOrder
+from app.domain.entities.payment import PaymentIntent
 from app.domain.values.payments import PaymentProvider, PaymentStatus
 
 
@@ -82,7 +82,7 @@ class YooKassaPaymentGateway(PaymentGateway):
 
     async def create_payment(
         self,
-        order: PaymentOrder,
+        order: PaymentIntent,
         *,
         return_url: str,
     ) -> GatewayPaymentResult:
@@ -96,10 +96,10 @@ class YooKassaPaymentGateway(PaymentGateway):
                 "type": "redirect",
                 "return_url": return_url,
             },
-            "description": f"Subscription draft payment {order.draft_id}",
+            "description": f"Subscription checkout payment {order.checkout_session_id}",
             "metadata": {
-                "payment_order_id": str(order.id),
-                "draft_id": str(order.draft_id),
+                "payment_intent_id": str(order.id),
+                "checkout_session_id": str(order.checkout_session_id),
                 "user_id": str(order.user_id),
             },
         }

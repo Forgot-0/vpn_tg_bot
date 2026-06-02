@@ -22,17 +22,18 @@ class SubscriptionModel(BaseModelORM):
     )
     plan_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
-        ForeignKey("subscription_plans.id", ondelete="RESTRICT"),
+        ForeignKey("plans.id", ondelete="RESTRICT"),
         nullable=False,
     )
-    server_id: Mapped[UUID] = mapped_column(
+    server_id: Mapped[UUID | None] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("vpn_servers.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True,
     )
+    order_id: Mapped[UUID | None] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("orders.id", ondelete="SET NULL"), nullable=True, index=True)
     spec: Mapped[dict] = mapped_column(JSONB, nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
-    payment_order_id: Mapped[UUID | None] = mapped_column(
+    payment_intent_id: Mapped[UUID | None] = mapped_column(
         PG_UUID(as_uuid=True),
         nullable=True,
         index=True,
@@ -41,6 +42,9 @@ class SubscriptionModel(BaseModelORM):
     purchased_currency: Mapped[str | None] = mapped_column(String(8), nullable=True)
     started_at: Mapped[date | None] = mapped_column(Date, nullable=True)
     expires_at: Mapped[date | None] = mapped_column(Date, nullable=True, index=True)
+    current_period_start: Mapped[date | None] = mapped_column(Date, nullable=True)
+    current_period_end: Mapped[date | None] = mapped_column(Date, nullable=True, index=True)
     used_traffic_gb: Mapped[float] = mapped_column(Numeric(16, 4), nullable=False, default=0)
     access_credentials: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    provisioned_access_ids: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)

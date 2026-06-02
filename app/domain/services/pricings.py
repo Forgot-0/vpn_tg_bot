@@ -3,12 +3,12 @@ from __future__ import annotations
 from decimal import Decimal
 
 from app.domain.values.money import Money
-from app.domain.values.subscriptions import PricingRules, SubscriptionSpec
+from app.domain.values.subscriptions import PricingRules, PlanConfiguration
 
 
 class PricingService:
 
-    def calculate(self, spec: SubscriptionSpec, rules: PricingRules) -> Money:
+    def calculate(self, spec: PlanConfiguration, rules: PricingRules) -> Money:
         currency = rules.currency
         total = rules.base_fee
 

@@ -8,13 +8,13 @@ from uuid import UUID
 
 from app.application.dtos.base import BaseDTO
 from app.domain.entities.subscription import Subscription
-from app.domain.entities.subscription_plan import SubscriptionPlan
+from app.domain.entities.plan import Plan
 from app.domain.entities.base import AggregateRoot
 from app.domain.values.subscriptions import AccessCredential, AccessFormat
 
 
 @dataclass
-class SubscriptionPlanDTO(BaseDTO):
+class PlanDTO(BaseDTO):
     id: UUID
     code: str
     name: str
@@ -36,7 +36,7 @@ class SubscriptionPlanDTO(BaseDTO):
     allowed_features: list[str]
 
     @classmethod
-    def from_entity(cls, entity: SubscriptionPlan) -> Self:
+    def from_entity(cls, entity: Plan) -> Self:
         price_amount = None
         price_currency = None
 
@@ -147,8 +147,8 @@ class SubscriptionDTO(BaseDTO):
 
 @dataclass
 class CreateSubscriptionResultDTO:
-    draft_id: UUID
-    payment_order_id: UUID
+    checkout_session_id: UUID
+    payment_intent_id: UUID
     confirmation_url: str
     amount: Decimal
     currency: str

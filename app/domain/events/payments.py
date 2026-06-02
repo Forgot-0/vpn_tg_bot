@@ -5,11 +5,11 @@ from app.domain.entities.base import DomainEvent
 
 
 @dataclass(frozen=True)
-class PaymentOrderCreatedEvent(DomainEvent):
+class PaymentIntentCreatedEvent(DomainEvent):
     __event_name__ = "payment.created"
 
-    payment_order_id: UUID
-    draft_id: UUID
+    payment_intent_id: UUID
+    checkout_session_id: UUID
     user_id: UUID
 
 
@@ -17,6 +17,6 @@ class PaymentOrderCreatedEvent(DomainEvent):
 class PaymentSucceededEvent(DomainEvent):
     __event_name__ = "payment.succeeded"
 
-    payment_order_id: UUID
-    draft_id: UUID
+    payment_intent_id: UUID
+    checkout_session_id: UUID
     external_id: str

@@ -5,14 +5,16 @@ from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from typing import Any
 from urllib.parse import quote
+from uuid import uuid4
 
 from httpx import AsyncClient, Response
 
 from app.application.interfaces.servers import PanelClient, PanelServerInfoResult
+from app.domain.entities.access import ProvisionedAccess
 from app.domain.entities.server import VPNServer
 from app.domain.entities.subscription import Subscription
 from app.domain.values.servers import PanelType, ProtocolCode
-from app.domain.values.subscriptions import AccessCredential, AccessFormat
+from app.domain.values.subscriptions import AccessCredential, AccessFormat, ProvisioningStatus, RemoteAccessState
 
 _BYTES_IN_GIB = Decimal(1024**3)
 _SUPPORTED_LINK_PROTOCOLS = {
@@ -68,7 +70,7 @@ class ThreeXUIClient(PanelClient):
         self,
         server: VPNServer,
         subscription: Subscription,
-    ) -> list[AccessCredential]:
+    ) -> ProvisionedAccess:
         await self.login(server=server)
 
         email = self._client_email(server, subscription)
@@ -81,10 +83,21 @@ class ThreeXUIClient(PanelClient):
         resp = await self._request(server, "POST", "/panel/api/clients/add", json=payload)
         self._ensure_success(resp)
 
-        return await self._get_access_credentials(
+        credentials = await self._get_access_credentials(
             server,
             email,
             self._subscription_id(server, subscription),
+        )
+        return ProvisionedAccess(
+            id=uuid4(),
+            subscription_id=subscription.id,
+            server_id=server.id,
+            panel_type=server.panel_type,
+            panel_client_id=email,
+            inbound_ids=tuple(inbound_ids),
+            credentials=credentials,
+            status=ProvisioningStatus.ACTIVE,
+            remote_state=RemoteAccessState.EXISTS,
         )
 
     async def delete(self, server: VPNServer, subscription: Subscription) -> None:
