@@ -17,7 +17,7 @@ services:
 
     command: [
       "sh", "-c",
-      "uvicorn app.presentation.main:init_api --reload --host ${WEBAPP_WEBHOOK_HOST}
+      "uvicorn app.presentation ... --reload --host ${WEBAPP_WEBHOOK_HOST}
       --port ${WEBAPP_WEBHOOK_PORT} --no-access-log"
     ]
 
@@ -62,7 +62,7 @@ services:
       - .:/app
     env_file:
       - .env
-    command: taskiq worker app.workers.taskiq_worker.py:broker
+    command: taskiq worker app ...
     networks:
       - app-network
 
@@ -71,7 +71,7 @@ services:
     container_name: "scheduler"
     volumes:
       - .:/app
-    command: taskiq scheduler app.workers.taskiq_worker.py:scheduler
+    command: taskiq scheduler app ...
     env_file:
       - .env
     networks:

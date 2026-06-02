@@ -1,15 +1,4 @@
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-    container_name: frontend_builder
-    volumes:
-      - frontend_dist:/dist
-    command: sh -c "cp -r /app/dist/* /dist"
-
   nginx:
     image: nginx:latest
     container_name: nginx_proxy
