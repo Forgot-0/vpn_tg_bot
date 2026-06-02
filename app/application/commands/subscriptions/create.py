@@ -9,10 +9,11 @@ from app.application.dtos.users import UserJWTData
 from app.application.event_bus import EventBus
 from app.application.interfaces.payments import PaymentGateway
 from app.domain.entities.payment import PaymentOrder
-from app.domain.entities.subscription import Subscription
+from app.domain.entities.subscription_draft import SubscriptionDraft
 from app.domain.repositories.payments import PaymentOrderRepository
 from app.domain.repositories.servers import VPNServerRepository
-from app.domain.repositories.subscriptions import SubscriptionPlanRepository, SubscriptionRepository
+from app.domain.repositories.subscription_drafts import SubscriptionDraftRepository
+from app.domain.repositories.subscriptions import SubscriptionPlanRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.services.pricings import PricingService
 from app.domain.values.servers import FeatureCode, ProtocolCode
@@ -27,7 +28,6 @@ class CreateSubscriptionCommand(BaseCommand):
     user_jwt_data: UserJWTData
 
     plan_id: UUID
-    server_id: UUID
     return_url: str
 
     duration_days: int | None = None
@@ -40,7 +40,7 @@ class CreateSubscriptionCommand(BaseCommand):
 @dataclass(frozen=True)
 class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionCommand, CreateSubscriptionResultDTO]):
     plan_repository: SubscriptionPlanRepository
-    subscription_repository: SubscriptionRepository
+    draft_repository: SubscriptionDraftRepository
     server_repository: VPNServerRepository
     payment_repository: PaymentOrderRepository
     payment_gateway: PaymentGateway
@@ -73,26 +73,26 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
             price = self.pricing_service.calculate(spec, plan.pricing_rules)
 
         server = await self.server_repository.get_max_free_server(spec.protocols, spec.features)
-        if server is None or server.can_accommodate(spec) is False:
-            raise 
+        if server is None:
+            raise
 
-        subscription = Subscription(
+        draft = SubscriptionDraft(
             id=uuid4(),
             user_id=command.user_jwt_data.id,
             plan_id=command.plan_id,
-            server_id=command.server_id,
+            server_id=server.id,
             spec=spec,
         )
+        draft.recalculate_price(plan, self.pricing_service)
+        draft.mark_ready_for_checkout()
 
         payment_order = PaymentOrder(
             id=uuid4(),
-            subscription_id=subscription.id,
+            draft_id=draft.id,
             user_id=command.user_jwt_data.id,
             amount=price,
             provider=self.payment_gateway.provider,
         )
-
-        subscription.mark_pending_payment(payment_order.id)
 
         try:
             gateway_result = await self.payment_gateway.create_payment(
@@ -107,15 +107,15 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
             external_id=gateway_result.external_id,
             confirmation_url=gateway_result.confirmation_url or "",
         )
-        await self.subscription_repository.add(subscription)
+        await self.draft_repository.add(draft)
         await self.payment_repository.add(payment_order)
         await self.uow.commit()
 
-        await self.event_bus.publish(subscription.pull_events())
+        await self.event_bus.publish(draft.pull_events())
         await self.event_bus.publish(payment_order.pull_events())
 
         return CreateSubscriptionResultDTO(
-            subscription_id=subscription.id,
+            draft_id=draft.id,
             payment_order_id=payment_order.id,
             confirmation_url=gateway_result.confirmation_url or "",
             amount=price.amount,

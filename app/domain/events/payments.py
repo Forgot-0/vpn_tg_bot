@@ -9,7 +9,7 @@ class PaymentOrderCreatedEvent(DomainEvent):
     __event_name__ = "payment.created"
 
     payment_order_id: UUID
-    subscription_id: UUID
+    draft_id: UUID
     user_id: UUID
 
 
@@ -18,5 +18,5 @@ class PaymentSucceededEvent(DomainEvent):
     __event_name__ = "payment.succeeded"
 
     payment_order_id: UUID
-    subscription_id: UUID
+    draft_id: UUID
     external_id: str

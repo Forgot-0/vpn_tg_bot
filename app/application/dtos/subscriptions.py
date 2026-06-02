@@ -23,11 +23,9 @@ class SubscriptionPlanDTO(BaseDTO):
     is_active: bool
     sort_order: int
 
-    # Для FIXED плана
     price_amount: Decimal | None
     price_currency: str | None
 
-    # Для FLEXIBLE плана — диапазоны
     min_duration_days: int | None
     max_duration_days: int | None
     min_traffic_gb: Decimal | None
@@ -149,7 +147,7 @@ class SubscriptionDTO(BaseDTO):
 
 @dataclass
 class CreateSubscriptionResultDTO:
-    subscription_id: UUID
+    draft_id: UUID
     payment_order_id: UUID
     confirmation_url: str
     amount: Decimal

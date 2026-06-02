@@ -14,7 +14,7 @@ from app.domain.values.payments import PaymentProvider, PaymentStatus
 @dataclass
 class PaymentOrder(AggregateRoot):
     id: UUID
-    subscription_id: UUID
+    draft_id: UUID
     user_id: UUID
     amount: Money
     provider: PaymentProvider
@@ -27,10 +27,6 @@ class PaymentOrder(AggregateRoot):
 
 
     def validate(self) -> None:
-        if not self.subscription_id:
-            raise ValueError("PaymentOrder must reference a subscription")
-        if not self.user_id:
-            raise ValueError("PaymentOrder must reference a user")
         if self.amount.amount <= 0:
             raise ValueError("Payment amount must be positive")
 
@@ -40,6 +36,13 @@ class PaymentOrder(AggregateRoot):
         self.status = PaymentStatus.WAITING_FOR_CAPTURE
         self.external_id = external_id
         self.confirmation_url = confirmation_url
+        self.register_event(
+            PaymentOrderCreatedEvent(
+                payment_order_id=self.id,
+                draft_id=self.draft_id,
+                user_id=self.user_id,
+            )
+        )
 
     def succeed(self, *, external_id: str, paid_at: datetime) -> None:
         self._require_mutable()
@@ -49,7 +52,7 @@ class PaymentOrder(AggregateRoot):
         self.register_event(
             PaymentSucceededEvent(
                 payment_order_id=self.id,
-                subscription_id=self.subscription_id,
+                draft_id=self.draft_id,
                 external_id=external_id,
             )
         )

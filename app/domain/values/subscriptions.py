@@ -10,12 +10,18 @@ from app.domain.values.servers import FeatureCode, ProtocolCode
 
 
 class SubscriptionStatus(StrEnum):
-    DRAFT = "draft"
     PENDING_PAYMENT = "pending_payment"
     ACTIVE = "active"
     SUSPENDED = "suspended"
     EXPIRED = "expired"
     CANCELLED = "cancelled"
+
+
+class DraftStatus(StrEnum):
+    DRAFT = "draft"
+    READY_FOR_CHECKOUT = "ready_for_checkout"
+    CONVERTED = "converted"
+    EXPIRED = "expired"
 
 
 class PlanType(StrEnum):

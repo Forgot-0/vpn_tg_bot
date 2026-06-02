@@ -12,8 +12,8 @@ class PaymentOrderRepository(ABC):
     async def get_by_external_id(self, external_id: str) -> PaymentOrder | None: ...
  
     @abstractmethod
-    async def get_pending_for_subscription(
-        self, subscription_id: UUID
+    async def get_pending_for_draft(
+        self, draft_id: UUID
     ) -> PaymentOrder | None: ...
  
     @abstractmethod

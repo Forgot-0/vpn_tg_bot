@@ -14,9 +14,9 @@ class PaymentOrderModel(BaseModelORM):
     __tablename__ = "payment_orders"
 
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
-    subscription_id: Mapped[UUID] = mapped_column(
+    draft_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
-        ForeignKey("subscriptions.id", ondelete="CASCADE"),
+        ForeignKey("subscription_drafts.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )

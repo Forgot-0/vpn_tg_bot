@@ -24,6 +24,9 @@ class SubscriptionRepository(ABC):
  
     @abstractmethod
     async def list_expiring_within(self, days: int) -> list[Subscription]: ...
+
+    @abstractmethod
+    async def get_by_payment_order(self, payment_order_id: UUID) -> Subscription | None: ...
  
     @abstractmethod
     async def list_traffic_exceeded(self) -> list[Subscription]: ...

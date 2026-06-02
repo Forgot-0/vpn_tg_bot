@@ -11,7 +11,7 @@ class PaymentOrderMapper:
     def to_entity(model: PaymentOrderModel) -> PaymentOrder:
         return PaymentOrder(
             id=model.id,
-            subscription_id=model.subscription_id,
+            draft_id=model.draft_id,
             user_id=model.user_id,
             amount=Money(Decimal(model.amount), model.currency),
             provider=PaymentProvider(model.provider),
@@ -26,7 +26,7 @@ class PaymentOrderMapper:
     def to_model(entity: PaymentOrder) -> PaymentOrderModel:
         return PaymentOrderModel(
             id=entity.id,
-            subscription_id=entity.subscription_id,
+            draft_id=entity.draft_id,
             user_id=entity.user_id,
             amount=entity.amount.amount,
             currency=entity.amount.currency,

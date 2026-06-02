@@ -32,7 +32,7 @@ class Subscription(AggregateRoot):
 
     spec: SubscriptionSpec
 
-    status: SubscriptionStatus = SubscriptionStatus.DRAFT
+    status: SubscriptionStatus = SubscriptionStatus.PENDING_PAYMENT
     payment_order_id: UUID | None = None
     purchased_price: Money | None = None
 
@@ -52,14 +52,6 @@ class Subscription(AggregateRoot):
             raise ValueError("Subscription must reference a server")
 
 
-    def mark_pending_payment(self, payment_order_id: UUID) -> None:
-        self._require_status(
-            {SubscriptionStatus.DRAFT},
-            action="mark_pending_payment",
-        )
-        self.payment_order_id = payment_order_id
-        self.status = SubscriptionStatus.PENDING_PAYMENT
-
     def activate(
         self,
         *,
@@ -68,7 +60,7 @@ class Subscription(AggregateRoot):
         access_credentials: list[AccessCredential],
     ) -> None:
         self._require_status(
-            {SubscriptionStatus.PENDING_PAYMENT, SubscriptionStatus.DRAFT},
+            {SubscriptionStatus.PENDING_PAYMENT},
             action="activate",
         )
         self.status = SubscriptionStatus.ACTIVE

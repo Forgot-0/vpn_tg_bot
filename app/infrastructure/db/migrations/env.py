@@ -10,6 +10,7 @@ from alembic import context
 from app.configs.app import app_config
 from app.infrastructure.db.models import (  # noqa: F401
     PaymentOrderModel,
+    SubscriptionDraftModel,
     SubscriptionModel,
     SubscriptionPlanModel,
     UserModel,

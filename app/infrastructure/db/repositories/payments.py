@@ -23,10 +23,10 @@ class SQLAlchemyPaymentOrderRepository(SQLAlchemyRepository, PaymentOrderReposit
         model = result.scalar_one_or_none()
         return PaymentOrderMapper.to_entity(model) if model else None
 
-    async def get_pending_for_subscription(self, subscription_id: UUID) -> PaymentOrder | None:
+    async def get_pending_for_draft(self, draft_id: UUID) -> PaymentOrder | None:
         stmt = (
             select(PaymentOrderModel)
-            .where(PaymentOrderModel.subscription_id == subscription_id)
+            .where(PaymentOrderModel.draft_id == draft_id)
             .where(
                 PaymentOrderModel.status.in_(
                     [PaymentStatus.PENDING.value, PaymentStatus.WAITING_FOR_CAPTURE.value]

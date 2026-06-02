@@ -14,11 +14,13 @@ from app.application.interfaces.servers import PanelClientFactory
 from app.configs.app import app_config
 from app.domain.repositories.payments import PaymentOrderRepository
 from app.domain.repositories.servers import VPNServerRepository
+from app.domain.repositories.subscription_drafts import SubscriptionDraftRepository
 from app.domain.repositories.subscriptions import SubscriptionPlanRepository, SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.repositories.users import UserRepository
 from app.infrastructure.db.repositories.payments import SQLAlchemyPaymentOrderRepository
 from app.infrastructure.db.repositories.servers import SQLAlchemyVPNServerRepository
+from app.infrastructure.db.repositories.subscription_drafts import SQLAlchemySubscriptionDraftRepository
 from app.infrastructure.db.repositories.subscription_plans import SQLAlchemySubscriptionPlanRepository
 from app.infrastructure.db.repositories.subscriptions import SQLAlchemySubscriptionRepository
 from app.infrastructure.db.repositories.users import SQLAlchemyUserRepository
@@ -69,6 +71,12 @@ class InfrastructureProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def get_server_repository(self, session: AsyncSession) -> VPNServerRepository:
         return SQLAlchemyVPNServerRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_subscription_draft_repository(
+        self, session: AsyncSession,
+    ) -> SubscriptionDraftRepository:
+        return SQLAlchemySubscriptionDraftRepository(session)
 
     @provide(scope=Scope.REQUEST)
     def get_subscription_repository(self, session: AsyncSession) -> SubscriptionRepository:

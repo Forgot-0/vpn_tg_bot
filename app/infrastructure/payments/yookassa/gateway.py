@@ -96,10 +96,10 @@ class YooKassaPaymentGateway(PaymentGateway):
                 "type": "redirect",
                 "return_url": return_url,
             },
-            "description": f"Subscription payment {order.subscription_id}",
+            "description": f"Subscription draft payment {order.draft_id}",
             "metadata": {
                 "payment_order_id": str(order.id),
-                "subscription_id": str(order.subscription_id),
+                "draft_id": str(order.draft_id),
                 "user_id": str(order.user_id),
             },
         }

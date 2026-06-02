@@ -72,3 +72,11 @@ class SQLAlchemySubscriptionRepository(SQLAlchemyRepository, SubscriptionReposit
             if entity.is_traffic_exceeded:
                 exceeded.append(entity)
         return exceeded
+
+    async def get_by_payment_order(self, payment_order_id: UUID) -> Subscription | None:
+        stmt = select(SubscriptionModel).where(
+            SubscriptionModel.payment_order_id == payment_order_id
+        )
+        result = await self.session.execute(stmt)
+        model = result.scalar_one_or_none()
+        return SubscriptionMapper.to_entity(model) if model else None
