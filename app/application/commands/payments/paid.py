@@ -67,8 +67,6 @@ class ConfirmPaymentHandler(BaseCommandHandler[ConfirmPaymentCommand, Subscripti
                 checkout=checkout,
                 payment_intent=payment_intent,
             )
-            # Provisioning is intentionally decoupled from payment confirmation.
-            # A retryable worker should create ProvisionedAccess and then activate the subscription.
             checkout.mark_converted(payment_intent.id)
 
             await self.subscription_repository.add(subscription)
@@ -81,13 +79,11 @@ class ConfirmPaymentHandler(BaseCommandHandler[ConfirmPaymentCommand, Subscripti
         await self.payment_repository.update(payment_intent)
         await self.uow.commit()
 
-        await self.event_bus.publish(payment_intent.pull_events())
-        await self.event_bus.publish(checkout.pull_events())
-
-        if subscription is not None:
-            await self.event_bus.publish(subscription.pull_events())
-
         if subscription is None:
             raise
+
+        await self.event_bus.publish(payment_intent.pull_events())
+        await self.event_bus.publish(checkout.pull_events())
+        await self.event_bus.publish(subscription.pull_events())
 
         return SubscriptionDTO.from_entity(subscription)

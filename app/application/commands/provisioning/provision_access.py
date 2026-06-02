@@ -19,9 +19,7 @@ class ProvisionSubscriptionAccessCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class ProvisionSubscriptionAccessHandler(
-    BaseCommandHandler[ProvisionSubscriptionAccessCommand, ProvisionedAccessDTO]
-):
+class ProvisionSubscriptionAccessHandler(BaseCommandHandler[ProvisionSubscriptionAccessCommand, ProvisionedAccessDTO]):
     subscription_repository: SubscriptionRepository
     server_repository: VPNServerRepository
     access_repository: ProvisionedAccessRepository
@@ -31,13 +29,16 @@ class ProvisionSubscriptionAccessHandler(
 
     async def handle(self, command: ProvisionSubscriptionAccessCommand) -> ProvisionedAccessDTO:
         subscription = await self.subscription_repository.get_by_id(command.subscription_id)
+
         if subscription is None:
             raise LookupError(f"Subscription {command.subscription_id} not found")
+
         if subscription.status not in {
             SubscriptionStatus.PENDING_PROVISIONING,
             SubscriptionStatus.PROVISIONING_FAILED,
         }:
             raise ValueError(f"Subscription {subscription.id} is not waiting for provisioning")
+
         if subscription.server_id is None:
             raise ValueError(f"Subscription {subscription.id} has no selected server")
 
