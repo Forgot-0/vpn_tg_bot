@@ -9,8 +9,7 @@ from uuid import UUID
 from app.application.dtos.base import BaseDTO
 from app.domain.entities.subscription import Subscription
 from app.domain.entities.plan import Plan
-from app.domain.entities.base import AggregateRoot
-from app.domain.values.subscriptions import AccessCredential, AccessFormat
+from app.domain.values.subscriptions import AccessCredential
 
 
 @dataclass
@@ -115,7 +114,7 @@ class SubscriptionDTO(BaseDTO):
     id: UUID
     user_id: UUID
     plan_id: UUID
-    server_id: UUID
+    server_id: UUID | None
     status: str
     started_at: date | None
     expires_at: date | None

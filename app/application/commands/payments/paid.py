@@ -33,7 +33,7 @@ class ConfirmPaymentHandler(BaseCommandHandler[ConfirmPaymentCommand, Subscripti
 
     async def handle(self, command: ConfirmPaymentCommand) -> SubscriptionDTO:
         payment_intent = await self.payment_repository.get_by_external_id(command.external_payment_id)
-        if payment_intent is None:
+        if payment_intent is None or payment_intent.checkout_session_id is None:
             raise
 
         if payment_intent.is_terminal:

@@ -29,7 +29,7 @@ class SyncSubscriptionTrafficHandler(BaseCommandHandler[SyncSubscriptionTrafficC
 
     async def handle(self, command: SyncSubscriptionTrafficCommand) -> Decimal:
         subscription = await self.subscription_repository.get_by_id(command.subscription_id)
-        if subscription is None:
+        if subscription is None or subscription.server_id is None:
             raise 
 
         server = await self.server_repository.get_by_id(subscription.server_id)

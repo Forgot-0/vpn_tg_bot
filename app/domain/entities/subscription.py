@@ -41,9 +41,6 @@ class Subscription(AggregateRoot):
     used_traffic_gb: Decimal = Decimal("0")
     provisioned_access_ids: list[UUID] = field(default_factory=list)
 
-    # Deprecated  field. Technical credentials belong to ProvisionedAccess.
-    access_credentials: list[AccessCredential] = field(default_factory=list)
-
     def validate(self) -> None:
         if not self.user_id:
             raise ValueError("Subscription must belong to a user")
