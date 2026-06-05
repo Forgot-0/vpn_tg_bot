@@ -10,10 +10,14 @@ from app.application.event_bus import EventBus
 from app.application.interfaces.payments import PaymentGateway
 from app.domain.entities.payment import PaymentIntent
 from app.domain.entities.checkout import CheckoutSession
+from app.domain.errors import (
+    NoAvailableServerError,
+    PlanNotFoundError,
+)
 from app.domain.repositories.payments import PaymentIntentRepository
 from app.domain.repositories.servers import VPNServerRepository
 from app.domain.repositories.checkouts import CheckoutSessionRepository
-from app.domain.repositories.subscriptions import PlanRepository
+from app.domain.repositories.plans import PlanRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.services.pricings import PricingService
 from app.domain.values.servers import FeatureCode, ProtocolCode
@@ -50,8 +54,12 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
     async def handle(self, command: CreateSubscriptionCommand) -> CreateSubscriptionResultDTO:
         plan = await self.plan_repository.get_by_id(command.plan_id)
-        if plan is None or not plan.is_active:
-            raise 
+
+        if plan is None:
+            raise PlanNotFoundError(entity_id=str(command.plan_id))
+
+        if not plan.is_active:
+            raise
 
         if plan.plan_type == PlanType.FIXED:
             spec = plan.get_fixed_spec()
@@ -74,7 +82,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         server = await self.server_repository.get_max_free_server(spec.protocols, spec.features)
         if server is None:
-            raise
+            raise NoAvailableServerError
 
         checkout = CheckoutSession(
             id=uuid4(),

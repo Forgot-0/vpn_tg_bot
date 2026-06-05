@@ -5,6 +5,10 @@ from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.event_bus import EventBus
 from app.application.interfaces.password import PasswordService
 from app.domain.entities.user import User
+from app.domain.errors import (
+    UserAlreadyExistsError,
+    PasswordMismatchError,
+)
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.repositories.users import UserRepository
 
@@ -28,22 +32,20 @@ class RegisterUserByEmailCommandHandler(BaseCommandHandler[RegisterUserByEmailCo
     event_bus: EventBus
 
     async def handle(self, command: RegisterUserByEmailCommand) -> None:
+        if command.password != command.password_repeat:
+            raise PasswordMismatchError
+
         email_user = await self.user_repository.get_by_email(command.email)
         if email_user is not None:
-            raise
+            raise UserAlreadyExistsError
 
         reffered_user_id = None
-        if command.referral_code is not None:
-            reffered_user = await self.user_repository.get_by_referral_code(
-                command.referral_code
-            )
+        if command.referral_code:
+            reffered_user = await self.user_repository.get_by_referral_code(command.referral_code)
             if reffered_user is not None:
                 reffered_user.increment_referrals()
                 reffered_user_id = reffered_user.id
                 await self.user_repository.update(reffered_user)
-
-        if command.password != command.password_repeat:
-            raise
 
         password_hash = self.password_service.hash_password(command.password)
         user = User.create(
@@ -55,4 +57,3 @@ class RegisterUserByEmailCommandHandler(BaseCommandHandler[RegisterUserByEmailCo
         await self.user_repository.add(user)
         await self.uow.commit()
         await self.event_bus.publish(user.pull_events())
-

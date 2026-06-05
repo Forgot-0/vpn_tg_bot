@@ -5,6 +5,7 @@ from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.dtos.users import TokenGroup, UserJWTData
 from app.application.interfaces.auth import JWTManager
 from app.application.interfaces.password import PasswordService
+from app.domain.errors import InvalidCredentialsError
 from app.domain.repositories.users import UserRepository
 
 
@@ -25,17 +26,17 @@ class LoginCommandHandler(BaseCommandHandler[LoginCommand, TokenGroup]):
 
     async def handle(self, command: LoginCommand) -> TokenGroup:
         user = await self.user_repository.get_by_email(command.username)
-        if (
-            (user is None) or
-            (user.password_hash is None) or
-            (not self.password_service.verify_password(command.password, user.password_hash))
+
+        if user is None or (
+            user is not None
+            and user.password_hash is not None
+            and self.password_service.verify_password(command.password, user.password_hash)
         ):
-            raise
+            raise InvalidCredentialsError()
 
         token_group = self.jwt_manager.create_token_pair(
             UserJWTData.create_from_user(user, device_id=None)
         )
 
-        logger.info("Logining user", extra={"user_id": user.id})
+        logger.info("User logged in", extra={"user_id": user.id})
         return token_group
-

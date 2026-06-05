@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from app.domain.entities.base import DomainEvent
+from app.domain.events.base import DomainEvent
+from app.domain.values.users import UserRole
 
 
 @dataclass(frozen=True)
@@ -19,6 +20,5 @@ class UserRoleChangedEvent(DomainEvent):
     __event_name__ = "user.role_changed"
 
     user_id: UUID
-    old_role: str
-    new_role: str
-
+    old_role: UserRole
+    new_role: UserRole

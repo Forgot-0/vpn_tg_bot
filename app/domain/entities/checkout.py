@@ -6,7 +6,7 @@ from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.entities.plan import Plan
-from app.domain.errors import BusinessRuleViolationError, InvalidStateTransitionError
+from app.domain.errors import InvalidStateTransitionError
 from app.domain.events.checkout_sessions import (
     CheckoutSessionConvertedEvent,
     CheckoutSessionExpiredEvent,
@@ -82,9 +82,10 @@ class CheckoutSession(AggregateRoot):
     def mark_ready_for_checkout(self) -> None:
         self._require_status({CheckoutStatus.DRAFT, CheckoutStatus.OPEN}, action="mark_ready_for_checkout")
         if self.server_id is None:
-            raise BusinessRuleViolationError(reason="Checkout session requires a selected server")
+            raise
+
         if self.calculated_price is None:
-            raise BusinessRuleViolationError(reason="Checkout session requires calculated price")
+            raise
 
         self.status = CheckoutStatus.READY_FOR_CHECKOUT
         self.updated_at = now_utc()
@@ -107,7 +108,7 @@ class CheckoutSession(AggregateRoot):
     def mark_converted(self, payment_intent_id: UUID) -> None:
         self._require_status({CheckoutStatus.READY_FOR_CHECKOUT, CheckoutStatus.READY_FOR_PAYMENT}, action="mark_converted")
         if self.server_id is None:
-            raise BusinessRuleViolationError(reason="Checkout session requires a selected server")
+            raise
 
         self.status = CheckoutStatus.CONVERTED
         self.updated_at = now_utc()

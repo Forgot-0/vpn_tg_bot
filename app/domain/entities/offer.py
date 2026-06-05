@@ -6,7 +6,6 @@ from decimal import Decimal
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.errors import BusinessRuleViolationError
 from app.domain.values.money import Money
 from app.domain.values.subscriptions import OfferStatus
 
@@ -44,11 +43,11 @@ class Offer(AggregateRoot):
 
     def ensure_available(self, today: date) -> None:
         if self.status != OfferStatus.ACTIVE:
-            raise BusinessRuleViolationError(reason="Offer is not active")
+            raise
         if self.active_from is not None and today < self.active_from:
-            raise BusinessRuleViolationError(reason="Offer is not active yet")
+            raise
         if self.active_to is not None and today > self.active_to:
-            raise BusinessRuleViolationError(reason="Offer is expired")
+            raise
 
     def apply_discount(self, money: Money) -> Money:
         if self.discount_percent is None:

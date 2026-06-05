@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import timedelta
-import random
+import secrets
 
 from app.application.events.base import BaseEventHandler
 from app.application.interfaces.mail import BaseMailService
@@ -19,9 +19,8 @@ class RegisteredEventHandler(BaseEventHandler[UserCreatedEvent, None]):
         if not event.email:
             return
 
-        code = f"{random.randint(0, 999999):06d}"
+        code = f"{secrets.randbelow(10**6):06d}"
         expiration = timedelta(minutes=60)
 
         await self.token_repository.add_token(code, str(event.user_id), expiration)
-
         await self.mail_service.send_verification_code(event.email, code, valid_minutes=60)

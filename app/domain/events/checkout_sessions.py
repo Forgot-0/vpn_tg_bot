@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
 from uuid import UUID
 
-from app.domain.entities.base import DomainEvent
+from app.domain.events.base import DomainEvent
 from app.domain.values.money import Money
 from app.domain.values.subscriptions import CheckoutStatus
 
@@ -62,4 +61,3 @@ class CheckoutSessionExpiredEvent(DomainEvent):
     checkout_session_id: UUID
     user_id: UUID
     plan_id: UUID
-

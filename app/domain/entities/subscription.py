@@ -6,7 +6,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.errors import BusinessRuleViolationError, InvalidStateTransitionError
+from app.domain.errors import InvalidStateTransitionError
 from app.domain.events.subscriptions import (
     SubscriptionActivatedEvent,
     SubscriptionCancelledEvent,
@@ -39,13 +39,12 @@ class Subscription(AggregateRoot):
     expires_at: date | None = None
 
     used_traffic_gb: Decimal = Decimal("0")
+    access_credentials: list[AccessCredential] = field(default_factory=list)
+
     provisioned_access_ids: list[UUID] = field(default_factory=list)
 
     def validate(self) -> None:
-        if not self.user_id:
-            raise ValueError("Subscription must belong to a user")
-        if not self.plan_id:
-            raise ValueError("Subscription must reference a plan")
+        ...
 
     @classmethod
     def pending_provisioning(
@@ -76,21 +75,20 @@ class Subscription(AggregateRoot):
         self,
         *,
         start_date: date,
-        purchased_price: Money | None = None,
-        access_credentials: list[AccessCredential] | None = None,
         provisioned_access_id: UUID | None = None,
     ) -> None:
         self._require_status(
-            {SubscriptionStatus.PENDING_PAYMENT, SubscriptionStatus.PENDING_PROVISIONING, SubscriptionStatus.PROVISIONING_FAILED},
+            {
+                SubscriptionStatus.PENDING_PAYMENT,
+                SubscriptionStatus.PENDING_PROVISIONING,
+                SubscriptionStatus.PROVISIONING_FAILED,
+            },
             action="activate",
         )
         self.status = SubscriptionStatus.ACTIVE
         self.started_at = start_date
         self.current_period_start = start_date
-        if purchased_price is not None:
-            self.purchased_price = purchased_price
-        if access_credentials is not None:
-            self.access_credentials = access_credentials
+
         if provisioned_access_id is not None and provisioned_access_id not in self.provisioned_access_ids:
             self.provisioned_access_ids.append(provisioned_access_id)
 
@@ -110,6 +108,13 @@ class Subscription(AggregateRoot):
             )
         )
 
+    def attach_credentials(self, credentials: list[AccessCredential]) -> None:
+        self._require_status(
+            {SubscriptionStatus.ACTIVE, SubscriptionStatus.PENDING_PROVISIONING},
+            action="attach_credentials",
+        )
+        self.access_credentials = credentials
+
     def mark_provisioning_failed(self, *, reason: str) -> None:
         self._require_status({SubscriptionStatus.PENDING_PROVISIONING}, action="mark_provisioning_failed")
         self.status = SubscriptionStatus.PROVISIONING_FAILED
@@ -127,7 +132,7 @@ class Subscription(AggregateRoot):
             action="renew",
         )
         if not self.spec.is_time_limited:
-            raise BusinessRuleViolationError(reason="Unlimited subscriptions cannot be renewed")
+            raise
 
         assert self.spec.duration_days is not None
         previous_expires_at = self.expires_at
@@ -184,7 +189,8 @@ class Subscription(AggregateRoot):
     def unsuspend(self) -> None:
         self._require_status({SubscriptionStatus.SUSPENDED}, action="unsuspend")
         if self.is_traffic_exceeded:
-            raise BusinessRuleViolationError(reason="Cannot unsuspend: traffic limit still exceeded")
+            raise
+
         self.status = SubscriptionStatus.ACTIVE
 
     def expire(self) -> None:
@@ -260,4 +266,6 @@ class Subscription(AggregateRoot):
 
     def _require_status(self, allowed: set[SubscriptionStatus], *, action: str) -> None:
         if self.status not in allowed:
-            raise InvalidStateTransitionError(reason=f"Cannot {action} subscription in status '{self.status}'")
+            raise InvalidStateTransitionError(
+                reason=f"Cannot {action} subscription in status '{self.status}'"
+            )

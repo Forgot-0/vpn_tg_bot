@@ -6,7 +6,8 @@ from uuid import UUID
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.event_bus import EventBus
 from app.application.interfaces.servers import PanelClientFactory
-from app.domain.repositories.servers import PanelConnectionRepository, VPNServerRepository
+from app.domain.repositories.panel_connections import PanelConnectionRepository
+from app.domain.repositories.servers import VPNServerRepository
 from app.domain.repositories.subscriptions import SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
 

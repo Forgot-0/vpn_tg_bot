@@ -6,26 +6,27 @@ from uuid import uuid4
 from app.domain.entities.payment import PaymentIntent
 from app.domain.entities.subscription import Subscription
 from app.domain.entities.checkout import CheckoutSession
-from app.domain.errors import BusinessRuleViolationError
 from app.domain.values.subscriptions import CheckoutStatus
 
 
 @dataclass(frozen=True)
 class SubscriptionFactory:
+
     @staticmethod
     def from_checkout(
         *,
         checkout: CheckoutSession,
         payment_intent: PaymentIntent,
     ) -> Subscription:
-        if payment_intent.checkout_session_id != checkout.id and payment_intent.order_id != checkout.order_id:
-            raise BusinessRuleViolationError(reason="Payment intent does not belong to checkout session")
+        belongs_to_checkout = (
+            payment_intent.checkout_session_id == checkout.id
+            or payment_intent.order_id == checkout.order_id
+        )
+        if not belongs_to_checkout:
+            raise
 
         if not payment_intent.is_paid:
-            raise BusinessRuleViolationError(reason="Payment intent must be paid before subscription creation")
-
-        if checkout.status not in {CheckoutStatus.READY_FOR_CHECKOUT, CheckoutStatus.READY_FOR_PAYMENT}:
-            raise BusinessRuleViolationError(reason="Checkout session is not ready for conversion")
+            raise
 
         return Subscription.pending_provisioning(
             id=uuid4(),

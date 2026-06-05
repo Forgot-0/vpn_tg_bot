@@ -5,7 +5,7 @@ from typing import FrozenSet
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.errors import BusinessRuleViolationError, SpecValidationError
+from app.domain.errors import SpecValidationError
 from app.domain.values.money import Money
 from app.domain.values.servers import FeatureCode, ProtocolCode
 from app.domain.values.subscriptions import (
@@ -94,12 +94,12 @@ class Plan(AggregateRoot):
 
     def get_fixed_spec(self) -> PlanConfiguration:
         if not self.is_fixed or self.fixed_spec is None:
-            raise BusinessRuleViolationError(reason="Plan is not FIXED")
+            raise
         return self.fixed_spec
 
     def get_fixed_price(self) -> Money:
         if not self.is_fixed or self.fixed_price is None:
-            raise BusinessRuleViolationError(reason="Plan is not FIXED")
+            raise 
         return self.fixed_price
 
     def get_allowed_protocols(self) -> FrozenSet[ProtocolCode]:
@@ -115,9 +115,7 @@ class Plan(AggregateRoot):
     def validate_spec(self, spec: PlanConfiguration) -> None:
         if self.is_fixed:
             if spec != self.fixed_spec:
-                raise BusinessRuleViolationError(
-                    reason="Spec does not match the fixed plan configuration"
-                )
+                raise
             return
 
         assert self.constraints is not None

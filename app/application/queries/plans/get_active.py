@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from app.application.dtos.subscriptions import PlanDTO
 from app.application.queries.base import BaseQuery, BaseQueryHandler
-from app.domain.repositories.subscriptions import PlanRepository
+from app.domain.repositories.plans import PlanRepository
 
 
 

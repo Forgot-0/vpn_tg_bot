@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import select
 
 from app.domain.entities.server import PanelConnection
-from app.domain.repositories.servers import PanelConnectionRepository
+from app.domain.repositories.panel_connections import PanelConnectionRepository
 from app.infrastructure.db.mappers.panel_connections import PanelConnectionMapper
 from app.infrastructure.db.models.server_topology import PanelConnectionModel
 from app.infrastructure.db.models.servers import VPNServerModel
