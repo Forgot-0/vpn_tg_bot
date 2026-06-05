@@ -13,14 +13,18 @@ from app.application.interfaces.payments import PaymentGateway
 from app.application.interfaces.servers import PanelClientFactory
 from app.configs.app import app_config
 from app.domain.repositories.access import ProvisionedAccessRepository
+from app.domain.repositories.panel_connections import PanelConnectionRepository
 from app.domain.repositories.catalog import OfferRepository, PriceRepository, ProductRepository
 from app.domain.repositories.payments import PaymentIntentRepository
 from app.domain.repositories.servers import VPNServerRepository
 from app.domain.repositories.checkouts import CheckoutSessionRepository
 from app.domain.repositories.subscriptions import PlanRepository, SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
+from app.domain.services.provisioning import SubscriptionProvisioningService
+from app.domain.services.renewal import SubscriptionRenewalService
 from app.domain.repositories.users import UserRepository
 from app.infrastructure.db.repositories.access import SQLAlchemyProvisionedAccessRepository
+from app.infrastructure.db.repositories.panel_connections import SQLAlchemyPanelConnectionRepository
 from app.infrastructure.db.repositories.catalog import (
     SQLAlchemyOfferRepository,
     SQLAlchemyPriceRepository,
@@ -81,6 +85,12 @@ class InfrastructureProvider(Provider):
         return SQLAlchemyVPNServerRepository(session)
 
     @provide(scope=Scope.REQUEST)
+    def get_panel_connection_repository(
+        self, session: AsyncSession,
+    ) -> PanelConnectionRepository:
+        return SQLAlchemyPanelConnectionRepository(session)
+
+    @provide(scope=Scope.REQUEST)
     def get_checkout_repository(
         self, session: AsyncSession,
     ) -> CheckoutSessionRepository:
@@ -133,6 +143,14 @@ class InfrastructureProvider(Provider):
     async def get_http_client(self) -> AsyncIterable[AsyncClient]:
         async with AsyncClient(timeout=30.0) as client:
             yield client
+
+    @provide(scope=Scope.APP)
+    def get_provisioning_service(self) -> SubscriptionProvisioningService:
+        return SubscriptionProvisioningService()
+
+    @provide(scope=Scope.APP)
+    def get_renewal_service(self) -> SubscriptionRenewalService:
+        return SubscriptionRenewalService()
 
     @provide(scope=Scope.APP)
     def get_panel_client_factory(self, http_client: AsyncClient) -> PanelClientFactory:

@@ -201,9 +201,17 @@ class SubscriptionNotReadyForProvisioningError(DomainError):
     code: str = "SUBSCRIPTION_NOT_READY_FOR_PROVISIONING"
     status: int = 422
 
+    status_value: str = ""
+
     @property
     def message(self) -> str:
+        if self.status_value:
+            return f"Subscription is not ready for provisioning (status: {self.status_value})"
         return "Subscription is not ready for provisioning"
+
+    @property
+    def detail(self) -> dict:
+        return {"status": self.status_value} if self.status_value else {}
 
 
 @dataclass(eq=False)
@@ -234,6 +242,48 @@ class ExpiredJwtTokenError(DomainError):
     @property
     def message(self) -> str:
         return "JWT token has expired"
+
+
+@dataclass(eq=False)
+class SubscriptionNotRenewableError(DomainError):
+    code: str = "SUBSCRIPTION_NOT_RENEWABLE"
+    status: int = 422
+
+    status_value: str = ""
+    reason: str = ""
+
+    @property
+    def message(self) -> str:
+        if self.reason:
+            return self.reason
+        if self.status_value:
+            return f"Subscription cannot be renewed (status: {self.status_value})"
+        return "Subscription cannot be renewed"
+
+    @property
+    def detail(self) -> dict:
+        detail: dict[str, str] = {}
+        if self.status_value:
+            detail["status"] = self.status_value
+        if self.reason:
+            detail["reason"] = self.reason
+        return detail
+
+
+@dataclass(eq=False)
+class ProvisioningFailedError(DomainError):
+    code: str = "PROVISIONING_FAILED"
+    status: int = 502
+
+    reason: str = ""
+
+    @property
+    def message(self) -> str:
+        return f"Failed to provision subscription: {self.reason}"
+
+    @property
+    def detail(self) -> dict:
+        return {"reason": self.reason}
 
 
 @dataclass(eq=False)

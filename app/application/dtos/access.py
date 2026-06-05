@@ -43,3 +43,36 @@ class ProvisionedAccessDTO(BaseDTO):
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> Self:
         return cls(**data)
+
+
+@dataclass
+class ProvisionSubscriptionResultDTO(BaseDTO):
+    subscription_id: UUID
+    subscription_status: str
+    access: ProvisionedAccessDTO
+
+    @classmethod
+    def from_entity(cls, entity: ProvisionedAccess) -> Self:
+        raise NotImplementedError
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Self:
+        return cls(
+            subscription_id=data["subscription_id"],
+            subscription_status=data["subscription_status"],
+            access=ProvisionedAccessDTO.from_dict(data["access"]),
+        )
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        subscription_id: UUID,
+        subscription_status: str,
+        access: ProvisionedAccess,
+    ) -> Self:
+        return cls(
+            subscription_id=subscription_id,
+            subscription_status=subscription_status,
+            access=ProvisionedAccessDTO.from_entity(access),
+        )

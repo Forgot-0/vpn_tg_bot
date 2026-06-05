@@ -5,7 +5,6 @@ from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from typing import Any
 from urllib.parse import quote
-from uuid import uuid4
 
 from httpx import AsyncClient, Response
 
@@ -85,8 +84,7 @@ class ThreeXUIClient(PanelClient):
             email,
             self._subscription_id(server, subscription),
         )
-        return ProvisionedAccess(
-            id=uuid4(),
+        return ProvisionedAccess.create(
             subscription_id=subscription.id,
             server_id=server.id,
             panel_type=connection.panel_type,
@@ -96,6 +94,27 @@ class ThreeXUIClient(PanelClient):
             status=ProvisioningStatus.ACTIVE,
             remote_state=RemoteAccessState.EXISTS,
         )
+
+    async def renew(
+        self,
+        *,
+        server: VPNServer,
+        connection: PanelConnection,
+        subscription: Subscription,
+        access: ProvisionedAccess,
+    ) -> None:
+        await self.login(connection)
+        email = access.panel_client_id
+        payload = {
+            "client": self._client_payload(server, subscription, email),
+        }
+        resp = await self._request(
+            connection,
+            "POST",
+            f"/panel/api/clients/update/{quote(email, safe='')}",
+            json=payload,
+        )
+        self._ensure_success(resp)
 
     async def delete(
         self,

@@ -151,3 +151,36 @@ class CreateSubscriptionResultDTO:
     confirmation_url: str
     amount: Decimal
     currency: str
+
+
+@dataclass
+class RenewSubscriptionResultDTO(BaseDTO):
+    subscription: SubscriptionDTO
+    previous_expires_at: date | None
+    new_expires_at: date | None
+
+    @classmethod
+    def from_entity(cls, entity: Subscription) -> Self:
+        raise NotImplementedError
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> Self:
+        return cls(
+            subscription=SubscriptionDTO.from_dict(data["subscription"]),
+            previous_expires_at=data.get("previous_expires_at"),
+            new_expires_at=data.get("new_expires_at"),
+        )
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        subscription: Subscription,
+        previous_expires_at: date | None,
+        new_expires_at: date | None,
+    ) -> Self:
+        return cls(
+            subscription=SubscriptionDTO.from_entity(subscription),
+            previous_expires_at=previous_expires_at,
+            new_expires_at=new_expires_at,
+        )

@@ -6,6 +6,15 @@ from app.domain.values.servers import PanelType
 
 
 @dataclass(frozen=True)
+class VPNServerCreatedEvent(DomainEvent):
+    __event_name__ = "vpn_server.created"
+    server_id: UUID
+    name: str
+    region_code: str
+    panel_connection_id: UUID
+
+
+@dataclass(frozen=True)
 class VPNServerActivatedEvent(DomainEvent):
     __event_name__ = "vpn_server.activated"
     server_id: UUID

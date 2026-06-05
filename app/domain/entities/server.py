@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import Any, FrozenSet
-from uuid import UUID
+from typing import Any, FrozenSet, Self
+from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.events.servers import (
     PanelConnectionCredentialsRotatedEvent,
     VPNServerActivatedEvent,
+    VPNServerCreatedEvent,
     VPNServerDeactivatedEvent,
 )
 from app.domain.values.servers import (
@@ -162,6 +163,51 @@ class VPNServer(AggregateRoot):
             raise ValueError("VPNServer region_code cannot be empty")
         if self.current_clients < 0:
             raise ValueError("current_clients cannot be negative")
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        name: str,
+        region_code: str,
+        panel_connection_id: UUID,
+        server_id: UUID | None = None,
+        location_id: UUID | None = None,
+        server_group_id: UUID | None = None,
+        capacity_policy: CapacityPolicy | None = None,
+        supported_protocols: FrozenSet[ProtocolCode] = frozenset(),
+        supported_features: FrozenSet[FeatureCode] = frozenset(),
+        is_active: bool = True,
+        max_clients: int | None = None,
+        current_clients: int = 0,
+        tags: FrozenSet[str] = frozenset(),
+        panel_config: dict[str, Any] | None = None,
+    ) -> Self:
+        server = cls(
+            id=server_id or uuid4(),
+            name=name,
+            region_code=region_code,
+            panel_connection_id=panel_connection_id,
+            location_id=location_id,
+            server_group_id=server_group_id,
+            capacity_policy=capacity_policy or CapacityPolicy(max_clients=max_clients),
+            supported_protocols=supported_protocols,
+            supported_features=supported_features,
+            is_active=is_active,
+            max_clients=max_clients,
+            current_clients=current_clients,
+            tags=tags,
+            panel_config=panel_config or {},
+        )
+        server.register_event(
+            VPNServerCreatedEvent(
+                server_id=server.id,
+                name=server.name,
+                region_code=server.region_code,
+                panel_connection_id=server.panel_connection_id,
+            )
+        )
+        return server
 
     def can_accommodate(self, spec: PlanConfiguration) -> bool:
         if not self.is_active:

@@ -3,9 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from uuid import UUID
+from typing import Self
+from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
+from app.domain.events.access import ProvisionedAccessCreatedEvent
 from app.domain.values.servers import PanelType
 from app.domain.values.subscriptions import AccessCredential, ProvisioningStatus, RemoteAccessState
 
@@ -31,6 +33,42 @@ class ProvisionedAccess(AggregateRoot):
             raise ValueError("Provisioned access panel_client_id cannot be empty")
         if self.used_traffic_gb < 0:
             raise ValueError("Provisioned access used_traffic_gb cannot be negative")
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        subscription_id: UUID,
+        server_id: UUID,
+        panel_type: PanelType,
+        panel_client_id: str,
+        access_id: UUID | None = None,
+        inbound_ids: tuple[int, ...] = (),
+        credentials: list[AccessCredential] | None = None,
+        status: ProvisioningStatus = ProvisioningStatus.ACTIVE,
+        remote_state: RemoteAccessState = RemoteAccessState.EXISTS,
+    ) -> Self:
+        access = cls(
+            id=access_id or uuid4(),
+            subscription_id=subscription_id,
+            server_id=server_id,
+            panel_type=panel_type,
+            panel_client_id=panel_client_id,
+            inbound_ids=inbound_ids,
+            credentials=credentials or [],
+            status=status,
+            remote_state=remote_state,
+        )
+        access.register_event(
+            ProvisionedAccessCreatedEvent(
+                access_id=access.id,
+                subscription_id=access.subscription_id,
+                server_id=access.server_id,
+                panel_type=access.panel_type,
+                panel_client_id=access.panel_client_id,
+            )
+        )
+        return access
 
     def mark_provisioning(self) -> None:
         self.status = ProvisioningStatus.PROVISIONING

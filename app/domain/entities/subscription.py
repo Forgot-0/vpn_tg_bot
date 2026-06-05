@@ -11,6 +11,9 @@ from app.domain.events.subscriptions import (
     SubscriptionActivatedEvent,
     SubscriptionCancelledEvent,
     SubscriptionExpiredEvent,
+    SubscriptionPendingProvisioningEvent,
+    SubscriptionProvisioningFailedEvent,
+    SubscriptionProvisioningStartedEvent,
     SubscriptionRenewedEvent,
     SubscriptionSuspendedEvent,
     TrafficConsumedEvent,
@@ -59,7 +62,7 @@ class Subscription(AggregateRoot):
         purchased_price: Money,
         server_id: UUID | None = None,
     ) -> Subscription:
-        return cls(
+        subscription = cls(
             id=id,
             user_id=user_id,
             plan_id=plan_id,
@@ -70,6 +73,50 @@ class Subscription(AggregateRoot):
             purchased_price=purchased_price,
             status=SubscriptionStatus.PENDING_PROVISIONING,
         )
+        subscription.register_event(
+            SubscriptionPendingProvisioningEvent(
+                subscription_id=subscription.id,
+                user_id=subscription.user_id,
+                plan_id=subscription.plan_id,
+                server_id=subscription.server_id,
+            )
+        )
+        return subscription
+
+    def retry_provisioning(self) -> None:
+        self._require_status(
+            {SubscriptionStatus.PROVISIONING_FAILED},
+            action="retry_provisioning",
+        )
+        self.status = SubscriptionStatus.PENDING_PROVISIONING
+
+    def begin_provisioning(self) -> None:
+        self._require_status(
+            {SubscriptionStatus.PENDING_PROVISIONING},
+            action="begin_provisioning",
+        )
+        if self.server_id is None:
+            raise ValueError("Subscription server_id is required for provisioning")
+        self.register_event(
+            SubscriptionProvisioningStartedEvent(
+                subscription_id=self.id,
+                user_id=self.user_id,
+                server_id=self.server_id,
+            )
+        )
+
+    def complete_provisioning(
+        self,
+        *,
+        provisioned_access_id: UUID,
+        credentials: list[AccessCredential],
+        start_date: date,
+    ) -> None:
+        self.activate(
+            start_date=start_date,
+            provisioned_access_id=provisioned_access_id,
+        )
+        self.attach_credentials(credentials)
 
     def activate(
         self,
@@ -116,32 +163,43 @@ class Subscription(AggregateRoot):
         self.access_credentials = credentials
 
     def mark_provisioning_failed(self, *, reason: str) -> None:
-        self._require_status({SubscriptionStatus.PENDING_PROVISIONING}, action="mark_provisioning_failed")
+        self._require_status(
+            {SubscriptionStatus.PENDING_PROVISIONING},
+            action="mark_provisioning_failed",
+        )
         self.status = SubscriptionStatus.PROVISIONING_FAILED
         self.register_event(
-            SubscriptionSuspendedEvent(
+            SubscriptionProvisioningFailedEvent(
                 subscription_id=self.id,
                 user_id=self.user_id,
                 reason=reason,
             )
         )
 
-    def renew(self, *, renewed_at: datetime) -> None:
+    def renew(
+        self,
+        *,
+        renewed_at: datetime,
+        duration_days: int | None = None,
+    ) -> None:
         self._require_status(
             {SubscriptionStatus.ACTIVE, SubscriptionStatus.EXPIRED},
             action="renew",
         )
         if not self.spec.is_time_limited:
-            raise
+            raise ValueError("Only time-limited subscriptions can be renewed")
 
-        assert self.spec.duration_days is not None
+        period_days = duration_days or self.spec.duration_days
+        if period_days is None or period_days < 1:
+            raise ValueError("Renewal duration_days must be >= 1")
+
         previous_expires_at = self.expires_at
 
         base = max(
             renewed_at.date(),
             self.expires_at or renewed_at.date(),
         )
-        self.expires_at = base + timedelta(days=self.spec.duration_days)
+        self.expires_at = base + timedelta(days=period_days)
         self.current_period_end = self.expires_at
         if self.current_period_start is None:
             self.current_period_start = renewed_at.date()

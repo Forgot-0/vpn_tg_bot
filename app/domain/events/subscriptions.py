@@ -7,6 +7,34 @@ from app.domain.entities.base import DomainEvent
 
 
 @dataclass(frozen=True)
+class SubscriptionPendingProvisioningEvent(DomainEvent):
+    __event_name__ = "subscription.pending_provisioning"
+
+    subscription_id: UUID
+    user_id: UUID
+    plan_id: UUID
+    server_id: UUID | None
+
+
+@dataclass(frozen=True)
+class SubscriptionProvisioningStartedEvent(DomainEvent):
+    __event_name__ = "subscription.provisioning_started"
+
+    subscription_id: UUID
+    user_id: UUID
+    server_id: UUID
+
+
+@dataclass(frozen=True)
+class SubscriptionProvisioningFailedEvent(DomainEvent):
+    __event_name__ = "subscription.provisioning_failed"
+
+    subscription_id: UUID
+    user_id: UUID
+    reason: str
+
+
+@dataclass(frozen=True)
 class SubscriptionActivatedEvent(DomainEvent):
     __event_name__ = "subscription.activated"
 

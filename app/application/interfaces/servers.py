@@ -5,6 +5,7 @@ from typing import Any
 
 from app.domain.entities.access import ProvisionedAccess
 from app.domain.entities.server import PanelConnection, VPNServer
+from app.domain.errors import PanelClientNotRegisteredError
 from app.domain.entities.subscription import Subscription
 from app.domain.values.servers import FeatureCode, PanelType, ProtocolCode
 
@@ -30,6 +31,16 @@ class PanelClient(ABC):
         connection: PanelConnection,
         subscription: Subscription,
     ) -> ProvisionedAccess: ...
+
+    @abstractmethod
+    async def renew(
+        self,
+        *,
+        server: VPNServer,
+        connection: PanelConnection,
+        subscription: Subscription,
+        access: ProvisionedAccess,
+    ) -> None: ...
 
     @abstractmethod
     async def delete(
@@ -68,5 +79,5 @@ class PanelClientFactory:
     def get_client(self, connection: PanelConnection) -> PanelClient:
         client = self._clients.get(connection.panel_type)
         if client is None:
-            raise
+            raise PanelClientNotRegisteredError
         return client
