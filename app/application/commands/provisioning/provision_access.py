@@ -6,7 +6,7 @@ from app.application.dtos.access import ProvisionedAccessDTO
 from app.application.event_bus import EventBus
 from app.application.interfaces.servers import PanelClientFactory
 from app.domain.repositories.access import ProvisionedAccessRepository
-from app.domain.repositories.servers import VPNServerRepository
+from app.domain.repositories.servers import PanelConnectionRepository, VPNServerRepository
 from app.domain.repositories.subscriptions import SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.services.clock import now_utc
@@ -19,9 +19,12 @@ class ProvisionSubscriptionAccessCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class ProvisionSubscriptionAccessHandler(BaseCommandHandler[ProvisionSubscriptionAccessCommand, ProvisionedAccessDTO]):
+class ProvisionSubscriptionAccessHandler(
+    BaseCommandHandler[ProvisionSubscriptionAccessCommand, ProvisionedAccessDTO]
+):
     subscription_repository: SubscriptionRepository
     server_repository: VPNServerRepository
+    connection_repository: PanelConnectionRepository
     access_repository: ProvisionedAccessRepository
     panel_factory: PanelClientFactory
     uow: UnitOfWork
@@ -29,26 +32,33 @@ class ProvisionSubscriptionAccessHandler(BaseCommandHandler[ProvisionSubscriptio
 
     async def handle(self, command: ProvisionSubscriptionAccessCommand) -> ProvisionedAccessDTO:
         subscription = await self.subscription_repository.get_by_id(command.subscription_id)
-
         if subscription is None:
-            raise LookupError(f"Subscription {command.subscription_id} not found")
+            raise
 
         if subscription.status not in {
             SubscriptionStatus.PENDING_PROVISIONING,
             SubscriptionStatus.PROVISIONING_FAILED,
         }:
-            raise ValueError(f"Subscription {subscription.id} is not waiting for provisioning")
+            raise 
 
         if subscription.server_id is None:
-            raise ValueError(f"Subscription {subscription.id} has no selected server")
+            raise
 
         server = await self.server_repository.get_by_id(subscription.server_id)
         if server is None:
-            raise LookupError(f"VPN server {subscription.server_id} not found")
+            raise
 
-        panel_client = self.panel_factory.get_client(server)
+        connection = await self.connection_repository.get_by_id(server.panel_connection_id)
+        if connection is None or not connection.is_active:
+            raise
+
+        panel_client = self.panel_factory.get_client(connection)
         try:
-            access = await panel_client.create(server=server, subscription=subscription)
+            access = await panel_client.create(
+                server=server,
+                connection=connection,
+                subscription=subscription,
+            )
         except Exception as exc:
             subscription.mark_provisioning_failed(reason=str(exc))
             await self.subscription_repository.update(subscription)

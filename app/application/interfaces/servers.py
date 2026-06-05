@@ -3,10 +3,10 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Any
 
-from app.domain.entities.server import VPNServer
+from app.domain.entities.access import ProvisionedAccess
+from app.domain.entities.server import PanelConnection, VPNServer
 from app.domain.entities.subscription import Subscription
 from app.domain.values.servers import FeatureCode, PanelType, ProtocolCode
-from app.domain.entities.access import ProvisionedAccess
 
 
 @dataclass(frozen=True)
@@ -18,7 +18,6 @@ class PanelServerInfoResult:
 
 
 class PanelClient(ABC):
-
     @property
     @abstractmethod
     def panel_type(self) -> PanelType: ...
@@ -26,30 +25,37 @@ class PanelClient(ABC):
     @abstractmethod
     async def create(
         self,
+        *,
         server: VPNServer,
+        connection: PanelConnection,
         subscription: Subscription,
-    ) -> ProvisionedAccess:
-        ...
+    ) -> ProvisionedAccess: ...
 
     @abstractmethod
     async def delete(
         self,
+        *,
         server: VPNServer,
+        connection: PanelConnection,
         subscription: Subscription,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @abstractmethod
     async def sync_traffic(
         self,
+        *,
         server: VPNServer,
+        connection: PanelConnection,
         subscription: Subscription,
-    ) -> Decimal:
-        ...
+    ) -> Decimal: ...
 
     @abstractmethod
-    async def get_info(self, server: VPNServer) -> PanelServerInfoResult:
-        ...
+    async def get_info(
+        self,
+        *,
+        server: VPNServer,
+        connection: PanelConnection,
+    ) -> PanelServerInfoResult: ...
 
 
 @dataclass
@@ -59,9 +65,8 @@ class PanelClientFactory:
     def register(self, client: PanelClient) -> None:
         self._clients[client.panel_type] = client
 
-    def get_client(self, server: VPNServer) -> PanelClient:
-        client = self._clients.get(server.panel_type)
+    def get_client(self, connection: PanelConnection) -> PanelClient:
+        client = self._clients.get(connection.panel_type)
         if client is None:
-            raise 
+            raise
         return client
-

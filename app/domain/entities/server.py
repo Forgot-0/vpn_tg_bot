@@ -6,8 +6,20 @@ from typing import Any, FrozenSet
 from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.values.servers import FeatureCode, PanelCredentials, PanelEndpoint, PanelType, ProtocolCode
+from app.domain.events.servers import (
+    PanelConnectionCredentialsRotatedEvent,
+    VPNServerActivatedEvent,
+    VPNServerDeactivatedEvent,
+)
+from app.domain.values.servers import (
+    FeatureCode,
+    PanelCredentials,
+    PanelEndpoint,
+    PanelType,
+    ProtocolCode,
+)
 from app.domain.values.subscriptions import PlanConfiguration
+
 
 
 @dataclass(frozen=True)
@@ -45,7 +57,9 @@ class Location(AggregateRoot):
 
 @dataclass
 class PanelConnection(AggregateRoot):
+
     id: UUID
+    name: str
     panel_type: PanelType
     endpoint: PanelEndpoint
     credentials: PanelCredentials
@@ -53,8 +67,26 @@ class PanelConnection(AggregateRoot):
     is_active: bool = True
 
     def validate(self) -> None:
+        if not self.name:
+            raise ValueError("PanelConnection name cannot be empty")
         if not self.endpoint.host:
-            raise ValueError("Panel connection host cannot be empty")
+            raise ValueError("PanelConnection endpoint host cannot be empty")
+
+    def rotate_credentials(self, new_credentials: PanelCredentials) -> None:
+        """Смена учётных данных панели (ротация пароля или токена)."""
+        self.credentials = new_credentials
+        self.register_event(
+            PanelConnectionCredentialsRotatedEvent(
+                panel_connection_id=self.id,
+                panel_type=self.panel_type,
+            )
+        )
+
+    def activate(self) -> None:
+        self.is_active = True
+
+    def deactivate(self) -> None:
+        self.is_active = False
 
 
 @dataclass
@@ -94,13 +126,10 @@ class VPNServer(AggregateRoot):
     name: str
     region_code: str
 
-    panel_type: PanelType
-    panel_endpoint: PanelEndpoint
-    panel_credentials: PanelCredentials
+    panel_connection_id: UUID
 
     location_id: UUID | None = None
     server_group_id: UUID | None = None
-    panel_connection_id: UUID | None = None
     capacity_policy: CapacityPolicy = field(default_factory=CapacityPolicy)
 
     supported_protocols: FrozenSet[ProtocolCode] = frozenset()
@@ -167,9 +196,11 @@ class VPNServer(AggregateRoot):
 
     def activate(self) -> None:
         self.is_active = True
+        self.register_event(VPNServerActivatedEvent(server_id=self.id))
 
     def deactivate(self) -> None:
         self.is_active = False
+        self.register_event(VPNServerDeactivatedEvent(server_id=self.id))
 
     def increment_clients(self) -> None:
         if self.max_clients is not None and self.current_clients >= self.max_clients:

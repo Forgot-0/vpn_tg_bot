@@ -27,7 +27,12 @@ class ServerGroupModel(BaseModelORM):
 
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
     name: Mapped[str] = mapped_column(String(128), nullable=False)
-    location_id: Mapped[UUID | None] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("locations.id", ondelete="SET NULL"), nullable=True, index=True)
+    location_id: Mapped[UUID | None] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("locations.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     max_clients: Mapped[int | None] = mapped_column(Integer, nullable=True)
     max_traffic_gb: Mapped[float | None] = mapped_column(Numeric(16, 4), nullable=True)
     weight: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
@@ -41,6 +46,7 @@ class PanelConnectionModel(BaseModelORM):
     __tablename__ = "panel_connections"
 
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
     panel_type: Mapped[str] = mapped_column(String(32), nullable=False)
     endpoint: Mapped[dict] = mapped_column(JSONB, nullable=False)
     credentials_encrypted: Mapped[dict] = mapped_column(JSONB, nullable=False)
@@ -52,7 +58,12 @@ class InboundModel(BaseModelORM):
     __tablename__ = "inbounds"
 
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
-    server_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), ForeignKey("vpn_servers.id", ondelete="CASCADE"), nullable=False, index=True)
+    server_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("vpn_servers.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     panel_inbound_id: Mapped[int] = mapped_column(Integer, nullable=False)
     protocol: Mapped[str] = mapped_column(String(32), nullable=False, index=True)
     features: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)

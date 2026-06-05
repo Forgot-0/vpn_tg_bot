@@ -6,10 +6,9 @@ from uuid import UUID
 from app.application.commands.base import BaseCommand, BaseCommandHandler
 from app.application.event_bus import EventBus
 from app.application.interfaces.servers import PanelClientFactory
-from app.domain.repositories.servers import VPNServerRepository
+from app.domain.repositories.servers import PanelConnectionRepository, VPNServerRepository
 from app.domain.repositories.subscriptions import SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
-
 
 
 logger = logging.getLogger(__name__)
@@ -19,10 +18,14 @@ logger = logging.getLogger(__name__)
 class SyncSubscriptionTrafficCommand(BaseCommand):
     subscription_id: UUID
 
+
 @dataclass(frozen=True)
-class SyncSubscriptionTrafficHandler(BaseCommandHandler[SyncSubscriptionTrafficCommand, Decimal]):
+class SyncSubscriptionTrafficHandler(
+    BaseCommandHandler[SyncSubscriptionTrafficCommand, Decimal]
+):
     subscription_repository: SubscriptionRepository
     server_repository: VPNServerRepository
+    connection_repository: PanelConnectionRepository
     panel_factory: PanelClientFactory
     uow: UnitOfWork
     event_bus: EventBus
@@ -30,14 +33,22 @@ class SyncSubscriptionTrafficHandler(BaseCommandHandler[SyncSubscriptionTrafficC
     async def handle(self, command: SyncSubscriptionTrafficCommand) -> Decimal:
         subscription = await self.subscription_repository.get_by_id(command.subscription_id)
         if subscription is None or subscription.server_id is None:
-            raise 
+            raise
 
         server = await self.server_repository.get_by_id(subscription.server_id)
         if server is None:
-            raise 
+            raise
 
-        panel_client = self.panel_factory.get_client(server)
-        used_gb = await panel_client.sync_traffic(server, subscription)
+        connection = await self.connection_repository.get_by_id(server.panel_connection_id)
+        if connection is None:
+            raise
+
+        panel_client = self.panel_factory.get_client(connection)
+        used_gb = await panel_client.sync_traffic(
+            server=server,
+            connection=connection,
+            subscription=subscription,
+        )
 
         delta = used_gb - subscription.used_traffic_gb
         if delta > Decimal("0"):
