@@ -2,15 +2,11 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, TypeVar
 
-from app.domain.events.base import BaseEvent
+from app.domain.events.base import DomainEvent
 
 
-@dataclass(frozen=True)
-class IntegrationEvent(BaseEvent, ABC):
-    ...
 
-
-ET = TypeVar('ET', bound=BaseEvent)
+ET = TypeVar('ET', bound=DomainEvent)
 ER = TypeVar('ER', bound=Any)
 
 

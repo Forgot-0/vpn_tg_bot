@@ -1,13 +1,14 @@
-from typing import Annotated, Literal
-from pydantic import BeforeValidator, computed_field
+from typing import Annotated, ClassVar, Literal
+from pydantic import BeforeValidator, PostgresDsn, computed_field
+from pydantic_core import MultiHostUrl
 from app.configs.base import BaseConfig
 
 
 class AppConfig(BaseConfig):
     ENVIRONMENT: Literal['local', 'production', 'testing'] = 'local'
+    PROJECT_NAME: str = "Social"
 
     SECRET: str = ""
-
     WEBHOOK_SECRET: str = ""
 
     BOT_TOKEN: str = ""
@@ -20,13 +21,16 @@ class AppConfig(BaseConfig):
 
     DOMAIN: str = ""
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
+    BACKEND_CORS_ORIGINS: ClassVar[Annotated[list[str] | str, BeforeValidator(BaseConfig.parse_list)]] = []
 
     PAYMENT_SECRET: str = ""
     PAYMENT_ID: int = 0
 
     @computed_field
     @property
-    def web_app_url(self) -> str:
+    def app_url(self) -> str:
+        if self.ENVIRONMENT in ["local", "testing"]:
+            return f"http://{self.DOMAIN}"
         return f"https://{self.DOMAIN}"
 
     @computed_field
@@ -39,16 +43,24 @@ class AppConfig(BaseConfig):
     APP_PORT: int = 8080
     APP_HOST: str = "0.0.0.0"
 
-    DATABASE_DB: str = "main"
-    DATABASE_USERNAME: str = ""
-    DATABASE_PASSWORD: str = ""
-    DATABASE_PORT: int = 27017
-    DATABASE_HOST: str = "mongo"
+    POSTGRES_SERVER: str = ""
+    POSTGRES_PORT: int = 5432
+    POSTGRES_USER: str = ""
+    POSTGRES_PASSWORD: str = ""
+    POSTGRES_DB: str = ""
+    SQL_ECHO: bool = False
 
     @computed_field
     @property
-    def mongo_url(self) -> str:
-        return f"mongodb://{self.DATABASE_USERNAME}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/"
+    def postgres_url(self) -> PostgresDsn:
+        return MultiHostUrl.build(
+            scheme="postgresql+asyncpg",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB,
+        ) # type: ignore
 
     REDIS_HOST: str = 'redis'
     REDIS_PORT: int = 6379
@@ -63,6 +75,16 @@ class AppConfig(BaseConfig):
     def fsm_redis_url(self) -> str:
         return f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}/1'
 
+    SMTP_TLS: bool = True
+    SMTP_SSL: bool = False
+    SMTP_PORT: int = 587
+    SMTP_HOST: str | None = None
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+
+    EMAIL_SENDER_ADDRESS: str | None = None
+    EMAIL_SENDER_NAME: str | None = None
+
     LOG_LEVEL: str = 'ERROR'
     JSON_LOG: bool = True
     PATH_LOG: str | None = ".logs/logs.log"
@@ -75,4 +97,4 @@ class AppConfig(BaseConfig):
     JWT_ALGORITHM: str = "HS256"
 
 
-app_settings = AppConfig()
+app_config = AppConfig()

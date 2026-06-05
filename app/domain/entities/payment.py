@@ -1,74 +1,94 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
-from enum import Enum
-from uuid import UUID, uuid4
+from datetime import datetime
+from uuid import UUID
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.entities.discount import Discount
-from app.domain.entities.subscription import Subscription
-from app.domain.events.paymens.paid import PaidPaymentEvent
-from app.domain.services.utils import now_utc
-from app.domain.values.users import UserId
-
-
-
-class PaymentStatus(Enum):
-    pending = "PENDING"
-    succese = "SUCCESE"
+from app.domain.errors import InvalidStateTransitionError
+from app.domain.events.payments import PaymentIntentCreatedEvent, PaymentSucceededEvent
+from app.domain.values.money import Money
+from app.domain.values.payments import PaymentProvider, PaymentStatus
 
 
 @dataclass
-class Payment(AggregateRoot):
-    id: UUID = field(default_factory=uuid4, kw_only=True)
-    subscription: Subscription
-    user_id: UserId
+class PaymentIntent(AggregateRoot):
+    id: UUID
+    user_id: UUID
+    amount: Money
+    provider: PaymentProvider
 
-    total_price: float
+    order_id: UUID | None = None
+    checkout_session_id: UUID | None = None
 
-    status: PaymentStatus
+    status: PaymentStatus = PaymentStatus.PENDING
+    external_id: str | None = None
+    confirmation_url: str | None = None
+    idempotency_key: str | None = None
+    provider_payload: dict[str, object] = field(default_factory=dict)
+    created_at: datetime | None = None
+    paid_at: datetime | None = None
 
-    payment_date: datetime | None = field(default=None, kw_only=True)
-    payment_id: str | None = field(default=None, kw_only=True)
-    created_at: datetime = field(
-        default_factory=now_utc,
-        kw_only=True
-    )
+    def validate(self) -> None:
+        if self.amount.amount <= 0:
+            raise ValueError("Payment amount must be positive")
+        if self.order_id is None and self.checkout_session_id is None:
+            raise ValueError("Payment intent must reference order_id or checkout_session_id")
 
-    discount: Discount | None = field(default=None, kw_only=True)
-
-    @classmethod
-    def create(
-        cls,
-        subscription: Subscription,
-        user_id: UserId,
-        price: float,
-        discount: Discount | None=None
-    ) -> "Payment":
-
-        total_price = price
-
-        if discount:
-            total_price = discount.apply(price=total_price)
-
-        order = cls(
-            subscription=subscription,
-            user_id=user_id,
-            total_price=total_price,
-            discount=discount,
-            status=PaymentStatus.pending
-        )
-
-        return order
-
-    def paid(self) -> None:
-        self.payment_date = now_utc()
-        self.status = PaymentStatus.succese
-
+    def awaiting_confirmation(self, *, external_id: str, confirmation_url: str) -> None:
+        self._require_mutable()
+        self.status = PaymentStatus.WAITING_FOR_CAPTURE
+        self.external_id = external_id
+        self.confirmation_url = confirmation_url
         self.register_event(
-            PaidPaymentEvent(
-                order_id=self.id,
-                subscription_id=self.subscription.id.value,
-                user_id=self.user_id.value,
-                end_time=self.payment_date + timedelta(days=self.subscription.duration)
+            PaymentIntentCreatedEvent(
+                payment_intent_id=self.id,
+                checkout_session_id=self.checkout_session_id or self.order_id or self.id,
+                user_id=self.user_id,
             )
         )
+
+    def succeed(self, *, external_id: str, paid_at: datetime) -> None:
+        self._require_mutable()
+        self.status = PaymentStatus.SUCCEEDED
+        self.external_id = external_id
+        self.paid_at = paid_at
+        self.register_event(
+            PaymentSucceededEvent(
+                payment_intent_id=self.id,
+                checkout_session_id=self.checkout_session_id or self.order_id or self.id,
+                external_id=external_id,
+            )
+        )
+
+    def cancel(self) -> None:
+        self._require_mutable()
+        self.status = PaymentStatus.CANCELLED
+
+    def fail(self) -> None:
+        self._require_mutable()
+        self.status = PaymentStatus.FAILED
+
+    def refund(self) -> None:
+        if self.status != PaymentStatus.SUCCEEDED:
+            raise InvalidStateTransitionError(reason="Only succeeded payments can be refunded")
+        self.status = PaymentStatus.REFUNDED
+
+    @property
+    def is_paid(self) -> bool:
+        return self.status == PaymentStatus.SUCCEEDED
+
+    @property
+    def is_terminal(self) -> bool:
+        return self.status in {
+            PaymentStatus.SUCCEEDED,
+            PaymentStatus.CANCELLED,
+            PaymentStatus.FAILED,
+            PaymentStatus.REFUNDED,
+        }
+
+    def _require_mutable(self) -> None:
+        if self.status not in {PaymentStatus.PENDING, PaymentStatus.WAITING_FOR_CAPTURE}:
+            raise InvalidStateTransitionError(
+                reason=f"Payment is already in terminal status: {self.status}"
+            )

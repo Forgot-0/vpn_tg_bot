@@ -4,7 +4,7 @@ from pathlib import Path
 import structlog
 from structlog.processors import CallsiteParameter, CallsiteParameterAdder
 
-from app.configs.app import app_settings
+from app.configs.app import app_config
 from app.infrastructure.log.processors import get_render_processor
 
 
@@ -35,16 +35,16 @@ def configure_logging() -> None:
     logging_processors = (structlog.stdlib.ProcessorFormatter.remove_processors_meta,)
     logging_console_processors = (
         *logging_processors,
-        get_render_processor(render_json_logs=app_settings.JSON_LOG, colors=True),
+        get_render_processor(render_json_logs=app_config.JSON_LOG, colors=True),
     )
     logging_file_processors = (
         *logging_processors,
-        get_render_processor(render_json_logs=app_settings.JSON_LOG, colors=False),
+        get_render_processor(render_json_logs=app_config.JSON_LOG, colors=False),
     )
 
     handler = logging.StreamHandler()
     handler.set_name("default")
-    handler.setLevel(app_settings.LOG_LEVEL)
+    handler.setLevel(app_config.LOG_LEVEL)
     console_formatter = structlog.stdlib.ProcessorFormatter(
         foreign_pre_chain=common_processors,  # type: ignore
         processors=logging_console_processors,
@@ -52,14 +52,14 @@ def configure_logging() -> None:
     handler.setFormatter(console_formatter)
 
     handlers: list[logging.Handler] = [handler]
-    if app_settings.PATH_LOG:
-        path = Path(app_settings.PATH_LOG)
+    if app_config.PATH_LOG:
+        path = Path(app_config.PATH_LOG)
         path.parent.mkdir(parents=True, exist_ok=True)
         log_path = path / "logs.log" if path.is_dir() else path
 
         file_handler = logging.FileHandler(log_path)
         file_handler.set_name("file")
-        file_handler.setLevel(app_settings.LOG_LEVEL)
+        file_handler.setLevel(app_config.LOG_LEVEL)
         file_formatter = structlog.stdlib.ProcessorFormatter(
             foreign_pre_chain=common_processors,  # type: ignore
             processors=logging_file_processors,
@@ -67,7 +67,7 @@ def configure_logging() -> None:
         file_handler.setFormatter(file_formatter)
         handlers.append(file_handler)
 
-    logging.basicConfig(handlers=handlers, level=app_settings.LOG_LEVEL)
+    logging.basicConfig(handlers=handlers, level=app_config.LOG_LEVEL)
     structlog.configure(
         processors=common_processors + structlog_processors,
         logger_factory=structlog.stdlib.LoggerFactory(),

@@ -1,29 +1,25 @@
-from abc import (
-    ABC,
-    abstractmethod,
-)
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import (
-    Any,
-    Generic,
-    TypeVar,
-)
+from typing import Generic, TypeVar
 
-
-VT = TypeVar('VT', bound=Any)
+T = TypeVar("T")
 
 
 @dataclass(frozen=True)
-class BaseValueObject(ABC, Generic[VT]):
-    value: VT
+class BaseValueObject(ABC, Generic[T]):
+    value: T
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.validate()
 
     @abstractmethod
-    def validate(self):
-        ...
+    def validate(self) -> None: ...
 
     @abstractmethod
-    def as_generic_type(self) -> VT:
+    def as_generic_type(self) -> T:
         ...
+
+    def unwrap(self) -> T:
+        return self.value

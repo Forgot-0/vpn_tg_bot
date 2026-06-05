@@ -1,38 +1,31 @@
-from abc import abstractmethod
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
 from uuid import UUID
 
-from app.domain.entities.server import Server
-from app.domain.repositories.base import BaseRepository
-from app.domain.values.servers import ProtocolType
+from app.domain.entities.server import VPNServer
 
 
-@dataclass
-class BaseServerRepository(BaseRepository[Server]):
+class VPNServerRepository(ABC):
+    @abstractmethod
+    async def get_by_id(self, server_id: UUID) -> VPNServer | None: ...
 
     @abstractmethod
-    async def get_by_max_free(self, type_protocols: list[ProtocolType]) -> Server | None: ...
+    async def add(self, server: VPNServer) -> None: ...
 
     @abstractmethod
-    async def create(self, server: Server) -> None: ...
+    async def update(self, server: VPNServer) -> None: ...
 
     @abstractmethod
-    async def update(self, server: Server) -> None: ...
+    async def delete(self, server_id: UUID) -> None: ...
 
     @abstractmethod
-    async def update_decrement_free(self, server_id: UUID, decr: int = -1) -> None: ...
+    async def list_active(self) -> list[VPNServer]: ...
 
     @abstractmethod
-    async def get_all(self) -> list[Server]: ...
+    async def list_by_region(self, region_code: str) -> list[VPNServer]: ...
 
     @abstractmethod
-    async def get_all_protocols(self) -> list[str]: ...
-
-    @abstractmethod
-    async def get_by_id(self, server_id: UUID) -> Server | None: ...
-
-    @abstractmethod
-    async def set_free(self, server_id: UUID, new_free: int) -> None: ...
-
-    @abstractmethod
-    async def delete_by_id(self, server_id: UUID) -> None: ...
+    async def get_max_free_server(
+        self,
+        protocols: frozenset[str],
+        features: frozenset[str],
+    ) -> VPNServer | None: ...

@@ -1,33 +1,31 @@
-from abc import abstractmethod
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from uuid import UUID
 
 from app.domain.entities.subscription import Subscription
-from app.domain.repositories.base import BaseRepository
-from app.domain.values.subscriptions import SubscriptionId
-from app.domain.values.users import UserId
+from app.domain.values.subscriptions import SubscriptionStatus
 
 
-@dataclass
-class BaseSubscriptionRepository(BaseRepository[Subscription]):
+class SubscriptionRepository(ABC):
+    @abstractmethod
+    async def get_by_id(self, subscription_id: UUID) -> Subscription | None: ...
 
     @abstractmethod
-    async def create(self, subscription: Subscription) -> None: ...
-
-    @abstractmethod
-    async def deactivate(self, id: SubscriptionId) -> None: ...
-
-    @abstractmethod
-    async def activate(self, id: SubscriptionId) -> None: ...
-
-    @abstractmethod
-    async def get(self) -> list[Subscription]: ...
-
-    @abstractmethod
-    async def get_by_id(self, id: SubscriptionId) -> Subscription | None: ...
-
-    @abstractmethod
-    async def get_by_user(self, user_id: UserId) -> list[Subscription]: ...
+    async def add(self, subscription: Subscription) -> None: ...
 
     @abstractmethod
     async def update(self, subscription: Subscription) -> None: ...
 
+    @abstractmethod
+    async def list_by_user(self, user_id: UUID) -> list[Subscription]: ...
+
+    @abstractmethod
+    async def list_by_status(self, status: SubscriptionStatus) -> list[Subscription]: ...
+
+    @abstractmethod
+    async def list_expiring_within(self, days: int) -> list[Subscription]: ...
+
+    @abstractmethod
+    async def get_by_payment_intent(self, payment_intent_id: UUID) -> Subscription | None: ...
+
+    @abstractmethod
+    async def list_traffic_exceeded(self) -> list[Subscription]: ...
