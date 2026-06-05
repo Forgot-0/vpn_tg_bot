@@ -13,9 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
-class SubscriptionPendingProvisioningHandler(
-    BaseEventHandler[SubscriptionPendingProvisioningEvent, None]
-):
+class SubscriptionPendingProvisioningHandler(BaseEventHandler[SubscriptionPendingProvisioningEvent, None]):
     provision_handler: ProvisionSubscriptionAccessHandler
 
     async def handle(self, event: SubscriptionPendingProvisioningEvent) -> None:

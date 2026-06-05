@@ -14,6 +14,7 @@ from app.domain.errors import (
     ProvisioningFailedError,
     ServerNotFoundError,
     SubscriptionNotFoundError,
+    SubscriptionNotRenewableError,
 )
 from app.domain.repositories.access import ProvisionedAccessRepository
 from app.domain.repositories.checkouts import CheckoutSessionRepository
@@ -22,10 +23,9 @@ from app.domain.repositories.payments import PaymentIntentRepository
 from app.domain.repositories.servers import VPNServerRepository
 from app.domain.repositories.subscriptions import SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
-from app.domain.services.renewal import SubscriptionRenewalService
 from app.domain.values.checkouts import CheckoutIntent
 from app.domain.values.payments import PaymentStatus
-from app.domain.values.subscriptions import ProvisioningStatus
+from app.domain.values.subscriptions import ProvisioningStatus, SubscriptionStatus
 
 
 @dataclass(frozen=True)
@@ -47,7 +47,6 @@ class RenewSubscriptionHandler(
     connection_repository: PanelConnectionRepository
     access_repository: ProvisionedAccessRepository
     panel_factory: PanelClientFactory
-    renewal_service: SubscriptionRenewalService
     uow: UnitOfWork
     event_bus: EventBus
 
@@ -82,12 +81,26 @@ class RenewSubscriptionHandler(
         if subscription is None:
             raise SubscriptionNotFoundError(entity_id=str(command.subscription_id))
 
-        self.renewal_service.ensure_renewable(subscription)
+        if subscription.status not in {
+            SubscriptionStatus.ACTIVE,
+            SubscriptionStatus.EXPIRED,
+        }:
+            raise
+
+        if subscription.spec.is_time_limited is False:
+            raise SubscriptionNotRenewableError(
+                reason="Only time-limited subscriptions can be renewed",
+            )
+
+        if subscription.server_id is None:
+            raise SubscriptionNotRenewableError(
+                reason="Subscription has no associated server",
+            )
 
         previous_expires_at = subscription.expires_at
         duration_days = checkout.spec.duration_days
 
-        server = await self.server_repository.get_by_id(subscription.server_id)  # type: ignore[arg-type]
+        server = await self.server_repository.get_by_id(subscription.server_id)
         if server is None:
             raise ServerNotFoundError(entity_id=str(subscription.server_id))
 
