@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import select
 
 from app.domain.entities.plan import Plan
-from app.domain.repositories.subscriptions import PlanRepository
+from app.domain.repositories.plans import PlanRepository
 from app.infrastructure.db.mappers.plans import PlanMapper
 from app.infrastructure.db.models.plans import PlanModel
 from app.infrastructure.db.repositories.base import SQLAlchemyRepository

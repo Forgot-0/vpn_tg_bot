@@ -27,7 +27,10 @@ class LoginCommandHandler(BaseCommandHandler[LoginCommand, TokenGroup]):
     async def handle(self, command: LoginCommand) -> TokenGroup:
         user = await self.user_repository.get_by_email(command.username)
 
-        if user is None or (
+        if user is None:
+            raise
+
+        if (
             user is not None
             and user.password_hash is not None
             and self.password_service.verify_password(command.password, user.password_hash)
