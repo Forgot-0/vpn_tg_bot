@@ -27,6 +27,13 @@ class User(AggregateRoot):
     is_active: bool = field(default=True)
     created_at: datetime = field(default_factory=now_utc)
 
+    def validate(self) -> None:
+        if self.email is None and self.telegram_id is None:
+            raise
+
+        if self.referred_by is not None and self.referred_by == self.id:
+            raise
+
     @classmethod
     def create(
         cls,
@@ -54,9 +61,9 @@ class User(AggregateRoot):
 
     def change_role(self, new_role: UserRole) -> None:
         if not self.role.is_changeable:
-            raise ValueError(f"Role '{self.role}' cannot be changed")
+            raise
         if not new_role.is_assignable:
-            raise ValueError(f"Role '{new_role}' cannot be assigned")
+            raise
 
         old_role = self.role
         self.role = new_role
@@ -73,9 +80,3 @@ class User(AggregateRoot):
 
     def increment_referrals(self) -> None:
         self.referrals_count += 1
-
-    def validate(self) -> None:
-        if self.email is None and self.telegram_id is None:
-            raise ValueError("User must have either email or telegram_id")
-        if self.referred_by is not None and self.referred_by == self.id:
-            raise ValueError("User cannot refer themselves")

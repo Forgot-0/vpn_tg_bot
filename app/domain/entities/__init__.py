@@ -2,7 +2,7 @@ from app.domain.entities.access import ProvisionedAccess
 from app.domain.entities.checkout import CheckoutSession
 from app.domain.entities.offer import Offer
 from app.domain.entities.order import Order, OrderLineItem
-from app.domain.entities.payment import PaymentIntent
+from app.domain.entities.payment import Payment
 from app.domain.entities.plan import Plan
 from app.domain.entities.price import Price
 from app.domain.entities.product import Product
@@ -19,7 +19,7 @@ __all__ = [
     "Order",
     "OrderLineItem",
     "PanelConnection",
-    "PaymentIntent",
+    "Payment",
     "Plan",
     "Price",
     "Product",

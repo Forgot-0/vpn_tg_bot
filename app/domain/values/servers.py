@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 
 
@@ -57,3 +57,30 @@ class PanelEndpoint:
         scheme = "https" if self.use_ssl else "http"
         path = self.path.lstrip("/")
         return f"{scheme}://{self.host}:{self.port}/{path}"
+
+
+@dataclass(frozen=True)
+class Capacity:
+    max_client: int = field(default=0)
+    free: int = field(default=0)
+
+    @property
+    def available_slots(self) -> int:
+        return max(0, self.max_client - self.free)
+
+    @property
+    def load_percent(self) -> float:
+        if self.max_client == 0:
+            return 100.0
+        return (self.free / self.max_client) * 100
+
+    @property
+    def has_capacity(self) -> bool:
+        return self.available_slots > 0
+
+
+class Location:
+    code: str
+    name: str
+    flag: str
+

@@ -1,21 +1,19 @@
 from dataclasses import dataclass
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import Decimal
 
 
 @dataclass(frozen=True)
 class Money:
     amount: Decimal
-    currency: str = "USD"
+    currency: str = "RU"
 
     def __post_init__(self) -> None:
-        if not isinstance(self.amount, Decimal):
-            object.__setattr__(self, "amount", Decimal(str(self.amount)))
-        normalized = self.amount.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-        object.__setattr__(self, "amount", normalized)
+        if self.amount < Decimal("0"):
+            raise
 
     def _assert_same_currency(self, other: Money) -> None:
         if self.currency != other.currency:
-            raise ValueError(f"Currency mismatch: {self.currency} != {other.currency}")
+            raise 
 
     def __add__(self, other: Money) -> Money:
         self._assert_same_currency(other)
@@ -47,5 +45,5 @@ class Money:
         return f"{self.amount} {self.currency}"
 
     @classmethod
-    def zero(cls, currency: str = "USD") -> Money:
+    def zero(cls, currency: str = "RU") -> Money:
         return cls(Decimal("0"), currency)
