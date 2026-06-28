@@ -8,3 +8,8 @@ class OrderStatus(str, Enum):
     FAILED = "FAILED"
     CANCELLED = "CANCELLED"
     REFUNDED = "REFUNDED"
+
+
+class OrderType(str, Enum):
+    NEW_SUBSCRIPTION = "NEW_SUBSCRIPTION"
+    RENEW_SUBSCRIPTION = "RENEW_SUBSCRIPTION"

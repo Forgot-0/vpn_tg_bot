@@ -40,7 +40,6 @@ class TrafficLimitStrategy(StrEnum):
 class VpnClient:
     server_id: UUID
     provider_external_id: str
-    connection_string: str
 
 
 class TrafficResetStrategy(StrEnum):
@@ -119,7 +118,7 @@ class Duration:
         if self.is_lifetime or other.is_lifetime:
             return Duration.lifetime()
 
-        return Duration(self.days + other.days)  # type: ignore[operator]
+        return Duration(self.days + other.days)  # type: ignore[operator]        
 
 
 @dataclass(frozen=True)

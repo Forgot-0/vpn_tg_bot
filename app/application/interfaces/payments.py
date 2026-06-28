@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from app.application.dtos.payments import GatewayPaymentResult, GatewayStatusResult
-from app.domain.entities.payment import Payment
+from app.domain.entities.order import Order
 from app.domain.values.payments import PaymentProvider
 
 
@@ -15,7 +15,7 @@ class PaymentGateway(ABC):
     @abstractmethod
     async def create_payment(
         self,
-        order: Payment,
+        order: Order,
         *,
         return_url: str,
     ) -> GatewayPaymentResult: ...

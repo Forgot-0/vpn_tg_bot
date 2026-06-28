@@ -23,8 +23,8 @@ class AppConfig(BaseConfig):
     TELEGRAM_WEBHOOK_PATH: str = "/webhook"
     BACKEND_CORS_ORIGINS: ClassVar[Annotated[list[str] | str, BeforeValidator(BaseConfig.parse_list)]] = []
 
-    PAYMENT_SECRET: str = ""
-    PAYMENT_ID: int = 0
+    PAYMENT_YOOKASSA_SECRET: str = ""
+    PAYMENT_YOOKASSA_ID: int = 0
 
     @computed_field
     @property

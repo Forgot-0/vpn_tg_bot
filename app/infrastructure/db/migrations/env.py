@@ -8,23 +8,6 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 
 from app.configs.app import app_config
-from app.infrastructure.db.models import (  # noqa: F401
-    InboundModel,
-    LocationModel,
-    OfferModel,
-    OrderModel,
-    PanelConnectionModel,
-    PriceModel,
-    ProductModel,
-    ProvisionedAccessModel,
-    ServerGroupModel,
-    PaymentIntentModel,
-    CheckoutSessionModel,
-    SubscriptionModel,
-    PlanModel,
-    UserModel,
-    VPNServerModel,
-)
 from app.infrastructure.db.models.base import BaseModelORM
 
 # this is the Alembic Config object, which provides
