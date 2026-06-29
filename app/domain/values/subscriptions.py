@@ -27,27 +27,25 @@ class SubscriptionStatus(StrEnum):
     CANCELLED = "cancelled"
 
 
-
-class TrafficLimitStrategy(StrEnum):
-    NO_RESET = "NO_RESET"
-    DAY = "DAY"
-    WEEK = "WEEK"
-    MONTH = "MONTH"
-    MONTH_ROLLING = "MONTH_ROLLING"
-
-
-@dataclass
-class VpnClient:
-    server_id: UUID
-    provider_external_id: str
-
-
 class TrafficResetStrategy(StrEnum):
     NO_RESET = "no_reset"
     MONTHLY = "monthly"
     WEEKLY = "weekly"
     EVERY_N_DAYS = "every_n_days"
     CUSTOM = "custom"
+
+
+class RenewalMode(StrEnum):
+    EXTEND_DURATION = "extend_duration"
+    ADD_TRAFFIC = "add_traffic"
+    EXTEND_AND_ADD_TRAFFIC = "extend_and_add_traffic"
+    REPLACE = "replace"
+
+
+@dataclass(frozen=True)
+class VpnClient:
+    server_id: UUID
+    provider_external_id: str
 
 
 @dataclass(frozen=True)
@@ -74,13 +72,11 @@ class TrafficLimit:
     def gb(self) -> float | None:
         if self.bytes_limit is None:
             return None
-
         return self.bytes_limit / 1024 ** 3
 
     def __add__(self, other: TrafficLimit) -> TrafficLimit:
         if self.is_unlimited or other.is_unlimited:
             return TrafficLimit.unlimited()
-
         return TrafficLimit(self.bytes_limit + other.bytes_limit)  # type: ignore[operator]
 
 
@@ -95,8 +91,7 @@ class Duration:
     @classmethod
     def of_days(cls, n: int) -> Duration:
         if n <= 0:
-            raise
-
+            raise ValueError("Duration must be positive")
         return cls(days=n)
 
     @classmethod
@@ -111,14 +106,12 @@ class Duration:
     def as_timedelta(self) -> timedelta | None:
         if self.days is None:
             return None
-
         return timedelta(days=self.days)
 
     def __add__(self, other: Duration) -> Duration:
         if self.is_lifetime or other.is_lifetime:
             return Duration.lifetime()
-
-        return Duration(self.days + other.days)  # type: ignore[operator]        
+        return Duration(self.days + other.days)  # type: ignore[operator]
 
 
 @dataclass(frozen=True)
@@ -143,7 +136,7 @@ class TrafficResetPolicy:
 
         if self.strategy == TrafficResetStrategy.CUSTOM:
             if not self.custom_cron:
-                raise 
+                raise
 
     @classmethod
     def no_reset(cls) -> TrafficResetPolicy:
@@ -152,6 +145,14 @@ class TrafficResetPolicy:
     @classmethod
     def monthly(cls) -> TrafficResetPolicy:
         return cls(strategy=TrafficResetStrategy.MONTHLY)
+
+    @classmethod
+    def weekly(cls) -> TrafficResetPolicy:
+        return cls(strategy=TrafficResetStrategy.WEEKLY)
+
+    @classmethod
+    def every_n_days(cls, n: int) -> TrafficResetPolicy:
+        return cls(strategy=TrafficResetStrategy.EVERY_N_DAYS, reset_every_n_days=n)
 
 
 @dataclass(frozen=True)
@@ -163,6 +164,11 @@ class SubscriptionLimits:
     features: set[FeatureCode]
     protocols: set[ProtocolCode]
     traffic_limit_strategy: TrafficResetPolicy
+
+
+@dataclass(frozen=True)
+class RenewalStrategy:
+    mode: RenewalMode
 
 
 @dataclass
@@ -184,4 +190,3 @@ class UsageStats:
     @property
     def gb_used(self) -> float:
         return self.bytes_used / 1024 ** 3
-

@@ -16,12 +16,16 @@ class ProtocolCode(StrEnum):
 
 
 class FeatureCode(StrEnum):
-    MULTI_HOP = "multi_hop"
+    WHITE_LIST = "white_list"
     DEDICATED_IP = "dedicated_ip"
-    STATIC_IP = "static_ip"
-    HIGH_SPEED = "high_speed"
-    EXTRA_PORTS = "extra_ports"
+    GEO_ROUTING = "geo_routing"
+    XRAY_ROUTING = "xray_routing"
+    ANTI_DPI = "anti_dpi"
+    GAMING_MODE = "gaming_mode"
+    PRIORITY_TRAFFIC = "priority_traffic"
+    MULTI_HOP = "multi_hop"
     OBFUSCATION = "obfuscation"
+    HIGH_SPEED = "high_speed"
 
 
 class PanelType(StrEnum):
@@ -79,8 +83,8 @@ class Capacity:
         return self.available_slots > 0
 
 
+@dataclass(frozen=True)
 class Location:
     code: str
     name: str
-    flag: str
-
+    flag: str = ""

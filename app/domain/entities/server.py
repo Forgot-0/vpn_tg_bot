@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from uuid import UUID, uuid4
 
@@ -9,7 +11,7 @@ from app.domain.values.servers import (
     PanelCredentials,
     PanelEndpoint,
     PanelType,
-    ProtocolCode
+    ProtocolCode,
 )
 
 
@@ -22,14 +24,42 @@ class VPNServer(AggregateRoot):
 
     panel_type: PanelType
     panel_endpoint: PanelEndpoint
-    panel_creditials: PanelCredentials
+    panel_credentials: PanelCredentials
 
     locations: set[Location] = field(default_factory=set)
     support_protocols: set[ProtocolCode] = field(default_factory=set)
-    feature_protocols: set[FeatureCode] = field(default_factory=set)
+    support_features: set[FeatureCode] = field(default_factory=set)
 
+    is_active: bool = field(default=True)
+    tags: list[str] = field(default_factory=list)
 
     def validate(self) -> None:
-        ...
+        pass
 
+
+    def supports(
+        self,
+        protocols: set[ProtocolCode],
+        features: set[FeatureCode],
+    ) -> bool:
+        return protocols <= self.support_protocols and features <= self.support_features
+
+    @property
+    def is_available(self) -> bool:
+        return self.is_active and self.capacity.has_capacity
+
+    def increment_clients(self) -> None:
+        self.capacity = Capacity(
+            max_client=self.capacity.max_client,
+            free=self.capacity.free + 1
+        )
+
+    def decrement_clients(self) -> None:
+        if self.capacity.free <= 0:
+            raise
+
+        self.capacity = Capacity(
+            max_client=self.capacity.max_client,
+            free=self.capacity.free - 1
+        )
 
