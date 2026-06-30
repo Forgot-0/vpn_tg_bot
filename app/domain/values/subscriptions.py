@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from decimal import Decimal
 from enum import StrEnum
+from typing import Self
 from uuid import UUID
 
 from app.domain.services.clock import now_utc
@@ -164,6 +164,33 @@ class SubscriptionLimits:
     features: set[FeatureCode]
     protocols: set[ProtocolCode]
     traffic_limit_strategy: TrafficResetPolicy
+
+    @classmethod
+    def create(
+        cls,
+        duration_days: int | None,
+        trafic_bytes_limit: int | None,
+        max_devices: int | None,
+
+        features: set[str],
+        protocols: set[str],
+
+        strategy: str,
+        reset_every_n_days: int | None = None,
+        custom_cron: str | None = None,
+    ) -> Self:
+        return cls(
+            duration_days=Duration(duration_days),
+            traffic_limit_gb=TrafficLimit(trafic_bytes_limit),
+            max_devices=DeviceLimit(max_devices),
+            features={FeatureCode(featcha) for featcha in features},
+            protocols={ProtocolCode(proto) for proto in protocols},
+            traffic_limit_strategy=TrafficResetPolicy(
+                strategy=TrafficResetStrategy(strategy),
+                reset_every_n_days=reset_every_n_days,
+                custom_cron=custom_cron
+            )
+        )
 
 
 @dataclass(frozen=True)

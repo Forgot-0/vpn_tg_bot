@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
 from app.domain.errors import InvalidStateTransitionError
+from app.domain.events.payments import PaymentSucceededEvent
 from app.domain.values.money import Money
 from app.domain.values.payments import PaymentProvider, PaymentStatus
 
@@ -36,24 +37,19 @@ class Payment(AggregateRoot):
         self.status = PaymentStatus.WAITING_FOR_CAPTURE
         self.external_id = external_id
         self.confirmation_url = confirmation_url
-        # self.register_event(
-        #     PaymentIntentCreatedEvent(
-        #         payment_intent_id=self.id,
-        #         user_id=self.user_id,
-        #     )
-        # )
 
     def succeed(self, *, external_id: str, paid_at: datetime) -> None:
         self._require_mutable()
         self.status = PaymentStatus.SUCCEEDED
         self.external_id = external_id
         self.paid_at = paid_at
-        # self.register_event(
-        #     PaymentSucceededEvent(
-        #         payment_intent_id=self.id,
-        #         external_id=external_id,
-        #     )
-        # )
+        self.register_event(
+            PaymentSucceededEvent(
+                payment_id=self.id,
+                order_id=self.order_id,
+                paid_at=paid_at,
+            )
+        )
 
     def cancel(self) -> None:
         self._require_mutable()
@@ -66,6 +62,7 @@ class Payment(AggregateRoot):
     def refund(self) -> None:
         if self.status != PaymentStatus.SUCCEEDED:
             raise InvalidStateTransitionError(reason="Only succeeded payments can be refunded")
+
         self.status = PaymentStatus.REFUNDED
 
     @property

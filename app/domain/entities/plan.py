@@ -124,7 +124,7 @@ class SubscriptionPlan(AggregateRoot):
         name: str,
         description: str,
         limit: SubscriptionLimits,
-        prices: list[Money],
+        prices: set[Money],
         visibility: PlanVisibility = PlanVisibility.PUBLIC,
         is_trial: bool = False,
     ) -> Self:
@@ -133,7 +133,7 @@ class SubscriptionPlan(AggregateRoot):
             name=name,
             description=description,
             limit=limit,
-            price=set(prices),
+            price=prices,
             visibility=visibility,
             is_trial=is_trial,
         )
