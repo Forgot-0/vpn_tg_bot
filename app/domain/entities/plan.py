@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Self
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
-from app.domain.errors import PlanNotActiveError
+from app.domain.errors import (
+    PlanMisconfiguredError,
+    PlanNotActiveError,
+    PlanPriceNotAvailableError,
+    SpecValidationError,
+)
 from app.domain.values.money import Money
 from app.domain.values.servers import FeatureCode, ProtocolCode
 from app.domain.values.subscriptions import (
@@ -100,7 +106,7 @@ class SubscriptionPlan(AggregateRoot):
 
     def calculate_price(self, limit: SubscriptionLimits) -> Money:
         if self.price_rule is None:
-            raise 
+            raise PlanMisconfiguredError()
 
         return self.price_rule.calculate(
             duration=limit.duration_days,
@@ -115,6 +121,70 @@ class SubscriptionPlan(AggregateRoot):
             if p.currency == currency:
                 return p
         return None
+
+    def validate_draft(self, limit: SubscriptionLimits) -> None:
+        violations: list[str] = []
+
+        if self.allowed_durations:
+            chosen_days = 0 if limit.duration_days.is_lifetime else limit.duration_days.days
+            if chosen_days not in self.allowed_durations:
+                violations.append(
+                    f"duration_days must be one of {sorted(self.allowed_durations)} for this plan"
+                )
+
+        if self.allowed_traffic_gb:
+            chosen_gb = 0.0 if limit.traffic_limit_gb.is_unlimited else limit.traffic_limit_gb.gb
+            if not any(
+                math.isclose(chosen_gb, allowed, rel_tol=1e-6, abs_tol=1e-6) # pyright: ignore[reportArgumentType]
+                for allowed in self.allowed_traffic_gb
+            ):
+                violations.append(
+                    f"traffic limit must be one of {sorted(self.allowed_traffic_gb)} GB for this plan"
+                )
+
+        if self.max_devices_limit is not None:
+            chosen_devices = limit.max_devices.max_devices
+            if chosen_devices is None or chosen_devices > self.max_devices_limit:
+                violations.append(f"max_devices must not exceed {self.max_devices_limit} for this plan")
+
+        if self.allowed_features and not limit.features.issubset(self.allowed_features):
+            not_allowed = sorted(f.value for f in limit.features - self.allowed_features)
+            violations.append(f"features not available on this plan: {', '.join(not_allowed)}")
+
+        if self.allowed_protocols and not limit.protocols.issubset(self.allowed_protocols):
+            not_allowed = sorted(p.value for p in limit.protocols - self.allowed_protocols)
+            violations.append(f"protocols not available on this plan: {', '.join(not_allowed)}")
+
+        if violations:
+            raise SpecValidationError(violations=violations)
+
+    def resolve_limits_and_price(
+        self,
+        *,
+        currency: str,
+        requested_limit: SubscriptionLimits | None,
+    ) -> tuple[SubscriptionLimits, Money]:
+        if self.is_fixed:
+            assert self.limit is not None
+
+            price = self.fixed_price_for(currency)
+            if price is None:
+                raise PlanPriceNotAvailableError(currency=currency)
+
+            return self.limit, price
+
+        if requested_limit is None:
+            raise SpecValidationError(violations=["plan_draft is required for a dynamic plan"])
+
+        self.validate_draft(requested_limit)
+
+        price = self.calculate_price(requested_limit)
+        if price.is_zero():
+            raise SpecValidationError(
+                violations=["selected configuration results in a zero-cost subscription, which is not allowed"]
+            )
+
+        return requested_limit, price
 
     @classmethod
     def create_fixed(

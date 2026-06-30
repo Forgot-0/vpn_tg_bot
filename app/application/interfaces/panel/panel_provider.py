@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from app.domain.entities.server import VPNServer
+from app.domain.entities.subscription import Subscription
 from app.domain.values.servers import PanelType, ProtocolCode
 
 
@@ -32,34 +34,43 @@ class PanelProviderPort(ABC):
     async def create_client(
         self,
         *,
-        email: str,
-        traffic_limit_bytes: int | None,
-        expire_timestamp_ms: int | None,
-        device_limit: int | None,
-        inbound_ids: list[int],
-        protocols: frozenset[ProtocolCode],
+        subscription: Subscription,
+        server: VPNServer,
     ) -> ProvisionedClientInfo: ...
 
     @abstractmethod
     async def update_client(
         self,
-        panel_client_id: str,
         *,
-        traffic_limit_bytes: int | None = None,
-        expire_timestamp_ms: int | None = None,
-        device_limit: int | None = None,
-        enable: bool | None = None,
+        subscription: Subscription,
+        server: VPNServer,
     ) -> None: ...
 
     @abstractmethod
-    async def delete_client(self, panel_client_id: str) -> None: ...
+    async def delete_client(
+        self,
+        subscription: Subscription,
+        server: VPNServer
+    ) -> None: ...
 
     @abstractmethod
-    async def get_client_traffic(self, panel_client_id: str) -> ClientTrafficInfo: ...
+    async def get_client_traffic(
+        self,
+        subscription: Subscription,
+        server: VPNServer
+    ) -> ClientTrafficInfo: ...
 
     @abstractmethod
-    async def reset_client_traffic(self, panel_client_id: str) -> None: ...
+    async def reset_client_traffic(
+        self,
+        subscription: Subscription,
+        server: VPNServer
+    ) -> None: ...
 
     @abstractmethod
-    async def get_subscription_url(self, panel_client_id: str) -> str: ...
+    async def get_subscription_url(
+        self,
+        subscription: Subscription,
+        server: VPNServer
+    ) -> str: ...
 

@@ -3,10 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from typing import Self
+from typing import ClassVar, Self
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
+from app.domain.errors import SubscriptionNotRenewableError
 from app.domain.events.subscriptions import (
     SubscriptionActivatedEvent,
     SubscriptionCancelledEvent,
@@ -144,6 +145,13 @@ class Subscription(AggregateRoot):
         )
 
     def renew(self, strategy: RenewalStrategy, new_limit: SubscriptionLimits) -> None:
+        if self.status not in {
+            SubscriptionStatus.ACTIVE,
+            SubscriptionStatus.EXPIRED,
+            SubscriptionStatus.SUSPENDED,
+        }:
+            raise SubscriptionNotRenewableError(status_value=self.status.value)
+
         previous = self.expires_at
 
         if strategy.mode == RenewalMode.EXTEND_DURATION:

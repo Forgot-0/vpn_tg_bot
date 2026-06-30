@@ -6,6 +6,7 @@ from enum import StrEnum
 from typing import Self
 from uuid import UUID
 
+from app.domain.errors import SpecValidationError
 from app.domain.services.clock import now_utc
 from app.domain.values.servers import FeatureCode, ProtocolCode
 
@@ -52,6 +53,10 @@ class VpnClient:
 class TrafficLimit:
     bytes_limit: int | None
 
+    def __post_init__(self) -> None:
+        if self.bytes_limit is not None and self.bytes_limit <= 0:
+            raise
+
     @classmethod
     def unlimited(cls) -> TrafficLimit:
         return cls(bytes_limit=None)
@@ -84,14 +89,16 @@ class TrafficLimit:
 class Duration:
     days: int | None
 
+    def __post_init__(self) -> None:
+        if self.days is not None and self.days <= 0:
+            raise
+
     @classmethod
     def lifetime(cls) -> Duration:
         return cls(days=None)
 
     @classmethod
     def of_days(cls, n: int) -> Duration:
-        if n <= 0:
-            raise ValueError("Duration must be positive")
         return cls(days=n)
 
     @classmethod
@@ -118,6 +125,10 @@ class Duration:
 class DeviceLimit:
     max_devices: int | None = None
 
+    def __post_init__(self) -> None:
+        if self.max_devices is not None and self.max_devices <= 0:
+            raise
+
     @classmethod
     def unlimited(cls) -> DeviceLimit:
         return cls(max_devices=None)
@@ -132,7 +143,7 @@ class TrafficResetPolicy:
     def __post_init__(self) -> None:
         if self.strategy == TrafficResetStrategy.EVERY_N_DAYS:
             if not self.reset_every_n_days or self.reset_every_n_days <= 0:
-                raise 
+                raise
 
         if self.strategy == TrafficResetStrategy.CUSTOM:
             if not self.custom_cron:
@@ -179,14 +190,60 @@ class SubscriptionLimits:
         reset_every_n_days: int | None = None,
         custom_cron: str | None = None,
     ) -> Self:
+        violations: list[str] = []
+
+        if duration_days is not None and duration_days <= 0:
+            violations.append("duration_days must be a positive integer or null for lifetime access")
+
+        if trafic_bytes_limit is not None and trafic_bytes_limit <= 0:
+            violations.append("trafic_bytes_limit must be a positive integer or null for unlimited traffic")
+
+        if max_devices is not None and max_devices <= 0:
+            violations.append("max_devices must be a positive integer or null for unlimited devices")
+
+        resolved_features: set[FeatureCode] = set()
+        for code in features:
+            try:
+                resolved_features.add(FeatureCode(code))
+            except ValueError:
+                violations.append(f"unknown feature code: {code!r}")
+
+        resolved_protocols: set[ProtocolCode] = set()
+        for code in protocols:
+            try:
+                resolved_protocols.add(ProtocolCode(code))
+            except ValueError:
+                violations.append(f"unknown protocol code: {code!r}")
+
+        resolved_strategy: TrafficResetStrategy | None = None
+        try:
+            resolved_strategy = TrafficResetStrategy(strategy)
+        except ValueError:
+            violations.append(f"unknown traffic reset strategy: {strategy!r}")
+
+        if resolved_strategy == TrafficResetStrategy.EVERY_N_DAYS:
+            if not reset_every_n_days or reset_every_n_days <= 0:
+                violations.append(
+                    "reset_every_n_days must be a positive integer when strategy is every_n_days"
+                )
+
+        if resolved_strategy == TrafficResetStrategy.CUSTOM:
+            if not custom_cron:
+                violations.append("custom_cron must be provided when strategy is custom")
+
+        if violations:
+            raise SpecValidationError(violations=violations)
+
+        assert resolved_strategy is not None
+
         return cls(
             duration_days=Duration(duration_days),
             traffic_limit_gb=TrafficLimit(trafic_bytes_limit),
             max_devices=DeviceLimit(max_devices),
-            features={FeatureCode(featcha) for featcha in features},
-            protocols={ProtocolCode(proto) for proto in protocols},
+            features=resolved_features,
+            protocols=resolved_protocols,
             traffic_limit_strategy=TrafficResetPolicy(
-                strategy=TrafficResetStrategy(strategy),
+                strategy=resolved_strategy,
                 reset_every_n_days=reset_every_n_days,
                 custom_cron=custom_cron
             )

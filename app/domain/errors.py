@@ -151,6 +151,34 @@ class PlanNotActiveError(DomainError):
 
 
 @dataclass(eq=False)
+class PlanPriceNotAvailableError(DomainError):
+    code: str = "PLAN_PRICE_NOT_AVAILABLE"
+    status: int = 422
+
+    currency: str = ""
+
+    @property
+    def message(self) -> str:
+        if self.currency:
+            return f"Plan has no price configured for currency: {self.currency}"
+        return "Plan has no price configured for the requested currency"
+
+    @property
+    def detail(self) -> dict:
+        return {"currency": self.currency} if self.currency else {}
+
+
+@dataclass(eq=False)
+class PlanMisconfiguredError(DomainError):
+    code: str = "PLAN_MISCONFIGURED"
+    status: int = 500
+
+    @property
+    def message(self) -> str:
+        return "Plan is missing pricing configuration"
+
+
+@dataclass(eq=False)
 class UserNotFoundError(NotFoundError):
     code: str = "USER_NOT_FOUND"
     entity: str = "User"

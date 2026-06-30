@@ -98,6 +98,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
                 protocols=command.plan_draft.protocols,
                 strategy=command.plan_draft.strategy,
             )
+            plan.validate_draft(limits)
             price = plan.calculate_price(limits)
 
 

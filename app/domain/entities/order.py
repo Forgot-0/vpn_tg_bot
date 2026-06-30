@@ -8,7 +8,7 @@ from app.domain.entities.base import AggregateRoot
 from app.domain.services.clock import now_utc
 from app.domain.values.money import Money
 from app.domain.values.order import OrderStatus, OrderType
-from app.domain.values.subscriptions import SubscriptionLimits
+from app.domain.values.subscriptions import RenewalMode, SubscriptionLimits
 
 
 
@@ -24,9 +24,11 @@ class Order(AggregateRoot):
     status: OrderStatus
 
     subscription_limit: SubscriptionLimits | None = field(default=None)
+    renewal_mode: RenewalMode | None = field(default=None)
     created_at: datetime = field(default_factory=now_utc)
     paid_at: datetime | None = field(default=None)
     expires_at: datetime | None = field(default=None)
 
     def validate(self) -> None:
-        ...
+        if self.type == OrderType.RENEW_SUBSCRIPTION and self.renewal_mode is None:
+            raise

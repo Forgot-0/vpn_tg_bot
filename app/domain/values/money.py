@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from decimal import Decimal
 
@@ -9,7 +11,7 @@ class Money:
 
     def __post_init__(self) -> None:
         if self.amount < Decimal("0"):
-            raise
+            raise 
 
     def _assert_same_currency(self, other: Money) -> None:
         if self.currency != other.currency:

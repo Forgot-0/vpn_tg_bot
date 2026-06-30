@@ -108,7 +108,7 @@ class CreatePlanCommandHandler(BaseCommandHandler[CreatePlanCommand, None]):
                 ),
                 prices={Money(m.amount, m.currency) for m in command.prices}
             )
-        else:
+        elif command.is_dynamic_request:
             assert command.price_per_day is not None
             assert command.price_per_gb is not None
             assert command.price_per_device is not None
@@ -123,7 +123,7 @@ class CreatePlanCommandHandler(BaseCommandHandler[CreatePlanCommand, None]):
                 protocol: Money(amount, currency)
                 for protocol, amount in command.protocol_surcharges.items()
             }
-    
+
             plan = SubscriptionPlan.create_dynamic(
                 code=command.code,
                 name=command.name,
@@ -141,12 +141,14 @@ class CreatePlanCommandHandler(BaseCommandHandler[CreatePlanCommand, None]):
                 allowed_protocols=set(command.allowed_protocols),
                 max_devices_limit=command.max_devices_limit,
             )
+        else:
+            raise
 
         plan.visibility = command.visibility
         plan.order_index = command.order_index
         plan.is_trial = command.is_trial
         plan.is_active = command.is_active
- 
+
         await self.plan_repository.add(plan)
         await self.uow.commit()
         logger.info(
