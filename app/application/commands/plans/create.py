@@ -8,9 +8,11 @@ from app.application.event_bus import EventBus
 from app.domain.entities.plan import PricingRule, SubscriptionPlan
 from app.domain.repositories.plans import PlanRepository
 from app.domain.repositories.uow import UnitOfWork
+from app.domain.services.access_control import RoleAccessControl
 from app.domain.values.money import Money
 from app.domain.values.servers import FeatureCode, ProtocolCode
 from app.domain.values.subscriptions import PlanVisibility, SubscriptionLimits
+from app.domain.values.users import UserRole
 
 
 logger = logging.getLogger(__name__)
@@ -83,10 +85,14 @@ class CreatePlanCommand(BaseCommand):
 @dataclass(frozen=True)
 class CreatePlanCommandHandler(BaseCommandHandler[CreatePlanCommand, None]):
     plan_repository: PlanRepository
+    access_service: RoleAccessControl
     uow: UnitOfWork
     event_bus: EventBus
 
     async def handle(self, command: CreatePlanCommand) -> None:
+        if not self.access_service.can_action(command.user_jwt_data.role, UserRole.ADMIN):
+            raise 
+
         plan = await self.plan_repository.get_by_code(command.code)
         if plan is not None:
             raise

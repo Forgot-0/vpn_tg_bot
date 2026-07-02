@@ -11,6 +11,11 @@ from app.application.interfaces.auth import JWTManager
 from app.application.interfaces.password import PasswordService
 from app.application.interfaces.payments import PaymentGateway
 from app.configs.app import app_config
+from app.domain.repositories.orders import OrderRepository
+from app.domain.repositories.payments import PaymentRepository
+from app.domain.repositories.plans import PlanRepository
+from app.domain.repositories.servers import ServerRepository
+from app.domain.repositories.subscriptions import SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.repositories.users import UserRepository
 from app.infrastructure.db.session import create_async_marker, create_engine
@@ -48,7 +53,6 @@ class InfrastructureProvider(Provider):
     def get_uow(self, session: AsyncSession) -> UnitOfWork:
         return SQLAlchemyUoW(session)
 
-  
     @provide(scope=Scope.APP)
     def get_payment_gateway(self) -> PaymentGateway:
         return YooKassaPaymentGateway()
