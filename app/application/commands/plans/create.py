@@ -59,8 +59,8 @@ class CreatePlanCommand(BaseCommand):
     price_per_device: MoneyAmount | None = None
     feature_surcharges: dict[FeatureCode, Decimal] = field(default_factory=dict)
     protocol_surcharges: dict[ProtocolCode, Decimal] = field(default_factory=dict)
-    allowed_durations: list[int] = field(default_factory=list)
-    allowed_traffic_gb: list[float] = field(default_factory=list)
+    allowed_durations: set[int] = field(default_factory=set)
+    allowed_traffic_gb: set[float] = field(default_factory=set)
     allowed_features: set[FeatureCode] = field(default_factory=set)
     allowed_protocols: set[ProtocolCode] = field(default_factory=set)
     max_devices_limit: int | None = None
@@ -141,10 +141,10 @@ class CreatePlanCommandHandler(BaseCommandHandler[CreatePlanCommand, None]):
                     feature_surcharges=feature_surcharges,
                     protocol_surcharges=protocol_surcharges,
                 ),
-                allowed_durations=list(command.allowed_durations),
-                allowed_traffic_gb=list(command.allowed_traffic_gb),
-                allowed_features=set(command.allowed_features),
-                allowed_protocols=set(command.allowed_protocols),
+                allowed_durations=command.allowed_durations,
+                allowed_traffic_gb=command.allowed_traffic_gb,
+                allowed_features=command.allowed_features,
+                allowed_protocols=command.allowed_protocols,
                 max_devices_limit=command.max_devices_limit,
             )
         else:

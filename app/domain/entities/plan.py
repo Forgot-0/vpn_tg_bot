@@ -83,8 +83,8 @@ class SubscriptionPlan(AggregateRoot):
     is_trial: bool = field(default=False)
     is_active: bool = field(default=True)
 
-    allowed_durations: list[int] = field(default_factory=list)
-    allowed_traffic_gb: list[float] = field(default_factory=list)
+    allowed_durations: set[int] = field(default_factory=set)
+    allowed_traffic_gb: set[float] = field(default_factory=set)
     max_devices_limit: int | None = field(default=None)
     allowed_features: set[FeatureCode] = field(default_factory=set)
     allowed_protocols: set[ProtocolCode] = field(default_factory=set)
@@ -216,8 +216,8 @@ class SubscriptionPlan(AggregateRoot):
         name: str,
         description: str,
         price_rule: PricingRule,
-        allowed_durations: list[int],
-        allowed_traffic_gb: list[float],
+        allowed_durations: set[int],
+        allowed_traffic_gb: set[float],
         allowed_features: set[FeatureCode],
         allowed_protocols: set[ProtocolCode],
         max_devices_limit: int | None = None,
