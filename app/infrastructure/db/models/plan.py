@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy import Boolean, Enum, Integer, String, DECIMAL
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 
 from app.domain.values.subscriptions import PlanVisibility, TrafficResetStrategy
 from app.infrastructure.db.models.base import BaseModelORM
@@ -31,6 +31,9 @@ class SubscriptionPlanModel(BaseModelORM):
     strategy: Mapped[TrafficResetStrategy] = mapped_column(Enum(TrafficResetStrategy), nullable=False)
     reset_every_n_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
     custom_cron: Mapped[str | None] = mapped_column(String(128), nullable=True)
+
+    price: Mapped[list[dict[str, str]]] = mapped_column(JSONB, nullable=False, default=list)
+    price_rule: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
 
     # 
     visibility: Mapped[PlanVisibility] = mapped_column(Enum(PlanVisibility))
