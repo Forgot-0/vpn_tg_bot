@@ -5,9 +5,8 @@ from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import DateTime, ForeignKey, Numeric, String, func
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy.dialects.postgresql import JSONB
 
 from app.infrastructure.db.models.base import BaseModelORM
 
@@ -29,7 +28,7 @@ class PaymentModel(BaseModelORM):
     confirmation_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
 
     idempotency_key: Mapped[str | None] = mapped_column(String(256), nullable=True, unique=True)
-    provider_payload: Mapped[dict[str, object]] = mapped_column(JSONB, nullable=False, default="{}")
+    provider_payload: Mapped[dict[str, object]] = mapped_column(JSONB, nullable=False, default=dict)
 
     created_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True, server_default=func.now())
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

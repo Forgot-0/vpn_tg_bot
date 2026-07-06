@@ -7,7 +7,7 @@ from app.infrastructure.db.models.user import UserModel
 
 class UserMapper:
     @staticmethod
-    def from_user_domain_to_mode(user: User) -> UserModel:
+    def from_user_domain_to_model(user: User) -> UserModel:
         return UserModel(
             id=user.id,
             role=user.role.value,
@@ -18,7 +18,7 @@ class UserMapper:
             referred_by=user.referred_by,
             referrals_count=user.referrals_count,
             is_active=user.is_active,
-            created_at=user.created_at
+            created_at=user.created_at,
         )
 
     @overload
@@ -46,5 +46,5 @@ class UserMapper:
             referred_by=user_model.referred_by,
             referrals_count=user_model.referrals_count,
             is_active=user_model.is_active,
-            created_at=user_model.created_at
+            created_at=user_model.created_at,
         )

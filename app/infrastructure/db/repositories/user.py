@@ -35,10 +35,10 @@ class SQLUserRepository(SQLAlchemyRepository, UserRepository):
         return UserMapper.from_user_model_to_domain(result.scalar())
 
     async def add(self, user: User) -> None:
-        self.session.add(UserMapper.from_user_domain_to_mode(user))
+        self.session.add(UserMapper.from_user_domain_to_model(user))
 
     async def update(self, user: User) -> None:
-        ...
+        await self.session.merge(UserMapper.from_user_domain_to_model(user))
 
     async def list_referrals(self, referrer_id: UUID) -> list[User]:
         results = await self.session.execute(

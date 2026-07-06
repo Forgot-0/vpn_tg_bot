@@ -30,9 +30,9 @@ class VPNServerModel(BaseModelORM):
     panel_password: Mapped[str | None] = mapped_column(String(512), nullable=True)
     panel_api_token: Mapped[str | None] = mapped_column(String(1024), nullable=True)
 
-    locations: Mapped[dict[str, str]] = mapped_column(JSONB, nullable=False, default="{}")
-    support_protocols: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default="[]")
-    support_features: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default="[]")
+    locations: Mapped[list[dict[str, str]]] = mapped_column(JSONB, nullable=False, default=list)
+    support_protocols: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    support_features: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
 
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True, index=True)
-    tags: Mapped[list[str]] = mapped_column(ARRAY(String(128)), nullable=False, default="[]")
+    tags: Mapped[list[str]] = mapped_column(ARRAY(String(128)), nullable=False, default=list)

@@ -18,6 +18,12 @@ from app.domain.repositories.servers import ServerRepository
 from app.domain.repositories.subscriptions import SubscriptionRepository
 from app.domain.repositories.uow import UnitOfWork
 from app.domain.repositories.users import UserRepository
+from app.infrastructure.db.repositories.order import SQLOrderRepository
+from app.infrastructure.db.repositories.payment import SQLPaymentRepository
+from app.infrastructure.db.repositories.plan import SQLPlanRepository
+from app.infrastructure.db.repositories.server import SQLServerRepository
+from app.infrastructure.db.repositories.subscription import SQLSubscriptionRepository
+from app.infrastructure.db.repositories.user import SQLUserRepository
 from app.infrastructure.db.session import create_async_marker, create_engine
 from app.infrastructure.db.uow import SQLAlchemyUoW
 from app.infrastructure.payments.yookassa.gateway import YooKassaPaymentGateway
@@ -44,6 +50,30 @@ class InfrastructureProvider(Provider):
     ) -> AsyncIterable[AsyncSession]:
         async with marker() as session:
             yield session
+
+    @provide(scope=Scope.REQUEST)
+    def get_user_repository(self, session: AsyncSession) -> UserRepository:
+        return SQLUserRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_server_repository(self, session: AsyncSession) -> ServerRepository:
+        return SQLServerRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_plan_repository(self, session: AsyncSession) -> PlanRepository:
+        return SQLPlanRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_subscription_repository(self, session: AsyncSession) -> SubscriptionRepository:
+        return SQLSubscriptionRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_order_repository(self, session: AsyncSession) -> OrderRepository:
+        return SQLOrderRepository(session)
+
+    @provide(scope=Scope.REQUEST)
+    def get_payment_repository(self, session: AsyncSession) -> PaymentRepository:
+        return SQLPaymentRepository(session)
 
     @provide(scope=Scope.APP)
     async def get_redis(self) -> Redis:
