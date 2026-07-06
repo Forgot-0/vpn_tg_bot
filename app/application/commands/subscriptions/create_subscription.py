@@ -129,7 +129,7 @@ class CreateSubscriptionCommandHandler(BaseCommandHandler[CreateSubscriptionComm
 
         await self.uow.commit()
 
-        gateway_result = await self.payment_gateway.create_payment(order, return_url=command.return_url)
+        gateway_result = await self.payment_gateway.create_payment(payment, return_url=command.return_url)
 
         payment.awaiting_confirmation(
             external_id=gateway_result.external_id,

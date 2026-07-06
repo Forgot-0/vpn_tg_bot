@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from typing import ClassVar, Self
+from typing import Self
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
@@ -19,14 +19,12 @@ from app.domain.events.subscriptions import (
     TrafficConsumedEvent,
 )
 from app.domain.services.clock import now_utc
-from app.domain.values.servers import Location
 from app.domain.values.subscriptions import (
     RenewalMode,
     RenewalStrategy,
     SubscriptionLimits,
     SubscriptionStatus,
     UsageStats,
-    VpnClient,
 )
 
 
@@ -45,8 +43,10 @@ class Subscription(AggregateRoot):
     current_period_start: datetime | None = field(default=None)
     current_period_end: datetime | None = field(default=None)
 
+    server_id: UUID | None = field(default=None)
+    provider_external_id: str | None = field(default=None)
+
     usage: UsageStats = field(default_factory=UsageStats)
-    vpn_client: VpnClient | None = field(default=None)
     created_at: datetime = field(default_factory=now_utc)
 
     def validate(self) -> None:
@@ -59,12 +59,14 @@ class Subscription(AggregateRoot):
         user_id: UUID,
         plan_id: UUID,
         limit: SubscriptionLimits,
+        server_id: UUID | None=None
     ) -> Self:
         return cls(
             user_id=user_id,
             plan_id=plan_id,
             limit=limit,
             status=SubscriptionStatus.PENDING_PAYMENT,
+            server_id=server_id
         )
 
     def pending_provisioning(self, server_id: UUID, external_id: str) -> None:
@@ -72,7 +74,8 @@ class Subscription(AggregateRoot):
             raise
 
         self.status = SubscriptionStatus.PENDING_PROVISIONING
-        self.vpn_client = VpnClient(server_id=server_id, provider_external_id=external_id)
+        self.server_id = server_id
+        self.provider_external_id = external_id
 
         self.register_event(
             SubscriptionPendingProvisioningEvent(

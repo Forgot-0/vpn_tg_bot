@@ -88,3 +88,11 @@ class Location:
     code: str
     name: str
     flag: str = ""
+
+    @classmethod
+    def get_from_code(cls, code: str) -> Location:
+        return cls(
+            code=code,
+            name="",
+            flag=""
+        )

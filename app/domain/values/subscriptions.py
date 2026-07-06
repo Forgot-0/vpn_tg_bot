@@ -44,12 +44,6 @@ class RenewalMode(StrEnum):
 
 
 @dataclass(frozen=True)
-class VpnClient:
-    server_id: UUID
-    provider_external_id: str
-
-
-@dataclass(frozen=True)
 class TrafficLimit:
     bytes_limit: int | None
 

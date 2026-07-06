@@ -89,6 +89,8 @@ class SubscriptionPlan(AggregateRoot):
     allowed_features: set[FeatureCode] = field(default_factory=set)
     allowed_protocols: set[ProtocolCode] = field(default_factory=set)
 
+    server_id: UUID | None = field(default=None)
+
     def validate(self) -> None:
         pass
 

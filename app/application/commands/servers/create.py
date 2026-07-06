@@ -24,12 +24,12 @@ from app.domain.values.users import UserRole
 logger = logging.getLogger(__name__)
 
 
+
 @dataclass(frozen=True)
 class CreateServerCommand(BaseCommand):
     user_jwt_data: UserJWTData
 
     name: str
-    region_code: str
     panel_type: PanelType
     panel_host: str
     panel_port: int
@@ -39,6 +39,7 @@ class CreateServerCommand(BaseCommand):
     panel_password: str | None = None
 
     max_clients: int = 0
+    location_codes: set[str] = field(default_factory=set)
     supported_protocols: set[ProtocolCode] = field(default_factory=set)
     supported_features: set[FeatureCode] = field(default_factory=set)
     tags: list[str] = field(default_factory=list)
@@ -69,14 +70,14 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, VPNServ
                 username=command.panel_username,
                 password=command.panel_password,
             ),
-            locations={Location(code=command.region_code, name=command.region_code)},
+            locations={Location.get_from_code(code) for code in command.location_codes},
             support_protocols=command.supported_protocols,
             support_features=command.supported_features,
             is_active=command.is_active,
             tags=command.tags,
         )
 
-        await self.server_repository.add(server, region_code=command.region_code)
+        await self.server_repository.add(server)
         await self.uow.commit()
 
         logger.info(
@@ -84,7 +85,6 @@ class CreateServerCommandHandler(BaseCommandHandler[CreateServerCommand, VPNServ
             extra={
                 "created_by": str(command.user_jwt_data.id),
                 "server_id": str(server.id),
-                "region_code": command.region_code,
             },
         )
         return server

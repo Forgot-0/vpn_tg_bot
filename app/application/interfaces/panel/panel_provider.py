@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from app.domain.entities.server import VPNServer
 from app.domain.entities.subscription import Subscription
-from app.domain.values.servers import PanelType, ProtocolCode
+from app.domain.values.servers import PanelType
 
 
 @dataclass(frozen=True)
@@ -29,6 +29,9 @@ class PanelProviderPort(ABC):
     @property
     @abstractmethod
     def panel_type(self) -> PanelType: ...
+
+    @abstractmethod
+    async def check_server(self, server: VPNServer) -> bool: ...
 
     @abstractmethod
     async def create_client(

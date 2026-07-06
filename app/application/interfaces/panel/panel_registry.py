@@ -6,6 +6,7 @@ from app.domain.entities.server import VPNServer
 from app.domain.errors import PanelClientNotRegisteredError
 from app.domain.values.servers import PanelType
 
+
 @dataclass
 class PanelRegistry:
     providers: dict[PanelType, PanelProviderPort] = field(default_factory=dict)

@@ -12,6 +12,7 @@ from app.application.event_bus import EventBus
 from app.application.interfaces.payments import PaymentGateway
 from app.domain.entities.order import Order
 from app.domain.entities.payment import Payment
+from app.domain.entities.plan import SubscriptionPlan
 from app.domain.errors import (
     PlanNotFoundError,
     SubscriptionNotFoundError,
@@ -100,7 +101,7 @@ class RenewSubscriptionCommandHandler(
         await self.payment_repository.add(payment)
         await self.uow.commit()
 
-        gateway_result = await self.payment_gateway.create_payment(order, return_url=command.return_url)
+        gateway_result = await self.payment_gateway.create_payment(payment, return_url=command.return_url)
 
         payment.awaiting_confirmation(
             external_id=gateway_result.external_id,
@@ -145,11 +146,15 @@ class RenewSubscriptionCommandHandler(
 
         return subscription.limit
 
-    def _calculate_price(self, plan, new_limit: SubscriptionLimits, currency: str):
+    def _calculate_price(self, plan: SubscriptionPlan, new_limit: SubscriptionLimits, currency: str):
         if plan.is_fixed:
             price = plan.fixed_price_for(currency)
+
             if price is None:
                 raise PlanNotFoundError(entity_id=str(plan.id))
+
             return price
+
         plan.validate_draft(new_limit)
+
         return plan.calculate_price(new_limit)
