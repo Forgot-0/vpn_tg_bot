@@ -24,9 +24,9 @@ class UserModel(BaseModelORM):
     referred_by: Mapped[UUID | None] = mapped_column(
         PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
-    referrals_count: Mapped[int] = mapped_column(Integer(), nullable=False, server_default="0")
+    referrals_count: Mapped[int] = mapped_column(Integer(), nullable=False)
 
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, server_default="true")
+    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )

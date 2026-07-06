@@ -32,7 +32,7 @@ class SubscriptionPlanModel(BaseModelORM):
     reset_every_n_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
     custom_cron: Mapped[str | None] = mapped_column(String(128), nullable=True)
 
-    price: Mapped[list[dict[str, str]]] = mapped_column(JSONB, nullable=False, default=list)
+    price: Mapped[list[dict[str, str]]] = mapped_column(JSONB, nullable=False, default="[]")
     price_rule: Mapped[dict[str, object] | None] = mapped_column(JSONB, nullable=True)
 
     # 

@@ -8,7 +8,7 @@ from uuid import UUID
 
 from app.domain.errors import SpecValidationError
 from app.domain.services.clock import now_utc
-from app.domain.values.servers import FeatureCode, ProtocolCode
+from app.domain.values.servers import FeatureCode, Location, ProtocolCode
 
 
 

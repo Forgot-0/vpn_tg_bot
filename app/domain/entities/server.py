@@ -36,7 +36,6 @@ class VPNServer(AggregateRoot):
     def validate(self) -> None:
         pass
 
-
     def supports(
         self,
         protocols: set[ProtocolCode],

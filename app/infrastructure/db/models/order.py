@@ -16,8 +16,7 @@ class OrderModel(BaseModelORM):
 
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
     user_id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True),
-        ForeignKey("users.id"), nullable=False, index=True
+        PG_UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True
     )
     subscription_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True), ForeignKey("subscriptions.id"), nullable=False, index=True

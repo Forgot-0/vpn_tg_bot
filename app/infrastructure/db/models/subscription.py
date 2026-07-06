@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, func
+from sqlalchemy import DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
@@ -28,6 +28,10 @@ class SubscriptionModel(BaseModelORM):
     current_period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     bytes_used: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    vpn_client: Mapped[list[dict[str, str]]] = mapped_column(JSONB, nullable=False, default=list)
+    active_devices: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_reset_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    server_id: Mapped[UUID | None] = mapped_column(PG_UUID(as_uuid=True), nullable=True)
+    provider_external_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())

@@ -19,6 +19,7 @@ from app.domain.events.subscriptions import (
     TrafficConsumedEvent,
 )
 from app.domain.services.clock import now_utc
+from app.domain.values.servers import Location
 from app.domain.values.subscriptions import (
     RenewalMode,
     RenewalStrategy,
@@ -45,7 +46,7 @@ class Subscription(AggregateRoot):
     current_period_end: datetime | None = field(default=None)
 
     usage: UsageStats = field(default_factory=UsageStats)
-    vpn_client: list[VpnClient] = field(default_factory=list)
+    vpn_client: VpnClient | None = field(default=None)
     created_at: datetime = field(default_factory=now_utc)
 
     def validate(self) -> None:
@@ -71,9 +72,8 @@ class Subscription(AggregateRoot):
             raise
 
         self.status = SubscriptionStatus.PENDING_PROVISIONING
-        self.vpn_client.append(
-            VpnClient(server_id=server_id, provider_external_id=external_id)
-        )
+        self.vpn_client = VpnClient(server_id=server_id, provider_external_id=external_id)
+
         self.register_event(
             SubscriptionPendingProvisioningEvent(
                 subscription_id=self.id,
