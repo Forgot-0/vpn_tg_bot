@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from uuid import UUID
 
 from app.domain.values.payments import PaymentStatus
 
@@ -17,3 +18,10 @@ class GatewayStatusResult:
     status: PaymentStatus
     paid_at: datetime | None
 
+
+@dataclass(frozen=True)
+class ConfirmPaymentResult:
+    payment_id: UUID
+    order_id: UUID
+    status: PaymentStatus
+    subscription_id: UUID | None = None

@@ -97,6 +97,12 @@ class CheckoutNotFoundError(NotFoundError):
 
 
 @dataclass(eq=False)
+class OrderNotFoundError(NotFoundError):
+    code: str = "ORDER_NOT_FOUND"
+    entity: str = "Order"
+
+
+@dataclass(eq=False)
 class SubscriptionNotFoundError(NotFoundError):
     code: str = "SUBSCRIPTION_NOT_FOUND"
     entity: str = "Subscription"

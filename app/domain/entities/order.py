@@ -5,6 +5,7 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from app.domain.entities.base import AggregateRoot
+from app.domain.errors import InvalidStateTransitionError
 from app.domain.services.clock import now_utc
 from app.domain.values.money import Money
 from app.domain.values.order import OrderStatus, OrderType
@@ -32,3 +33,27 @@ class Order(AggregateRoot):
     def validate(self) -> None:
         if self.type == OrderType.RENEW_SUBSCRIPTION and self.renewal_mode is None:
             raise
+
+    def mark_paid(self, *, paid_at: datetime) -> None:
+        if self.status == OrderStatus.PAID:
+            return
+
+        if self.status not in {OrderStatus.CREATED, OrderStatus.WAITING_PAYMENT}:
+            raise InvalidStateTransitionError(
+                reason=f"Order cannot be paid from status: {self.status.value}"
+            )
+
+        self.status = OrderStatus.PAID
+        self.paid_at = paid_at
+
+    def mark_failed(self) -> None:
+        if self.status in {OrderStatus.PAID, OrderStatus.CANCELLED, OrderStatus.REFUNDED}:
+            return
+
+        self.status = OrderStatus.FAILED
+
+    def mark_cancelled(self) -> None:
+        if self.status in {OrderStatus.PAID, OrderStatus.CANCELLED, OrderStatus.REFUNDED}:
+            return
+
+        self.status = OrderStatus.CANCELLED

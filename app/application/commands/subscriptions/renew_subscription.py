@@ -13,6 +13,7 @@ from app.application.interfaces.payments import PaymentGateway
 from app.domain.entities.order import Order
 from app.domain.entities.payment import Payment
 from app.domain.entities.plan import SubscriptionPlan
+from app.domain.entities.subscription import Subscription
 from app.domain.errors import (
     PlanNotFoundError,
     SubscriptionNotFoundError,
@@ -129,7 +130,7 @@ class RenewSubscriptionCommandHandler(
 
     def _resolve_renewal_limits(
         self,
-        subscription,
+        subscription: Subscription,
         command: RenewSubscriptionCommand,
     ) -> SubscriptionLimits:
         if command.plan_draft is not None:
